@@ -145,6 +145,7 @@
                 android:id="@+id/location_icon"/>
 
             <EditText
+                android:id="@+id/location"
                 android:layout_toRightOf="@id/location_icon"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -177,6 +178,7 @@
                 android:id="@+id/text_icon"/>
 
             <EditText
+                android:id="@+id/description"
                 android:layout_toRightOf="@id/text_icon"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

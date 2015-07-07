@@ -2,7 +2,9 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.preference.PreferenceManager;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -12,14 +14,21 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.BaseAdapter;
 
+import com.parse.ParseObject;
+import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 
 public class MainActivity extends AppCompatActivity implements EventList.OnFragmentInteractionListener{
+    public static final int NEW_EVENT = 1;
     SectionsPagerAdapter mSectionsPagerAdapter;
     EventList mEventList;
 
     ViewPager mViewPager;
+    private EventList mEventListFrag;
+    private ConnectionsFragment mConnectionsFragment;
+    private MeFragment mMeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -56,7 +65,16 @@ public class MainActivity extends AppCompatActivity implements EventList.OnFragm
     @Override
     public void createNewEvent() {
         Intent intent = new Intent(this, NewEventActivity.class);
-        startActivity(intent);
+        startActivityForResult(intent, NEW_EVENT);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode==NEW_EVENT&& resultCode== Activity.RESULT_OK){
+            ParseQueryAdapter<ParseObject> adapter = (ParseQueryAdapter<ParseObject>) mEventListFrag.mListView.getAdapter();
+            adapter.loadObjects();
+        }
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -69,11 +87,20 @@ public class MainActivity extends AppCompatActivity implements EventList.OnFragm
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    return new EventList();
+                    if (mEventListFrag==null) {
+                        mEventListFrag = new EventList();
+                    }
+                    return mEventListFrag;
                 case 1:
-                    return new ConnectionsFragment();
+                    if (mConnectionsFragment==null) {
+                        mConnectionsFragment = new ConnectionsFragment();
+                    }
+                    return mConnectionsFragment;
                 case 2:
-                    return new MeFragment();
+                    if (mMeFragment==null) {
+                        mMeFragment = new MeFragment();
+                    }
+                    return mMeFragment;
                 default:
                     return null;
             }
