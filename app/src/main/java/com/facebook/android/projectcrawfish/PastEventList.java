@@ -9,28 +9,25 @@ import com.parse.ParseQuery;
 
 import java.util.Date;
 
-/**
- * Created by markamendoza on 7/9/15.
- */
-public class UpcomingEventListFragment extends EventList {
+public class PastEventList extends EventList  {
 
     private OnFragmentInteractionListener mListener;
 
     interface OnFragmentInteractionListener{
-        void checkIntoEvent(Event event);
+        void openEventDetails(Event event);
     }
 
     @Override
     protected ParseQuery<ParseObject> query() {
-                ParseQuery<ParseObject> query = new ParseQuery<>(Event.CLASS_NAME);
-                query.orderByAscending(Event.START_DATE);
-                query.whereGreaterThan(Event.END_DATE, new Date());//Not over
-                return query;
+        ParseQuery<ParseObject> query = new ParseQuery<>(Event.CLASS_NAME);
+        query.orderByAscending(Event.START_DATE);
+        query.whereLessThan(Event.END_DATE, new Date());
+        return query;
     }
 
     @Override
     protected void onReceiveClickEvent(Event event) {
-        mListener.checkIntoEvent(event);
+        mListener.openEventDetails(event);
     }
 
     @Override

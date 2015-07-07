@@ -1,7 +1,6 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
 
-package com.facebook.android.projectcrawfish;
-
+package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,46 +16,26 @@ import com.parse.ParseQueryAdapter;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-
-abstract class EventList extends Fragment implements CustomViewPQA.ClickEventListener{
-
-    abstract protected ParseQuery<ParseObject> query();
-    abstract  protected void onReceiveClickEvent(Event event);
-    //abstract protected CustomViewPQA.CustomViewHolder holder();
-
-
+public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener{
     CustomViewPQA mAdapter;
 
-    @Bind(R.id.list_view) ListView mListView;
+    @Bind(R.id.list_view)
+    ListView mListView;
 
-    public void refreshList() {
-        mAdapter.loadObjects();
-    }
-
-
-
-    public EventList() {
+    public ContactListFragment() {
         // Required empty public constructor
     }
-
-
-    @Override
-    public void OnClick(ParseObject object) {
-        Event event = (Event) object;
-        onReceiveClickEvent(event);
-    }
-
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.fragment_event_list, container, false);
-        ButterKnife.bind(this,v);
+        ButterKnife.bind(this, v);
 
         ParseQueryAdapter.QueryFactory<ParseObject> factory =
                 new ParseQueryAdapter.QueryFactory<ParseObject>() {
                     public ParseQuery<ParseObject> create() {
-                        return query();
+                        return new ParseQuery<>(Contact.CLASS_NAME);
                     }
                 };
 
@@ -64,14 +43,17 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
                 new CustomViewPQA.CustomViewHolderFactory() {
                     @Override
                     public CustomViewPQA.CustomViewHolder create(View v, CustomViewPQA.CustomViewHolder.ClickEventListenerd listener) {
-                        return new EventViewHolder(v, listener);
+                        return new ContactViewHolder(v, listener);
                     }
                 }
-                ,R.layout.event_list_item
-        );
+        , R.layout.list_item_contact);
         mListView.setAdapter(mAdapter);
 
         return v;
     }
 
+    @Override
+    public void OnClick(ParseObject obj) {
+        //nothing
+    }
 }

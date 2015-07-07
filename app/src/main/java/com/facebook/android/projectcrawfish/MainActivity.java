@@ -4,27 +4,25 @@ package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
+import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.Menu;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
-import com.parse.ParseObject;
-import com.parse.ParseQueryAdapter;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
-        UpcomingEventsFragment.OnFragmentInteractionListener{
+        UpcomingEventsFragment.OnFragmentInteractionListener,
+        PastEventList.OnFragmentInteractionListener{
 
     public static final int CHECK_IN = 2;
     public static final String DIALOG_CHECK_IN = "CheckInDialog";
@@ -34,7 +32,7 @@ public class MainActivity extends AppCompatActivity implements
     SectionsPagerAdapter mSectionsPagerAdapter;
 
     private UpcomingEventsFragment mEventListFrag;
-    private ConnectionsFragment mConnectionsFragment;
+    private PastEventList mPastEventFrag;
     private MeFragment mMeFragment;
 
     public static final int NEW_EVENT = 1;
@@ -94,6 +92,11 @@ public class MainActivity extends AppCompatActivity implements
         cf.show(manager, DIALOG_CHECK_IN);
     }
 
+    @Override
+    public void openEventDetails(Event event) {
+        //Something
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -109,10 +112,10 @@ public class MainActivity extends AppCompatActivity implements
                     }
                     return mEventListFrag;
                 case 1:
-                    if (mConnectionsFragment==null) {
-                        mConnectionsFragment = new ConnectionsFragment();
+                    if (mPastEventFrag ==null) {
+                        mPastEventFrag = new PastEventList();
                     }
-                    return mConnectionsFragment;
+                    return mPastEventFrag;
                 case 2:
                     if (mMeFragment==null) {
                         mMeFragment = new MeFragment();
