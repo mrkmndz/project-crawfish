@@ -3,19 +3,15 @@
 package com.facebook.android.projectcrawfish;
 
 import android.content.Intent;
-import android.support.v4.app.Fragment;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuItem;
+import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 
-import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 public class LoginActivity extends AppCompatActivity {
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -27,5 +23,11 @@ public class LoginActivity extends AppCompatActivity {
     public void onTrigger(View v){
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
+    }
+
+    @OnClick(R.id.card_swipe_button)
+    public void onClick(View v) {
+        Intent i = new Intent(LoginActivity.this, CardSwipeActivity.class);
+        startActivity(i);
     }
 }

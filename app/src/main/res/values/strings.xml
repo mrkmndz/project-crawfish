@@ -19,4 +19,6 @@
     <string name="title_activity_new_event">NewEventActivity</string>
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_me_fragment">MeFragment</string>
+
+    <string name="title_activity_card_swipe">CardSwipeActivity</string>
 </resources>
