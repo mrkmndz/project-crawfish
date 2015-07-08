@@ -9,13 +9,13 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Adapter;
-import android.widget.BaseAdapter;
 import android.widget.ListView;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+
+import java.util.Date;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -25,7 +25,13 @@ import butterknife.OnClick;
 public class EventList extends Fragment {
 
     OnFragmentInteractionListener mListener;
+    EventListAdapter mAdapter;
+
     @Bind(R.id.list_view) ListView mListView;
+
+    public void refreshList() {
+        mAdapter.loadObjects();
+    }
 
     interface OnFragmentInteractionListener {
         void createNewEvent();
@@ -48,13 +54,13 @@ public class EventList extends Fragment {
                     public ParseQuery<ParseObject> create() {
                         ParseQuery<ParseObject> query = new ParseQuery<>(Event.CLASS_NAME);
                         query.orderByAscending(Event.START_DATE);
+                        query.whereGreaterThan(Event.END_DATE, new Date());//Not over
                         return query;
                     }
                 };
 
-        ParseQueryAdapter<ParseObject> mainAdapter = new ParseQueryAdapter<>(getActivity(), factory);
-        mListView.setAdapter(mainAdapter);
-        mainAdapter.setTextKey(Event.TITLE);
+        mAdapter = new EventListAdapter(getActivity(), factory);
+        mListView.setAdapter(mAdapter);
 
         return v;
     }

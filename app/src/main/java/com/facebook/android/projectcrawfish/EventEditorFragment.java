@@ -62,9 +62,6 @@ public class EventEditorFragment extends Fragment {
 
     public static final String DIALOG_DATE = "DialogDate";
 
-    private static final SimpleDateFormat dateFormat = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
-    private static final SimpleDateFormat timeFormat = new SimpleDateFormat("K:mm a", Locale.US);
-
 
     public static EventEditorFragment newInstance(String EventID) {
         EventEditorFragment fragment = new EventEditorFragment();
@@ -95,11 +92,11 @@ public class EventEditorFragment extends Fragment {
     }
 
     private void updateUI(){
-        mStartDateButton.setText(dateFormat.format(mEvent.getStartDate()));
-        mEndDateButton.setText(dateFormat.format(mEvent.getEndDate()));
+        mStartDateButton.setText(mEvent.getFormattedStartDate());
+        mEndDateButton.setText(mEvent.getFormattedEndDate());
 
-        mStartTimeButton.setText(timeFormat.format(mEvent.getStartDate()));
-        mEndTimeButton.setText(timeFormat.format(mEvent.getEndDate()));
+        mStartTimeButton.setText(mEvent.getFormattedStartTime());
+        mEndTimeButton.setText(mEvent.getFormattedEndTime());
 
         mEventTitle.setText(mEvent.getTitle());
         mLocation.setText(mEvent.getLocation());

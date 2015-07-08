@@ -4,7 +4,7 @@ package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
 import android.content.Intent;
-import android.preference.PreferenceManager;
+import android.graphics.drawable.Drawable;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -13,42 +13,48 @@ import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
-import android.view.MenuItem;
-import android.widget.BaseAdapter;
 
+import com.joanzapata.android.iconify.IconDrawable;
+import com.joanzapata.android.iconify.Iconify;
 import com.parse.ParseObject;
 import com.parse.ParseQueryAdapter;
-import com.parse.ParseUser;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements EventList.OnFragmentInteractionListener{
-    public static final int NEW_EVENT = 1;
-    SectionsPagerAdapter mSectionsPagerAdapter;
-    EventList mEventList;
 
-    ViewPager mViewPager;
+    @Bind(R.id.main_pager) ViewPager mViewPager;
+    @Bind(R.id.tab_layout) TabLayout mTabLayout;
+
+    SectionsPagerAdapter mSectionsPagerAdapter;
+
     private EventList mEventListFrag;
     private ConnectionsFragment mConnectionsFragment;
     private MeFragment mMeFragment;
+
+    public static final int NEW_EVENT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        ButterKnife.bind(this);
 
         mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
 
-        mViewPager = (ViewPager) findViewById(R.id.main_pager);
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        TabLayout tabLayout = (TabLayout) findViewById(R.id.tab_layout);
-        tabLayout.setTabsFromPagerAdapter(new SectionsPagerAdapter(this.getSupportFragmentManager()));
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(tabLayout));
-        tabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+        mTabLayout.setTabsFromPagerAdapter(new SectionsPagerAdapter(this.getSupportFragmentManager()));
+        mTabLayout.getTabAt(0).setIcon(new IconDrawable(this, Iconify.IconValue.fa_users).actionBarSize());
+        mTabLayout.getTabAt(1).setIcon(new IconDrawable(this, Iconify.IconValue.fa_link).actionBarSize());
+        mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize());
+        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
+        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
             @Override
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
             }
-
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 //Nothing
@@ -72,8 +78,7 @@ public class MainActivity extends AppCompatActivity implements EventList.OnFragm
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==NEW_EVENT&& resultCode== Activity.RESULT_OK){
-            ParseQueryAdapter<ParseObject> adapter = (ParseQueryAdapter<ParseObject>) mEventListFrag.mListView.getAdapter();
-            adapter.loadObjects();
+            mEventListFrag.refreshList();
         }
     }
 
@@ -109,20 +114,6 @@ public class MainActivity extends AppCompatActivity implements EventList.OnFragm
         @Override
         public int getCount() {
             return 3;
-        }
-
-        @Override
-        public CharSequence getPageTitle(int position) {
-            switch (position) {
-                case 0:
-                    return "Curr";
-                case 1:
-                    return "Conn";
-                case 2:
-                    return "Me";
-                default:
-                    return null;
-            }
         }
     }
 

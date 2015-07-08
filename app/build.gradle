@@ -31,8 +31,6 @@ dependencies {
     compile 'com.github.yongjhih:parse-facebook-v4:1.9.2'
     compile 'com.facebook.android:facebook-android-sdk:4.1.2'
     compile 'com.parse.bolts:bolts-android:1.1.4'
-
-
     compile 'com.lorentzos.swipecards:library:1.0.9@aar'
     compile 'com.joanzapata.android:android-iconify:1.0.9'
 }

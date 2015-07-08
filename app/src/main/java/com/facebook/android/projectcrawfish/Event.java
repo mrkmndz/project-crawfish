@@ -7,10 +7,12 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.Locale;
 import java.util.Map;
 
 /**
@@ -28,6 +30,9 @@ public class Event extends ParseObject {
     public static final String ALL_DAY = "ALL_DAY";
 
     public static final int STANDARD_DURATION_HOURS = 1;
+
+    private static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
+    private static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
 
     public Date getStartDate() {
         return (Date) get(START_DATE);
@@ -86,5 +91,26 @@ public class Event extends ParseObject {
             e.printStackTrace();
             return null;
         }
+    }
+
+    public String getFormattedStartTime(){
+        return DISPLAY_TIME_FORMAT.format(this.getStartDate());
+    }
+
+    public String getFormattedStartDate(){
+        return DISPLAY_DATE_FORMAT.format(this.getStartDate());
+    }
+
+    public String getFormattedEndTime(){
+        return DISPLAY_TIME_FORMAT.format(this.getEndDate());
+    }
+    public String getFormattedEndDate(){
+        return DISPLAY_DATE_FORMAT.format(this.getEndDate());
+    }
+
+
+    public String getFormattedStartAndEnd() {
+        return getFormattedStartDate()+" "+getFormattedStartTime()+
+                "-"+getFormattedEndDate()+" "+getFormattedEndTime();
     }
 }
