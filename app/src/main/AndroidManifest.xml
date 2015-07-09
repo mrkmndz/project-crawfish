@@ -38,7 +38,8 @@
         </activity>
         <activity
             android:name=".MainActivity"
-            android:label="@string/title_activity_main">
+            android:label="@string/title_activity_main"
+            android:windowSoftInputMode="adjustPan">
         </activity>
         <activity
             android:name=".CardSwipeActivity"

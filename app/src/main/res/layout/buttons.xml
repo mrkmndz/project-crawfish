@@ -8,7 +8,7 @@
               android:orientation="horizontal">
 
 
-    <IconButton
+    <android.widget.IconButton
         android:textColor="#e52933"
         android:textSize="20sp"
         android:layout_margin="40dp"
@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" />
 
-    <IconButton
+    <android.widget.IconButton
         android:textColor="#35e52b"
         android:textSize="20sp"
         android:layout_margin="40dp"

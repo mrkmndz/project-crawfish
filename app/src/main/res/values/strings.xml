@@ -8,7 +8,7 @@
     <string name="parse_client_key">0rGGU81Rr8elNfvTq2e64Uque11lvYGPoxImCEN1</string>
     <string name="facebook_app_id">1606049642985679</string>
 
-<!-- TODO: Remove or change this placeholder text -->
+    <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
     <string name="description_hint">Description</string>
     <string name="location_hint">Location</string>
@@ -25,8 +25,18 @@
     <string name="contact_name_label">contactNameLabel</string>
     <string name="contact_position_label">contactPositionLabel</string>
     <string name="contact_number_label">contactNumberLabel</string>
+    <string name="contact_email_label">contactEmailLabel</string>
     <string name="fb_logo">fbLogo</string>
     <string name="linkedin_logo">linkedInLogo</string>
+
     <string name="contact_activity_list">ContactListActivity</string>
     <string name="contact_details_label">Position</string>
+
+    <string name="edit">editButton</string>
+
+    <string name="name_hint">Name</string>
+    <string name="position_hint">Position</string>
+    <string name="email_hint">Email</string>
+    <string name="phone_number_hint">Phone Number</string>
+
 </resources>

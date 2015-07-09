@@ -2,4 +2,5 @@
 <resources>
     <color name="fb">#3b5998</color>
     <color name="linkedIn">#007bb6</color>
+    <color name="editButton">#C0C0C0</color>
 </resources>
