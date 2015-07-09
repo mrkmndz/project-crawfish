@@ -2,14 +2,21 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.content.Context;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.CardView;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -18,13 +25,45 @@ import butterknife.OnClick;
 
 public class CardSwipeActivity extends AppCompatActivity {
 
-    private ArrayList<String> al;
-    private ArrayAdapter<String> arrayAdapter;
-    private int i;
+    private CardAdapter mCardAdapter;
+    private int mCurrentCardIndex;
+    private ArrayList<ProfileDisplayInstance> mPDIs;
 
     @Bind(R.id.frame)
     SwipeFlingAdapterView flingContainer;
 
+    /*TEST CODE */
+        private static final String[] PEOPLE = new String[] {
+                "Grace Kao", "Maria Zlatkova", "Mark Mendoza",  "Sheryl Sandberg", "Mark Zuckerberg", "Josh Skeen"
+        };
+        private ProfileDisplayInstance testFill(String name){
+            Profile profile = new Profile();
+            profile.setName(name);
+            return new ProfileDisplayInstance(profile);
+        }
+        private void fillPDIs(){
+            mPDIs = new ArrayList<>();
+            for(String name : PEOPLE){
+                mPDIs.add(testFill(name));
+            }
+        }
+        private void infiniteConnies(){
+            mPDIs.add(testFill("Connie ".concat(String.valueOf(mCurrentCardIndex))));
+            mCardAdapter.notifyDataSetChanged();
+
+            mCurrentCardIndex++;
+        }
+
+        private class Profile{
+            private String mName;
+            public String getName() {
+                return mName;
+            }
+            public void setName(String name) {
+                mName = name;
+            }
+        }
+    /**/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,35 +71,20 @@ public class CardSwipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_swipe);
         ButterKnife.bind(this);
 
+        fillPDIs();//TODO actual parse pulldown here
 
-        al = new ArrayList<>();
-        al.add("php");
-        al.add("c");
-        al.add("python");
-        al.add("java");
-        al.add("html");
-        al.add("c++");
-        al.add("css");
-        al.add("javascript");
+        mCardAdapter = new CardAdapter(this,mPDIs);
 
-        arrayAdapter = new ArrayAdapter<>(this, R.layout.card, R.id.item, al);
-
-
-        flingContainer.setAdapter(arrayAdapter);
+        flingContainer.setAdapter(mCardAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                // this is the simplest way to delete an object from the Adapter (/AdapterView)
-
-                al.remove(0);
-                arrayAdapter.notifyDataSetChanged();
+                mPDIs.remove(0);
+                mCardAdapter.notifyDataSetChanged();
             }
 
             @Override
             public void onLeftCardExit(Object dataObject) {
-                //Do something on the left!
-                //You also have access to the original object.
-                //If you want to use it just cast it (String) dataObject
 
             }
 
@@ -71,11 +95,7 @@ public class CardSwipeActivity extends AppCompatActivity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                // Ask for more data here
-                al.add("XML ".concat(String.valueOf(i)));
-                arrayAdapter.notifyDataSetChanged();
-
-                i++;
+                infiniteConnies();//TODO end of deck handling
             }
 
             @Override
@@ -92,15 +112,66 @@ public class CardSwipeActivity extends AppCompatActivity {
 
     @OnClick(R.id.checkButton)
     public void right() {
-        /**
-         * Trigger the right event manually.
-         */
         flingContainer.getTopCardListener().selectRight();
     }
 
     @OnClick(R.id.xButton)
     public void left() {
         flingContainer.getTopCardListener().selectLeft();
+    }
+
+    private class ProfileDisplayInstance{
+
+        private final float RANGE = 10;
+
+        private final Profile mProfile;
+        private float mWiggleAngle;
+
+        public ProfileDisplayInstance(Profile profile){
+            mProfile = profile;
+            Float randomOver1 = (new Random()).nextFloat();
+            mWiggleAngle=RANGE*(randomOver1*2-1);
+        }
+
+        public Profile getProfile() {
+            return mProfile;
+        }
+
+        public float getWiggleAngle() {
+            return mWiggleAngle;
+        }
+    }
+
+    private class CardAdapter extends ArrayAdapter {
+        private final LayoutInflater mInflater;
+        private final List<ProfileDisplayInstance> mProfileDisplayInstances;
+
+        public CardAdapter(Context context, List<ProfileDisplayInstance> objects) {
+            super(context, R.layout.card, objects);
+            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mProfileDisplayInstances = objects;
+        }
+
+        @Override
+        public View getView(int position, View convertView, ViewGroup parent) {
+            View view;
+            TextView nameField;
+
+            if (convertView == null) {
+                view = mInflater.inflate(R.layout.card, parent, false);
+            } else {
+                view = convertView;
+            }
+
+            ProfileDisplayInstance pdi = mProfileDisplayInstances.get(position);
+            CardView card = (CardView) view.findViewById(R.id.actual_card);
+            card.setRotation(pdi.getWiggleAngle());
+
+            nameField = (TextView) view.findViewById(R.id.contact_name);
+            nameField.setText(pdi.getProfile().getName());
+
+            return view;
+        }
     }
 
 }

@@ -28,11 +28,6 @@ public class MeFragment extends Fragment {
         // Required empty public constructor
     }
 
-    @Bind(R.id.contact_fb)
-    ImageButton mFacebook;
-
-    @Bind((R.id.contact_linkedin))
-    ImageButton mLinkedIn;
 
 
     @Override
@@ -40,9 +35,6 @@ public class MeFragment extends Fragment {
                              Bundle savedInstanceState) {
 
         View v= inflater.inflate(R.layout.fragment_me, container, false);
-        ButterKnife.bind(this, v);
-        mFacebook.setImageDrawable(new IconDrawable(getActivity(), Iconify.IconValue.fa_facebook_square).sizeDp(48).colorRes(R.color.fb));
-        mLinkedIn.setImageDrawable(new IconDrawable(getActivity(), Iconify.IconValue.fa_linkedin_square).sizeDp(48).colorRes(R.color.linkedIn));
 
 
 

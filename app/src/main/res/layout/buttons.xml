@@ -6,21 +6,23 @@
               android:layout_gravity="center_horizontal|bottom"
               android:layout_marginBottom="20dp"
               android:orientation="horizontal">
-    <ImageButton
+
+
+    <IconButton
+        android:textColor="#e52933"
+        android:textSize="20sp"
+        android:layout_margin="40dp"
         android:id="@+id/xButton"
+        android:text="{fa-remove}"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:layout_height="wrap_content" />
+
+    <IconButton
+        android:textColor="#35e52b"
+        android:textSize="20sp"
         android:layout_margin="40dp"
-        android:src="@drawable/x_button"
-        />
-
-
-
-    <ImageButton
         android:id="@+id/checkButton"
+        android:text="{fa-check}"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="40dp"
-        android:src="@drawable/check_button"
-        />
+        android:layout_height="wrap_content" />
 </LinearLayout>

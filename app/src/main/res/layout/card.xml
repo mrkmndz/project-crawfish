@@ -2,31 +2,10 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
              xmlns:tools="http://schemas.android.com/tools"
              android:layout_gravity="center"
-             android:layout_width="wrap_content"
-             android:layout_height="wrap_content">
-    <LinearLayout
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:padding="30dp"
-        android:orientation="vertical"
-        android:background="#E339">
-        <ImageView
-            android:layout_width="200dp"
-            android:layout_height="200dp"
-            android:src="@mipmap/ic_launcher"
-            android:layout_weight="1"
-            />
-        <TextView
-            android:id="@+id/item"
-            android:textSize="40sp"
-            android:textColor="@android:color/black"
-            android:layout_gravity="center_horizontal"
-            android:gravity="center"
-            tools:text="@string/hello_world"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-    </LinearLayout>
+             android:layout_width="match_parent"
+             android:layout_height="match_parent">
+    <include android:id="@+id/contact_card"
+        layout="@layout/fragment_me" />
     <View
         android:id="@+id/item_swipe_left_indicator"
         android:alpha="0"
