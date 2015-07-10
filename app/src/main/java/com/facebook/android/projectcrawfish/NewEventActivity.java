@@ -24,7 +24,6 @@ public class NewEventActivity extends AppCompatActivity {
 
     public static final String KEY_ID = "ID";
     EventEditorFragment mFragment;
-    String mEventID;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,30 +31,10 @@ public class NewEventActivity extends AppCompatActivity {
         setContentView(R.layout.activity_fragment);
 
         FragmentManager fm = getSupportFragmentManager();
-        Fragment mFragment = fm.findFragmentById(R.id.fragment_container);
+        mFragment = (EventEditorFragment) fm.findFragmentById(R.id.fragment_container);
 
         if (mFragment == null) {
-            if (savedInstanceState != null) {
-                mEventID = savedInstanceState.getString(KEY_ID);
-            } else {
-                Event event = new Event();
-                Date now = new Date();
-                event.setStartDate(now);
-
-                Calendar cal = Calendar.getInstance();
-                cal.setTime(now);
-                cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
-                event.setEndDate(cal.getTime());
-
-                event.setIsAllDay(false);
-                try {
-                    event.pin();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
-                mEventID = event.getObjectId();
-            }
-            mFragment = EventEditorFragment.newInstance(mEventID);
+            mFragment = EventEditorFragment.newInstance(null);
             fm.beginTransaction()
                     .add(R.id.fragment_container, mFragment)
                     .commit();
@@ -77,29 +56,15 @@ public class NewEventActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_item_save) {
-            final Event event = Event.getLocalEvent(mEventID);
-            if (event != null) {
-                event.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        try {
-                            event.unpin();
-                        } catch (ParseException e1) {
-                            e1.printStackTrace();
-                        }
-                        setResult(Activity.RESULT_OK);
-                        finish();
-                    }
-                });
+            try {
+                mFragment.saveToParse();
+                setResult(Activity.RESULT_OK);
+                finish();
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
         }
 
         return super.onOptionsItemSelected(item);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(KEY_ID, mEventID);
     }
 }

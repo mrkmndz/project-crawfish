@@ -22,9 +22,12 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 
 
-public class EventList extends Fragment {
+abstract class EventList extends Fragment {
 
-    OnFragmentInteractionListener mListener;
+    abstract protected ParseQuery<ParseObject> query();
+    abstract  protected void onRecieveClickEvent(Event event);
+
+
     EventListAdapter mAdapter;
 
     @Bind(R.id.list_view) ListView mListView;
@@ -33,9 +36,6 @@ public class EventList extends Fragment {
         mAdapter.loadObjects();
     }
 
-    interface OnFragmentInteractionListener {
-        void createNewEvent();
-    }
 
 
     public EventList() {
@@ -52,40 +52,20 @@ public class EventList extends Fragment {
         ParseQueryAdapter.QueryFactory<ParseObject> factory =
                 new ParseQueryAdapter.QueryFactory<ParseObject>() {
                     public ParseQuery<ParseObject> create() {
-                        ParseQuery<ParseObject> query = new ParseQuery<>(Event.CLASS_NAME);
-                        query.orderByAscending(Event.START_DATE);
-                        query.whereGreaterThan(Event.END_DATE, new Date());//Not over
-                        return query;
+                        return query();
                     }
                 };
 
-        mAdapter = new EventListAdapter(getActivity(), factory);
+        mAdapter = new EventListAdapter(getActivity(), factory,
+                new EventListAdapter.ClickEventListener() {
+            @Override
+            public void OnClick(Event event) {
+                onRecieveClickEvent(event);
+            }
+        });
         mListView.setAdapter(mAdapter);
 
         return v;
     }
-
-    @Override
-    public void onAttach(Activity activity) {
-        super.onAttach(activity);
-        try {
-            mListener = (OnFragmentInteractionListener) activity;
-        } catch (ClassCastException e) {
-            throw new ClassCastException(activity.toString()
-                    + " must implement OnFragmentInteractionListener");
-        }
-    }
-
-    @Override
-    public void onDetach() {
-        super.onDetach();
-        mListener=null;
-    }
-
-    @OnClick(R.id.new_event_button)
-    public void OnCreateButton(View v){
-        mListener.createNewEvent();
-    }
-
 
 }

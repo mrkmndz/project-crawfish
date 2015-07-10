@@ -31,8 +31,8 @@ public class Event extends ParseObject {
 
     public static final int STANDARD_DURATION_HOURS = 1;
 
-    private static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
-    private static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
+    public static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
+    public static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
 
     public Date getStartDate() {
         return (Date) get(START_DATE);
@@ -88,6 +88,9 @@ public class Event extends ParseObject {
         try {
             return (Event) query.get(eventID);
         } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        } catch (ClassCastException e){
             e.printStackTrace();
             return null;
         }

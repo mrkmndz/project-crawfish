@@ -11,10 +11,19 @@ import android.widget.TextView;
 import com.parse.ParseObject;
 import com.parse.ParseQueryAdapter;
 
+import butterknife.OnClick;
+
 public class EventListAdapter extends ParseQueryAdapter<ParseObject> {
 
-    public EventListAdapter(Context context, QueryFactory<ParseObject> queryFactory) {
+    private final ClickEventListener mListener;
+
+    public EventListAdapter(Context context, QueryFactory<ParseObject> queryFactory, ClickEventListener listener) {
         super(context, queryFactory);
+        mListener = listener;
+    }
+
+    interface ClickEventListener{
+        void OnClick(Event event);
     }
 
     // Customize the layout by overriding getItemView
@@ -26,7 +35,7 @@ public class EventListAdapter extends ParseQueryAdapter<ParseObject> {
 
         super.getItemView(object, v, parent);
 
-        Event event = (Event) object;
+        final Event event = (Event) object;
 
         TextView titleView = (TextView) v.findViewById(R.id.list_item_event_name);
         TextView timeView = (TextView) v.findViewById(R.id.list_item_event_date);
@@ -39,7 +48,7 @@ public class EventListAdapter extends ParseQueryAdapter<ParseObject> {
         v.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //TODO load checkin dialog
+                mListener.OnClick(event);
             }
         });
 

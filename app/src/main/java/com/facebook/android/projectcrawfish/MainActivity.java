@@ -22,14 +22,18 @@ import com.parse.ParseQueryAdapter;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity implements EventList.OnFragmentInteractionListener{
+public class MainActivity extends AppCompatActivity implements
+        UpcomingEventListFragment.OnFragmentInteractionListener,
+        UpcomingEventsFragment.OnFragmentInteractionListener{
 
+    public static final int CHECK_IN = 2;
+    public static final String DIALOG_CHECK_IN = "CheckInDialog";
     @Bind(R.id.main_pager) ViewPager mViewPager;
     @Bind(R.id.tab_layout) TabLayout mTabLayout;
 
     SectionsPagerAdapter mSectionsPagerAdapter;
 
-    private EventList mEventListFrag;
+    private UpcomingEventsFragment mEventListFrag;
     private ConnectionsFragment mConnectionsFragment;
     private MeFragment mMeFragment;
 
@@ -82,6 +86,14 @@ public class MainActivity extends AppCompatActivity implements EventList.OnFragm
         }
     }
 
+    @Override
+    public void checkIntoEvent(Event event) {
+        FragmentManager manager = getSupportFragmentManager();
+        EventEditorFragment cf = EventEditorFragment.newInstance(event.getObjectId());
+        cf.setTargetFragment(mEventListFrag, CHECK_IN);
+        cf.show(manager, DIALOG_CHECK_IN);
+    }
+
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
         public SectionsPagerAdapter(FragmentManager fm) {
@@ -93,7 +105,7 @@ public class MainActivity extends AppCompatActivity implements EventList.OnFragm
             switch (position) {
                 case 0:
                     if (mEventListFrag==null) {
-                        mEventListFrag = new EventList();
+                        mEventListFrag = new UpcomingEventsFragment();
                     }
                     return mEventListFrag;
                 case 1:
