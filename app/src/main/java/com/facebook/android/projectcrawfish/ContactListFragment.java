@@ -29,7 +29,7 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.fragment_event_list, container, false);
+        View v= inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, v);
 
         ParseQueryAdapter.QueryFactory<ParseObject> factory =

@@ -24,8 +24,11 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener{
 
+    public static final int NEW_EVENT = 1;
     public static final int CHECK_IN = 2;
+    public static final int PAST_EVENTS = 3;
     public static final String DIALOG_CHECK_IN = "CheckInDialog";
+    public static final String PAST_EVENT_DETAILS = "PastEventDetails";
     @Bind(R.id.main_pager) ViewPager mViewPager;
     @Bind(R.id.tab_layout) TabLayout mTabLayout;
 
@@ -34,8 +37,6 @@ public class MainActivity extends AppCompatActivity implements
     private UpcomingEventsFragment mEventListFrag;
     private PastEventList mPastEventFrag;
     private MeFragment mMeFragment;
-
-    public static final int NEW_EVENT = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -93,7 +94,10 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public void openEventDetails(Event event) {
-        //Something
+        FragmentManager manager = getSupportFragmentManager();
+        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(event.getObjectId());
+        detailsFragment.setTargetFragment(mPastEventFrag, PAST_EVENTS);
+        detailsFragment.show(manager, PAST_EVENT_DETAILS);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {

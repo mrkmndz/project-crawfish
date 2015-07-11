@@ -50,11 +50,11 @@ public class ContactDetailsFragment extends Fragment {
         ParseQuery<Contact> query = new ParseQuery<>(Contact.CLASS_NAME);
         try {
             Contact contact = query.get(ContactID);
-            args.putString(CONTACT_ID, ContactID);
-            args.putString(NAME, contact.getFullName());
-            args.putString(POSITION, contact.getPosition());
-            args.putString(NUMBER, contact.getPhoneNumber());
-            args.putString(EMAIL, contact.getEmail());
+            args.getString(CONTACT_ID, ContactID);
+            args.getString(NAME, contact.getFullName());
+            args.getString(POSITION, contact.getPosition());
+            args.getString(NUMBER, contact.getPhoneNumber());
+            args.getString(EMAIL, contact.getEmail());
         } catch (ParseException e) {
             e.printStackTrace();
             throw new RuntimeException("Bad Connection");
@@ -97,8 +97,6 @@ public class ContactDetailsFragment extends Fragment {
         outState.putString(NUMBER, mNumber);
         outState.putString(EMAIL, mEmail);
     }
-
-    boolean hasInflated = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,

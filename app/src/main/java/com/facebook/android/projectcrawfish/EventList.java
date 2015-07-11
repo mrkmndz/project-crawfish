@@ -70,7 +70,7 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.fragment_event_list, container, false);
+        View v= inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this,v);
 
         mListView.setAdapter(mAdapter);
