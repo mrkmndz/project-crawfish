@@ -72,7 +72,7 @@
             cardview:cardElevation="16dp">
 
             <Button
-                android:id="@+id/fragment_past_event_deck_button"
+                android:id="@+id/fragment_past_event_connections_button"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="@android:color/transparent"
@@ -89,7 +89,7 @@
             cardview:cardElevation="16dp">
 
             <Button
-                android:id="@+id/fragment_past_event_connections_button"
+                android:id="@+id/fragment_past_event_deck_button"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:background="@android:color/transparent"

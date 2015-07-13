@@ -87,7 +87,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void checkIntoEvent(Event event) {
         FragmentManager manager = getSupportFragmentManager();
-        EventEditorFragment cf = EventEditorFragment.newInstance(event.getObjectId());
+        EventEditorFragment cf =  EventEditorFragment.newInstance(event.getObjectId());
         cf.setTargetFragment(mEventListFrag, CHECK_IN);
         cf.show(manager, DIALOG_CHECK_IN);
     }

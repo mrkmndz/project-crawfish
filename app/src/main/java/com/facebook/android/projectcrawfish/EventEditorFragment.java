@@ -31,16 +31,10 @@ import butterknife.OnClick;
 import butterknife.OnTextChanged;
 
 
-public class EventEditorFragment extends DialogFragment {
-    public static final String TITLE = "TITLE";
-    public static final String LOCATION = "LOCATION";
-    public static final String DETAILS = "DETAILS";
-    public static final String START_TIME = "START_TIME";
-    public static final String END_TIME = "END_TIME";
-    public static final String ALL_DAY = "ALL_DAY";
-    public static final String ID = "ID";
+public class EventEditorFragment extends EventDialog {
+
     // TODO rotation layout
-// TODO Upgrade Compliance code
+    // TODO Upgrade Compliance code
 
 
     @Bind(R.id.start_date)
@@ -68,101 +62,30 @@ public class EventEditorFragment extends DialogFragment {
     public static final int REQUEST_END_TIME = 3;
 
     public static final String DIALOG_DATE = "DialogDate";
-    private String mTitle;
-    private String mLocationt;
-    private String mDetailst;
-    private Date mStartTime;
-    private Date mEndTime;
-    private boolean mIsAllDay;
-    private String mID;
-
 
     public static EventEditorFragment newInstance(String EventID) {
         EventEditorFragment fragment = new EventEditorFragment();
-        Bundle args = new Bundle();
-        if (EventID == null) {
-            args.putString(TITLE, "");
-            args.putString(LOCATION, "");
-            args.putString(DETAILS, "");
-            Date now = new Date();
-            args.putSerializable(START_TIME, now);
-            Calendar cal = new GregorianCalendar();
-            cal.setTime(now);
-            cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
-            args.putSerializable(END_TIME, cal.getTime());
-            args.putBoolean(ALL_DAY, false);
-        } else {
-            ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
-            try {
-                Event event = query.get(EventID);
-                args.putString(ID,EventID);
-                args.putString(TITLE, event.getTitle());
-                args.putString(LOCATION, event.getLocation());
-                args.putString(DETAILS, event.getDescription());
-                args.putSerializable(START_TIME, event.getStartDate());
-                args.putSerializable(END_TIME, event.getEndDate());
-                args.putBoolean(ALL_DAY, event.isAllDay());
-            } catch (ParseException e) {
-                e.printStackTrace();
-                throw new RuntimeException("Bad Connection");
-            }
-        }
+        Bundle args = (EventID == null) ? getBundleWithNoID() : getBundleFromID(EventID);
         fragment.setArguments(args);
         return fragment;
     }
 
-    public void saveToParse() throws ParseException {
-        Event event;
-        if (mID==null){
-            event = new Event();
-        } else{
-          ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
-            event = query.get(mID);
-        }
-        event.setTitle(mTitle);
-        event.setDescription(mDetailst);
-        event.setLocation(mLocationt);
-        event.setStartDate(mStartTime);
-        event.setEndDate(mEndTime);
-        event.setIsAllDay(mIsAllDay);
-        event.save();
+    static private Bundle getBundleWithNoID() {
+        Bundle bundle = new Bundle();
+        bundle.putString(TITLE, "");
+        bundle.putString(LOCATION, "");
+        bundle.putString(DETAILS, "");
+        Date now = new Date();
+        bundle.putSerializable(START_TIME, now);
+        Calendar cal = new GregorianCalendar();
+        cal.setTime(now);
+        cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
+        bundle.putSerializable(END_TIME, cal.getTime());
+        bundle.putBoolean(ALL_DAY, false);
+        return bundle;
     }
 
-    public EventEditorFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle;
-        if (savedInstanceState != null) {
-            bundle = savedInstanceState;
-        } else {
-            bundle = getArguments();
-        }
-        mID = bundle.getString(ID);
-        mTitle = bundle.getString(TITLE);
-        mLocationt = bundle.getString(LOCATION);
-        mDetailst = bundle.getString(DETAILS);
-        mStartTime = (Date) bundle.getSerializable(START_TIME);
-        mEndTime = (Date) bundle.getSerializable(END_TIME);
-        mIsAllDay = bundle.getBoolean(ALL_DAY);
-    }
-
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(ID,mID);
-        outState.putString(TITLE,mTitle);
-        outState.putString(LOCATION,mLocationt);
-        outState.putString(DETAILS,mDetailst);
-        outState.putSerializable(START_TIME,mStartTime);
-        outState.putSerializable(END_TIME,mEndTime);
-        outState.putBoolean(ALL_DAY,mIsAllDay);
-    }
-
-    boolean hasInflated=false;
+    boolean hasInflated = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -179,14 +102,14 @@ public class EventEditorFragment extends DialogFragment {
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         super.onCreateDialog(savedInstanceState);
-            View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_event_creator, null);
-            ButterKnife.bind(this, v);
-            updateUI();
-        hasInflated=true;
+        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_event_creator, null);
+        ButterKnife.bind(this, v);
+        updateUI();
+        hasInflated = true;
         return new AlertDialog.Builder(getActivity())
                 .setView(v)
                 .setTitle("Event Details")
-                .setPositiveButton("Check In",null)
+                .setPositiveButton("Check In", null)
                 .setNegativeButton("Cancel", null)
                 .create();
     }
@@ -204,6 +127,24 @@ public class EventEditorFragment extends DialogFragment {
 
         mAllDay.setChecked(mIsAllDay);
     }
+
+    public void saveToParse() throws ParseException {
+        Event event;
+        if (mID == null) {
+            event = new Event();
+        } else {
+            ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
+            event = query.get(mID);
+        }
+        event.setTitle(mTitle);
+        event.setDescription(mDetailst);
+        event.setLocation(mLocationt);
+        event.setStartDate(mStartTime);
+        event.setEndDate(mEndTime);
+        event.setIsAllDay(mIsAllDay);
+        event.save();
+    }
+
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -224,7 +165,7 @@ public class EventEditorFragment extends DialogFragment {
             Calendar cal = Calendar.getInstance();
             cal.setTime(mEndTime);
             cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
-            mEndTime=cal.getTime();
+            mEndTime = cal.getTime();
         }
         updateUI();
     }
@@ -263,17 +204,17 @@ public class EventEditorFragment extends DialogFragment {
 
     @OnTextChanged(R.id.event_title)
     void onTitleChanged(CharSequence text) {
-        mTitle=text.toString();
+        mTitle = text.toString();
     }
 
     @OnTextChanged(R.id.location)
     void onLocationChanged(CharSequence text) {
-        mLocationt=text.toString();
+        mLocationt = text.toString();
     }
 
     @OnTextChanged(R.id.description)
     void onDescriptionChanged(CharSequence text) {
-        mDetailst=text.toString();
+        mDetailst = text.toString();
     }
 
     @OnCheckedChanged(R.id.all_day_switch)
