@@ -47,7 +47,7 @@
         </activity>
         <activity
             android:name=".ContactListActivity"
-            android:label="@string/title_activity_card_swipe">
+            android:label="@string/activity_contacts">
         </activity>
     </application>
 

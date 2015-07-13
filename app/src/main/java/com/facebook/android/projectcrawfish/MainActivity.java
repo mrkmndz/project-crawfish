@@ -23,14 +23,17 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
         UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener,
-UpcomingEventDetailsFragment.OnFragmentInteractionListener{
+        UpcomingEventDetailsFragment.OnFragmentInteractionListener {
 
     public static final int NEW_EVENT = 1;
     public static final int PAST_EVENTS = 3;
     public static final String DIALOG_CHECK_IN = "CheckInDialog";
     public static final String PAST_EVENT_DETAILS = "PastEventDetails";
-    @Bind(R.id.main_pager) ViewPager mViewPager;
-    @Bind(R.id.tab_layout) TabLayout mTabLayout;
+
+    @Bind(R.id.main_pager)
+    ViewPager mViewPager;
+    @Bind(R.id.tab_layout)
+    TabLayout mTabLayout;
 
     SectionsPagerAdapter mSectionsPagerAdapter;
 
@@ -54,6 +57,7 @@ UpcomingEventDetailsFragment.OnFragmentInteractionListener{
             public void onTabSelected(TabLayout.Tab tab) {
                 mViewPager.setCurrentItem(tab.getPosition());
             }
+
             @Override
             public void onTabUnselected(TabLayout.Tab tab) {
                 //Nothing
@@ -75,7 +79,7 @@ UpcomingEventDetailsFragment.OnFragmentInteractionListener{
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode==NEW_EVENT&& resultCode== Activity.RESULT_OK){
+        if (requestCode == NEW_EVENT && resultCode == Activity.RESULT_OK) {
             getUpcomingEventsTab().refreshList();
         }
     }
@@ -83,7 +87,7 @@ UpcomingEventDetailsFragment.OnFragmentInteractionListener{
     @Override
     public void checkIntoEvent(Event event) {
         FragmentManager manager = getSupportFragmentManager();
-        UpcomingEventDetailsFragment cf =  UpcomingEventDetailsFragment.newInstance(event.getObjectId());
+        UpcomingEventDetailsFragment cf = UpcomingEventDetailsFragment.newInstance(event.getObjectId());
         cf.show(manager, DIALOG_CHECK_IN);
     }
 
@@ -94,7 +98,7 @@ UpcomingEventDetailsFragment.OnFragmentInteractionListener{
         detailsFragment.show(manager, PAST_EVENT_DETAILS);
     }
 
-    private UpcomingEventsFragment getUpcomingEventsTab(){
+    private UpcomingEventsFragment getUpcomingEventsTab() {
         FragmentManager manager = this.getSupportFragmentManager();
         String tag = makeFragmentName(R.id.main_pager, 0);
         return (UpcomingEventsFragment) manager.findFragmentByTag(tag);
@@ -138,7 +142,7 @@ UpcomingEventDetailsFragment.OnFragmentInteractionListener{
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.menu_main,menu);
+        getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 /*

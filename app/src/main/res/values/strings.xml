@@ -21,6 +21,7 @@
     <string name="title_activity_main">MainActivity</string>
     <string name="title_activity_me_fragment">MeFragment</string>
     <string name="title_activity_card_swipe">CardSwipeActivity</string>
+    <string name="activity_contacts">ContactActivity</string>
     <string name="contact_photo">contactPhoto</string>
     <string name="contact_name_label">contactNameLabel</string>
     <string name="contact_position_label">contactPositionLabel</string>

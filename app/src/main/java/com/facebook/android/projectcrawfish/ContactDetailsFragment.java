@@ -2,12 +2,15 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.app.Dialog;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import android.support.annotation.NonNull;
+import android.support.v4.app.DialogFragment;
+import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageButton;
+import android.widget.IconButton;
 import android.widget.TextView;
 
 import com.parse.ParseException;
@@ -15,8 +18,9 @@ import com.parse.ParseQuery;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import butterknife.OnClick;
 
-public class ContactDetailsFragment extends Fragment {
+public class ContactDetailsFragment extends DialogFragment {
 
     private static final String CONTACT_ID = "CONTACT_ID";
     private static final String NAME = "NAME";
@@ -24,44 +28,43 @@ public class ContactDetailsFragment extends Fragment {
     private static final String NUMBER = "NUMBER";
     private static final String EMAIL = "EMAIL";
 
-    @Bind(R.id.list_item_contact_name) TextView mNameField;
-    @Bind(R.id.list_item_contact_position) TextView mPositionField;
-    @Bind(R.id.list_item_contact_number) TextView mNumberField;
-    @Bind(R.id.list_item_contact_email) TextView mEmailField;
-    @Bind(R.id.contact_fb) ImageButton mFbButton;
-    @Bind(R.id.contact_linkedin) ImageButton mLinkedInButton;
+    IconButton mContactFb;
+    IconButton mContactLinkedIn;
+    @Bind(R.id.contact_name)
+    TextView mNameField;
+    @Bind(R.id.contact_position)
+    TextView mPositionField;
+    @Bind(R.id.contact_number)
+    TextView mNumberField;
+    @Bind(R.id.contact_email)
+    TextView mEmailField;
 
-    private Contact mContact;
     private String mID;
     private String mName;
     private String mPosition;
     private String mNumber;
     private String mEmail;
 
-    public Contact getContact() {
-        return mContact;
-    }
-
     public static ContactDetailsFragment newInstance(String ContactID) {
-        ContactDetailsFragment fragment = new ContactDetailsFragment();
-        Bundle args = new Bundle();
-        args.putString(CONTACT_ID, ContactID);
 
-        ParseQuery<Contact> query = new ParseQuery<>(Contact.CLASS_NAME);
         try {
+            ContactDetailsFragment fragment = new ContactDetailsFragment();
+            Bundle args = new Bundle();
+
+            ParseQuery<Contact> query = new ParseQuery<>(Contact.CLASS_NAME);
             Contact contact = query.get(ContactID);
-            args.getString(CONTACT_ID, ContactID);
-            args.getString(NAME, contact.getFullName());
-            args.getString(POSITION, contact.getPosition());
-            args.getString(NUMBER, contact.getPhoneNumber());
-            args.getString(EMAIL, contact.getEmail());
+            args.putString(CONTACT_ID, ContactID);
+            args.putString(NAME, contact.getFullName());
+            args.putString(POSITION, contact.getPosition());
+            args.putString(NUMBER, contact.getPhoneNumber());
+            args.putString(EMAIL, contact.getEmail());
+
+            fragment.setArguments(args);
+            return fragment;
         } catch (ParseException e) {
             e.printStackTrace();
             throw new RuntimeException("Bad Connection");
         }
-
-        fragment.setArguments(args);
-        return fragment;
     }
 
     public ContactDetailsFragment() {
@@ -84,8 +87,43 @@ public class ContactDetailsFragment extends Fragment {
         mPosition = bundle.getString(POSITION);
         mNumber = bundle.getString(NUMBER);
         mEmail = bundle.getString(EMAIL);
+    }
 
-        // mContact = Contact.getContact(getArguments().getString(CONTACT_ID));
+    boolean hasInflated = false;
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        if (hasInflated) return null;
+        View v = inflater.inflate(R.layout.fragment_contact, container, false);
+        ButterKnife.bind(this, v);
+
+        mContactFb = (IconButton) v.findViewById(R.id.contact_fb);
+        mContactLinkedIn = (IconButton) v.findViewById(R.id.contact_linkedin);
+
+        updateUI();
+
+        return v;
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        super.onCreateDialog(savedInstanceState);
+        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_contact, null);
+        ButterKnife.bind(this, v);
+        updateUI();
+        hasInflated = true;
+        return new AlertDialog.Builder(getActivity())
+                .setView(v)
+                .create();
+    }
+
+    private void updateUI() {
+        mNameField.setText(mName);
+        mPositionField.setText(mPosition);
+        mNumberField.setText(mNumber);
+        mEmailField.setText(mEmail);
     }
 
     @Override
@@ -98,24 +136,13 @@ public class ContactDetailsFragment extends Fragment {
         outState.putString(EMAIL, mEmail);
     }
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_contact, container, false);
-
-        ButterKnife.bind(this, v);
-
-        mFbButton.setEnabled(false);
-        mLinkedInButton.setEnabled(false);
-
-        return v;
+    @OnClick(R.id.contact_fb)
+    public void onFbClick(View view) {
+        // TODO Connect FB profile
     }
 
-    private void updateUI() {
-        mNameField.setText(mName);
-        mPositionField.setText(mPosition);
-        mNumberField.setText(mNumber);
-        mEmailField.setText(mEmail);
+    @OnClick(R.id.contact_linkedin)
+    public void onLinkedInClick(View view) {
+        // TODO Connect LinkedIn Profile
     }
-
 }

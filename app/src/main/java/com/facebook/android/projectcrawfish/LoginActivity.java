@@ -20,9 +20,8 @@ public class LoginActivity extends AppCompatActivity {
     }
 
     @OnClick(R.id.trigger_events)
-    public void onTrigger(View v){
+    public void onTrigger(View v) {
         Intent intent = new Intent(this, MainActivity.class);
         startActivity(intent);
     }
-
 }

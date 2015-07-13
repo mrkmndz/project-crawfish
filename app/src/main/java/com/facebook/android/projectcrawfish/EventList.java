@@ -33,12 +33,9 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
         mAdapter.loadObjects();
     }
 
-
-
     public EventList() {
         // Required empty public constructor
     }
-
 
     @Override
     public void OnClick(ParseObject object) {
@@ -77,5 +74,4 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
 
         return v;
     }
-
 }

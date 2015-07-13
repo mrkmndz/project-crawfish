@@ -1,33 +1,31 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
 
-package com.facebook.android.projectcrawfish;
+package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.app.Activity;
 
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
-import java.util.Date;
 
-public class PastEventList extends EventList {
+public class ContactList extends ContactListFragment {
 
     private OnFragmentInteractionListener mListener;
 
-    interface OnFragmentInteractionListener {
-        void openEventDetails(Event event);
+    public interface OnFragmentInteractionListener {
+        void openContactDetails(Contact contact);
     }
 
     @Override
     protected ParseQuery<ParseObject> query() {
-        ParseQuery<ParseObject> query = new ParseQuery<>(Event.CLASS_NAME);
-        query.orderByAscending(Event.START_DATE);
-        query.whereLessThan(Event.END_DATE, new Date());
+        ParseQuery<ParseObject> query = new ParseQuery<>(Contact.CLASS_NAME);
+        query.orderByDescending(Contact.LAST_NAME);
         return query;
     }
 
     @Override
-    protected void onReceiveClickEvent(Event event) {
-        mListener.openEventDetails(event);
+    protected void onReceiveClickContact(Contact contact) {
+        mListener.openContactDetails(contact);
     }
 
     @Override

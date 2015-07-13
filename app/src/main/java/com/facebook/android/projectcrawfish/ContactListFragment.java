@@ -16,26 +16,33 @@ import com.parse.ParseQueryAdapter;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener{
+abstract class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener {
+
+    abstract protected ParseQuery<ParseObject> query();
+
+    abstract protected void onReceiveClickContact(Contact contact);
+
     CustomViewPQA mAdapter;
 
     @Bind(R.id.list_view)
     ListView mListView;
+
+    public void refreshList() {
+        mAdapter.loadObjects();
+    }
 
     public ContactListFragment() {
         // Required empty public constructor
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.fragment_list_view, container, false);
-        ButterKnife.bind(this, v);
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
 
         ParseQueryAdapter.QueryFactory<ParseObject> factory =
                 new ParseQueryAdapter.QueryFactory<ParseObject>() {
                     public ParseQuery<ParseObject> create() {
-                        return new ParseQuery<>(Contact.CLASS_NAME);
+                        return query();
                     }
                 };
 
@@ -46,14 +53,22 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
                         return new ContactViewHolder(v, listener);
                     }
                 }
-        , R.layout.list_item_contact);
+                , R.layout.list_item_contact);
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.fragment_list_view, container, false);
+        ButterKnife.bind(this, view);
+
         mListView.setAdapter(mAdapter);
 
-        return v;
+        return view;
     }
 
     @Override
     public void OnClick(ParseObject obj) {
-        //nothing
+        Contact contact = (Contact) obj;
+        onReceiveClickContact(contact);
     }
 }
