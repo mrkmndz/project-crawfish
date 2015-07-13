@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements
                 //Nothing
             }
         });
-
     }
 
     @Override

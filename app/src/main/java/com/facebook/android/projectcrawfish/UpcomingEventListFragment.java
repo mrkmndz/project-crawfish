@@ -49,4 +49,6 @@ public class UpcomingEventListFragment extends EventList {
         super.onDetach();
         mListener=null;
     }
+
+
 }

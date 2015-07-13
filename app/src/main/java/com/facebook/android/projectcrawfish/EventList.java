@@ -46,13 +46,9 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
         onReceiveClickEvent(event);
     }
 
-
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.fragment_event_list, container, false);
-        ButterKnife.bind(this,v);
-
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
         ParseQueryAdapter.QueryFactory<ParseObject> factory =
                 new ParseQueryAdapter.QueryFactory<ParseObject>() {
                     public ParseQuery<ParseObject> create() {
@@ -69,6 +65,14 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
                 }
                 ,R.layout.event_list_item
         );
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v= inflater.inflate(R.layout.fragment_event_list, container, false);
+        ButterKnife.bind(this,v);
+
         mListView.setAdapter(mAdapter);
 
         return v;

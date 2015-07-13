@@ -11,6 +11,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -32,19 +33,16 @@ public class UpcomingEventsFragment extends Fragment {
     }
 
 
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-
         View view = inflater.inflate(R.layout.fragment_upcoming_events_tab, container, false);
-
-        FragmentManager manager = getFragmentManager();
         ButterKnife.bind(this, view);
-        mListFragment = (UpcomingEventListFragment) manager.findFragmentById(R.id.fragment_container);
+        FragmentManager manager = getChildFragmentManager();
+        mListFragment = (UpcomingEventListFragment) manager.findFragmentById(R.id.list_fragment_container);
         if (mListFragment == null) {
-            mListFragment=new UpcomingEventListFragment();
+            mListFragment = new UpcomingEventListFragment();
             manager.beginTransaction()
-                    .add(R.id.fragment_container, mListFragment)
+                    .add(R.id.list_fragment_container, mListFragment)
                     .commit();
         }
         return view;
@@ -69,6 +67,6 @@ public class UpcomingEventsFragment extends Fragment {
     @Override
     public void onDetach() {
         super.onDetach();
-        mListener=null;
+        mListener = null;
     }
 }
