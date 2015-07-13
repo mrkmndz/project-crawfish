@@ -25,15 +25,4 @@ public class LoginActivity extends AppCompatActivity {
         startActivity(intent);
     }
 
-    @OnClick(R.id.card_swipe_button)
-    public void onClick(View v) {
-        Intent i = new Intent(LoginActivity.this, CardSwipeActivity.class);
-        startActivity(i);
-    }
-
-    @OnClick(R.id.connections_button)
-    public void onConnectionsClick(View v) {
-        Intent i = new Intent(LoginActivity.this, ContactListActivity.class);
-        startActivity(i);
-    }
 }

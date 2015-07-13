@@ -12,20 +12,7 @@
     android:id="@+id/trigger_events"
     android:layout_width="wrap_content"
     android:layout_height="wrap_content"
-    android:text="Fake Log In!"/>
-    <Button
-        android:id="@+id/card_swipe_button"
-        android:text="CardSwipe"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"/>
-    <Button
-        android:id="@+id/connections_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Connections"
-        android:layout_toEndOf="@+id/card_swipe_button"/>
-
-
+    android:text="Fake Log In!"
+    android:layout_centerInParent="true"/>
 
 </RelativeLayout>

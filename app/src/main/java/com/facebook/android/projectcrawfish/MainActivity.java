@@ -22,10 +22,10 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
         UpcomingEventsFragment.OnFragmentInteractionListener,
-        PastEventList.OnFragmentInteractionListener{
+        PastEventList.OnFragmentInteractionListener,
+UpcomingEventDetailsFragment.OnFragmentInteractionListener{
 
     public static final int NEW_EVENT = 1;
-    public static final int CHECK_IN = 2;
     public static final int PAST_EVENTS = 3;
     public static final String DIALOG_CHECK_IN = "CheckInDialog";
     public static final String PAST_EVENT_DETAILS = "PastEventDetails";
@@ -33,10 +33,6 @@ public class MainActivity extends AppCompatActivity implements
     @Bind(R.id.tab_layout) TabLayout mTabLayout;
 
     SectionsPagerAdapter mSectionsPagerAdapter;
-
-    private UpcomingEventsFragment mEventListFrag;
-    private PastEventList mPastEventFrag;
-    private MeFragment mMeFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -80,15 +76,14 @@ public class MainActivity extends AppCompatActivity implements
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode==NEW_EVENT&& resultCode== Activity.RESULT_OK){
-            mEventListFrag.refreshList();
+            getUpcomingEventsTab().refreshList();
         }
     }
 
     @Override
     public void checkIntoEvent(Event event) {
         FragmentManager manager = getSupportFragmentManager();
-        EventEditorFragment cf =  EventEditorFragment.newInstance(event.getObjectId());
-        cf.setTargetFragment(mEventListFrag, CHECK_IN);
+        UpcomingEventDetailsFragment cf =  UpcomingEventDetailsFragment.newInstance(event.getObjectId());
         cf.show(manager, DIALOG_CHECK_IN);
     }
 
@@ -96,8 +91,22 @@ public class MainActivity extends AppCompatActivity implements
     public void openEventDetails(Event event) {
         FragmentManager manager = getSupportFragmentManager();
         PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(event.getObjectId());
-        detailsFragment.setTargetFragment(mPastEventFrag, PAST_EVENTS);
         detailsFragment.show(manager, PAST_EVENT_DETAILS);
+    }
+
+    private UpcomingEventsFragment getUpcomingEventsTab(){
+        FragmentManager manager = this.getSupportFragmentManager();
+        String tag = makeFragmentName(R.id.main_pager, 0);
+        return (UpcomingEventsFragment) manager.findFragmentByTag(tag);
+    }
+
+    private static String makeFragmentName(int viewPagerId, int index) {
+        return "android:switcher:" + viewPagerId + ":" + index;
+    }
+
+    @Override
+    public void confirmCheckIn(String eventID, String cachedTitle) {
+        getUpcomingEventsTab().confirmCheckIn(eventID, cachedTitle);
     }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
@@ -110,20 +119,11 @@ public class MainActivity extends AppCompatActivity implements
         public Fragment getItem(int position) {
             switch (position) {
                 case 0:
-                    if (mEventListFrag==null) {
-                        mEventListFrag = new UpcomingEventsFragment();
-                    }
-                    return mEventListFrag;
+                    return new UpcomingEventsFragment();
                 case 1:
-                    if (mPastEventFrag ==null) {
-                        mPastEventFrag = new PastEventList();
-                    }
-                    return mPastEventFrag;
+                    return new PastEventList();
                 case 2:
-                    if (mMeFragment==null) {
-                        mMeFragment = new MeFragment();
-                    }
-                    return mMeFragment;
+                    return new MeFragment();
                 default:
                     return null;
             }

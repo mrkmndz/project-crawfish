@@ -1,18 +1,51 @@
 <FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     >
 
-    <FrameLayout
-        android:id="@+id/list_fragment_container"
-        xmlns:tools="http://schemas.android.com/tools"
+    <ViewSwitcher
+        android:id="@+id/switcher"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="1"
-        tools:context=".MainActivity"/>
+        android:layout_height="match_parent">
+
+        <FrameLayout
+            android:id="@+id/list_fragment_container"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            tools:context=".MainActivity"/>
+
+        <LinearLayout
+            android:id="@+id/checked_in_view"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="center"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text="You are attending:"/>
+
+            <TextView
+                android:id="@+id/checked_into_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"/>
+
+            <Button
+                android:id="@+id/check_out_button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Leave Early"/>
+        </LinearLayout>
+
+    </ViewSwitcher>
 
     <android.support.design.widget.FloatingActionButton
         android:id="@+id/new_event_button"
@@ -21,11 +54,11 @@
         android:layout_gravity="bottom|end"
         android:layout_margin="16dp"
         android:clickable="true"
-        android:src="@android:drawable/ic_input_add"
-        app:backgroundTint="#FF5722"
-        app:elevation="16dp"
-        app:borderWidth="0dp"
-        android:tint="@android:color/background_light"
         android:elevation="16dp"
-        android:focusableInTouchMode="true"/>
+        android:focusableInTouchMode="true"
+        android:src="@android:drawable/ic_input_add"
+        android:tint="@android:color/background_light"
+        app:backgroundTint="#FF5722"
+        app:borderWidth="0dp"
+        app:elevation="16dp"/>
 </FrameLayout>
