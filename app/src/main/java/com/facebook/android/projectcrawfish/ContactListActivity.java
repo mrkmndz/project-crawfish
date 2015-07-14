@@ -9,12 +9,12 @@ import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
 public class ContactListActivity extends AppCompatActivity
-        implements ContactList.OnFragmentInteractionListener {
+        implements ContactListFragment.OnFragmentInteractionListener {
 
     public static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
 
     protected Fragment createFragment() {
-        return new ContactList();
+        return new ContactListFragment();
     }
 
     @Override
@@ -39,9 +39,9 @@ public class ContactListActivity extends AppCompatActivity
     }
 
     @Override
-    public void openContactDetails(Contact contact) {
+    public void openContactDetails(Profile profile) {
         FragmentManager manager = getSupportFragmentManager();
-        ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(contact.getObjectId());
+        ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(profile.getObjectId());
         contactDetailsFragment.show(manager, DIALOG_CONTACT_DETAILS);
     }
 }

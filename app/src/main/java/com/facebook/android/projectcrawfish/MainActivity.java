@@ -127,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements
                 case 1:
                     return new PastEventList();
                 case 2:
-                    return new MeFragment();
+                    return MeFragment.newInstance("JlweFEU4NJ");
                 default:
                     return null;
             }

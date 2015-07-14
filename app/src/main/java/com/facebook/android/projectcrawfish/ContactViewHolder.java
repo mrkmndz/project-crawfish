@@ -23,12 +23,12 @@ public class ContactViewHolder extends CustomViewPQA.CustomViewHolder{
 
     @Override
     void bindObject(final ParseObject obj) {
-        final Contact contact = (Contact) obj;
+        final Profile profile = (Profile) obj;
 
         ButterKnife.bind(this, mView);
 
-        mNameView.setText(contact.getFullName());
-        mPositionView.setText(contact.getPosition());
+        mNameView.setText(profile.getFullName());
+        mPositionView.setText(profile.getPosition());
 
         mView.setOnClickListener(new View.OnClickListener() {
             @Override

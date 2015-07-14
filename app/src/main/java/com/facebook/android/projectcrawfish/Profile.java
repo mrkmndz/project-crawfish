@@ -8,9 +8,9 @@ import com.parse.ParseObject;
 // Copyright 2004-present Facebook. All Rights Reserved.
 
 
-@ParseClassName("Contact")
-public class Contact extends ParseObject {
-    public static final String CLASS_NAME = "Contact";
+@ParseClassName("Profile")
+public class Profile extends ParseObject {
+    public static final String CLASS_NAME = "Profile";
 
     public static final String FIRST_NAME = "FIRST_NAME";
     public static final String LAST_NAME = "LAST_NAME";
@@ -18,7 +18,7 @@ public class Contact extends ParseObject {
     public static final String PHONE_NUMBER = "PHONE_NUMBER";
     public static final String EMAIL = "EMAIL";
 
-    public Contact() {
+    public Profile() {
         // Required default constructor
     }
 

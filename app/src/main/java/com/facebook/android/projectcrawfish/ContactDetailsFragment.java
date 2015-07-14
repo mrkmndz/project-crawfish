@@ -20,13 +20,9 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ContactDetailsFragment extends DialogFragment {
+public class ContactDetailsFragment extends ProfileDialog {
 
-    private static final String CONTACT_ID = "CONTACT_ID";
-    private static final String NAME = "NAME";
-    private static final String POSITION = "POSITION";
-    private static final String NUMBER = "NUMBER";
-    private static final String EMAIL = "EMAIL";
+
 
     IconButton mContactFb;
     IconButton mContactLinkedIn;
@@ -39,54 +35,13 @@ public class ContactDetailsFragment extends DialogFragment {
     @Bind(R.id.contact_email)
     TextView mEmailField;
 
-    private String mID;
-    private String mName;
-    private String mPosition;
-    private String mNumber;
-    private String mEmail;
+
 
     public static ContactDetailsFragment newInstance(String ContactID) {
-
-        try {
-            ContactDetailsFragment fragment = new ContactDetailsFragment();
-            Bundle args = new Bundle();
-
-            ParseQuery<Contact> query = new ParseQuery<>(Contact.CLASS_NAME);
-            Contact contact = query.get(ContactID);
-            args.putString(CONTACT_ID, ContactID);
-            args.putString(NAME, contact.getFullName());
-            args.putString(POSITION, contact.getPosition());
-            args.putString(NUMBER, contact.getPhoneNumber());
-            args.putString(EMAIL, contact.getEmail());
-
-            fragment.setArguments(args);
-            return fragment;
-        } catch (ParseException e) {
-            e.printStackTrace();
-            throw new RuntimeException("Bad Connection");
-        }
-    }
-
-    public ContactDetailsFragment() {
-        // Required empty public constructor
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        Bundle bundle;
-
-        if (savedInstanceState != null) {
-            bundle = savedInstanceState;
-        } else {
-            bundle = getArguments();
-        }
-
-        mID = bundle.getString(CONTACT_ID);
-        mName = bundle.getString(NAME);
-        mPosition = bundle.getString(POSITION);
-        mNumber = bundle.getString(NUMBER);
-        mEmail = bundle.getString(EMAIL);
+        ContactDetailsFragment frag = new ContactDetailsFragment();
+        Bundle args = getBundleFromID(ContactID);
+        frag.setArguments(args);
+        return frag;
     }
 
     boolean hasInflated = false;
@@ -120,21 +75,13 @@ public class ContactDetailsFragment extends DialogFragment {
     }
 
     private void updateUI() {
-        mNameField.setText(mName);
+        mNameField.setText(mFirstName + " " + mLastName);
         mPositionField.setText(mPosition);
         mNumberField.setText(mNumber);
         mEmailField.setText(mEmail);
     }
 
-    @Override
-    public void onSaveInstanceState(Bundle outState) {
-        super.onSaveInstanceState(outState);
-        outState.putString(CONTACT_ID, mID);
-        outState.putString(NAME, mName);
-        outState.putString(POSITION, mPosition);
-        outState.putString(NUMBER, mNumber);
-        outState.putString(EMAIL, mEmail);
-    }
+
 
     @OnClick(R.id.contact_fb)
     public void onFbClick(View view) {

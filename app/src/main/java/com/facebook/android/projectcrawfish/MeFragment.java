@@ -4,17 +4,14 @@ package com.facebook.android.projectcrawfish;
 
 
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.EditText;
 import android.widget.IconButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
-
-import org.w3c.dom.Text;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -24,7 +21,7 @@ import butterknife.OnTextChanged;
 
 
 
-public class MeFragment extends Fragment implements View.OnClickListener {
+public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
     public MeFragment() {
         // Required empty public constructor
@@ -32,7 +29,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
 
 
 
-    Contact mContact;
     IconButton mContactFb;
     IconButton mContactLinkedIn;
     IconButton mSave;
@@ -49,7 +45,22 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     TextView mContactEmail;
     @Bind(R.id.contact_number)
     TextView mContactNumber;
+    @Bind(R.id.contact_name_edit)
+    EditText mEditName;
+    @Bind(R.id.contact_position_edit)
+    EditText mEditPosition;
+    @Bind(R.id.contact_number_edit)
+    EditText mEditNumber;
+    @Bind(R.id.contact_email_edit)
+    EditText mEditEmail;
 
+
+    public static MeFragment newInstance(String ContactID) {
+        MeFragment frag = new MeFragment();
+        Bundle args = getBundleFromID(ContactID);
+        frag.setArguments(args);
+        return frag;
+    }
 
     @Override
     public void onClick(View v) {
@@ -65,6 +76,7 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         mEdit.setVisibility(View.GONE);
         mSave.setEnabled(true);
         mSave.setVisibility(View.VISIBLE);
+        updateUI();
     }
 
     @Override
@@ -75,8 +87,6 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         View v = inflater.inflate(R.layout.fragment_me, container, false);
 
         ButterKnife.bind(this, v);
-
-        mContact = new Contact();
 
         mContactFb = (IconButton) v.findViewById(R.id.contact_fb);
         mContactLinkedIn = (IconButton) v.findViewById(R.id.contact_linkedin);
@@ -109,10 +119,14 @@ public class MeFragment extends Fragment implements View.OnClickListener {
     }
 
     private void updateUI() {
-        mContactName.setText(mContact.getFullName());
-        mContactPosition.setText(mContact.getPosition());
-        mContactNumber.setText(mContact.getPhoneNumber());
-        mContactEmail.setText(mContact.getEmail());
+        mContactName.setText(mFirstName + " " + mLastName);
+        mContactPosition.setText(mPosition);
+        mContactNumber.setText(mNumber);
+        mContactEmail.setText(mEmail);
+        mEditName.setText(mFirstName + " " + mLastName);
+        mEditPosition.setText(mPosition);
+        mEditEmail.setText(mEmail);
+        mEditNumber.setText(mNumber);
     }
 
 
@@ -135,26 +149,26 @@ public class MeFragment extends Fragment implements View.OnClickListener {
         String[] name = fullName.split(" ");
 
         if (name.length > 2) {
-            mContact.setFirstName(name[0] + " " + name[1]);
-            mContact.setLastName(name[name.length - 1]);
+            mFirstName = (name[0] + " " + name[1]);
+            mLastName = (name[name.length - 1]);
         } else {
-            mContact.setFirstName(name[0]);
-            mContact.setLastName(name[name.length - 1]);
+            mFirstName = (name[0]);
+            mLastName = (name[name.length - 1]);
         }
     }
 
     @OnTextChanged(R.id.contact_position_edit)
     void onPositionChanged(CharSequence text) {
-        mContact.setPosition(text.toString());
+        mPosition = (text.toString());
     }
 
     @OnTextChanged(R.id.contact_number_edit)
     void onNumberChanged(CharSequence text) {
-        mContact.setPhoneNumber(text.toString());
+        mNumber = (text.toString());
     }
 
     @OnTextChanged(R.id.contact_email_edit)
     void onEmailChanged(CharSequence text) {
-        mContact.setEmail(text.toString());
+        mEmail = (text.toString());
     }
 }
