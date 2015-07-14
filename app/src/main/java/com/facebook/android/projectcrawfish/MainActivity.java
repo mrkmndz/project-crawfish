@@ -12,9 +12,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
+import android.view.MenuItem;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,7 +25,8 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
         UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener,
-        UpcomingEventDetailsFragment.OnFragmentInteractionListener {
+        UpcomingEventDetailsFragment.OnFragmentInteractionListener
+{
 
     public static final int NEW_EVENT = 1;
     public static final int PAST_EVENTS = 3;
@@ -145,12 +148,12 @@ public class MainActivity extends AppCompatActivity implements
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
-/*
+
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_logout:
-                ParseUser.logOut();
+                //ParseUser.logOut();
                 Intent intent = new Intent(this, LoginActivity.class);
                 startActivity(intent);
                 overridePendingTransition(R.anim.fab_in, R.anim.fab_out);
@@ -159,5 +162,4 @@ public class MainActivity extends AppCompatActivity implements
                 return super.onOptionsItemSelected(item);
         }
     }
-    */
 }
