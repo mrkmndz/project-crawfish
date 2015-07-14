@@ -39,4 +39,5 @@
     <string name="phone_number_hint">Phone Number</string>
     <string name="past_event_view_connections">View Connections</string>
     <string name="past_event_view_deck">Go Through Attendee Deck</string>
+
 </resources>

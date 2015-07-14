@@ -1,8 +1,8 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
-
-        package com.facebook.android.projectcrawfish;
+ package com.facebook.android.projectcrawfish;
 
         import com.parse.ParseClassName;
+
 import com.parse.ParseObject;
 
 // Copyright 2004-present Facebook. All Rights Reserved.
@@ -65,6 +65,7 @@ public class Contact extends ParseObject {
     public String getFullName() {
         return getFirstName() + " " + getLastName();
     }
+
     public void getProfilePicture(){}
 
     public void setProfilePicture(){}
