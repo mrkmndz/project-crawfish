@@ -4,8 +4,14 @@
              android:layout_gravity="center"
              android:layout_width="match_parent"
              android:layout_height="match_parent">
-    <include android:id="@+id/contact_card"
-        layout="@layout/fragment_me" />
+    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                 xmlns:cardview="http://schemas.android.com/apk/res-auto"
+                 android:layout_width="match_parent"
+                 android:layout_height="wrap_content"
+        >
+    <include android:id="@+id/actual_card"
+             layout="@layout/fragment_contact" />
+        </FrameLayout>
     <View
         android:id="@+id/item_swipe_left_indicator"
         android:alpha="0"

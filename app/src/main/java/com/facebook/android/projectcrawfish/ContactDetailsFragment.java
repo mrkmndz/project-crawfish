@@ -44,7 +44,7 @@ public class ContactDetailsFragment extends ProfileDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        View v = inflater.inflate(R.layout.fragment_contact, container, false);
+        View v = inflater.inflate(R.layout.fragment_contact, null, false);
         ButterKnife.bind(this, v);
 
         mContactFb = (IconButton) v.findViewById(R.id.contact_fb);
