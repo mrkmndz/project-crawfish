@@ -23,36 +23,25 @@ import butterknife.OnTextChanged;
 
 public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
-    public MeFragment() {
-        // Required empty public constructor
-    }
+    @Bind(R.id.contact_fb) IconButton mContactFb;
+    @Bind(R.id.contact_linkedin) IconButton mContactLinkedIn;
+    @Bind(R.id.save_button) IconButton mSave;
+    @Bind(R.id.edit_button) IconButton mEdit;
 
-
-
-    IconButton mContactFb;
-    IconButton mContactLinkedIn;
-    IconButton mSave;
-    IconButton mEdit;
     @Bind(R.id.name_switcher) ViewSwitcher nameSwitcher;
     @Bind(R.id.position_switcher) ViewSwitcher positionSwitcher;
     @Bind(R.id.email_switcher) ViewSwitcher emailSwitcher;
     @Bind(R.id.number_switcher) ViewSwitcher numberSwitcher;
-    @Bind(R.id.contact_name)
-    TextView mContactName;
-    @Bind(R.id.contact_position)
-    TextView mContactPosition;
-    @Bind(R.id.contact_email)
-    TextView mContactEmail;
-    @Bind(R.id.contact_number)
-    TextView mContactNumber;
-    @Bind(R.id.contact_name_edit)
-    EditText mEditName;
-    @Bind(R.id.contact_position_edit)
-    EditText mEditPosition;
-    @Bind(R.id.contact_number_edit)
-    EditText mEditNumber;
-    @Bind(R.id.contact_email_edit)
-    EditText mEditEmail;
+
+    @Bind(R.id.contact_name) TextView mContactName;
+    @Bind(R.id.contact_position) TextView mContactPosition;
+    @Bind(R.id.contact_email) TextView mContactEmail;
+    @Bind(R.id.contact_number) TextView mContactNumber;
+
+    @Bind(R.id.contact_name_edit) EditText mEditName;
+    @Bind(R.id.contact_position_edit) EditText mEditPosition;
+    @Bind(R.id.contact_number_edit) EditText mEditNumber;
+    @Bind(R.id.contact_email_edit) EditText mEditEmail;
 
 
     public static MeFragment newInstance(String ContactID) {
@@ -63,6 +52,17 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
     }
 
     @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
+        View v = inflater.inflate(R.layout.fragment_me, container, false);
+        ButterKnife.bind(this, v);
+        updateUI();
+        return v;
+    }
+
+
+    @OnClick(R.id.edit_button)
     public void onClick(View v) {
         nameSwitcher.showPrevious();
         positionSwitcher.showPrevious();
@@ -78,28 +78,6 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mSave.setVisibility(View.VISIBLE);
         updateUI();
     }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-
-        super.onCreateView(inflater, container, savedInstanceState);
-        View v = inflater.inflate(R.layout.fragment_me, container, false);
-
-        ButterKnife.bind(this, v);
-
-        mContactFb = (IconButton) v.findViewById(R.id.contact_fb);
-        mContactLinkedIn = (IconButton) v.findViewById(R.id.contact_linkedin);
-        mSave = (IconButton) v.findViewById(R.id.save_button);
-        mEdit = (IconButton) v.findViewById(R.id.edit_button);
-        mEdit.setOnClickListener(this);
-
-        updateUI();
-
-        return v;
-    }
-
-
 
     @OnClick(R.id.save_button)
     public void saveCard() {

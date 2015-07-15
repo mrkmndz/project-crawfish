@@ -6,8 +6,11 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
+import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -27,16 +30,15 @@ public class UpcomingEventDetailsFragment extends EventDialog {
         return fragment;
     }
 
-    @NonNull
+
+    @Nullable
     @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        super.onCreateView(inflater, container, savedInstanceState);
         View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_upcoming_event_details, null);
         ButterKnife.bind(this, v);
         updateUI();
-        return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .create();
+        return v;
     }
 
     private void updateUI() {

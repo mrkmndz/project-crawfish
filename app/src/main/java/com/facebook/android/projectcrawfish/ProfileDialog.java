@@ -2,7 +2,10 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
 import com.parse.ParseException;
@@ -62,6 +65,14 @@ abstract class ProfileDialog extends DialogFragment{
         mPosition = bundle.getString(POSITION);
         mNumber = bundle.getString(NUMBER);
         mEmail = bundle.getString(EMAIL);
+    }
+
+    @NonNull
+    @Override
+    public Dialog onCreateDialog(Bundle savedInstanceState) {
+        Dialog dialog = super.onCreateDialog(savedInstanceState);
+        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
+        return dialog;
     }
 
     @Override

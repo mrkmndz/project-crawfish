@@ -55,19 +55,6 @@ public class PastEventDetailsFragment extends EventDialog {
         return v;
     }
 
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
-        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_past_event_details, null);
-        ButterKnife.bind(this, v);
-        updateUI();
-        hasInflated = true;
-        return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .create();
-    }
-
     private void updateUI() {
         mTitleView.setText(mTitle);
         mLocationView.setText(mLocationt);

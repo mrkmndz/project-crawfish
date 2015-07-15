@@ -3,6 +3,7 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Dialog;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
@@ -10,6 +11,7 @@ import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.Window;
 import android.widget.IconButton;
 import android.widget.TextView;
 
@@ -41,15 +43,13 @@ public class ContactDetailsFragment extends ProfileDialog {
         ContactDetailsFragment frag = new ContactDetailsFragment();
         Bundle args = getBundleFromID(ContactID);
         frag.setArguments(args);
+        frag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         return frag;
     }
-
-    boolean hasInflated = false;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        if (hasInflated) return null;
         View v = inflater.inflate(R.layout.fragment_contact, container, false);
         ButterKnife.bind(this, v);
 
@@ -59,19 +59,6 @@ public class ContactDetailsFragment extends ProfileDialog {
         updateUI();
 
         return v;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
-        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_contact, null);
-        ButterKnife.bind(this, v);
-        updateUI();
-        hasInflated = true;
-        return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .create();
     }
 
     private void updateUI() {

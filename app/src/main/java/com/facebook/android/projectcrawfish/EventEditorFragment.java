@@ -85,33 +85,13 @@ public class EventEditorFragment extends EventDialog {
         return bundle;
     }
 
-    boolean hasInflated = false;
-
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        if (hasInflated) return null;
         View v = inflater.inflate(R.layout.fragment_event_creator, container, false);
         ButterKnife.bind(this, v);
         updateUI();
         return v;
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        super.onCreateDialog(savedInstanceState);
-        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_event_creator, null);
-        ButterKnife.bind(this, v);
-        updateUI();
-        hasInflated = true;
-        return new AlertDialog.Builder(getActivity())
-                .setView(v)
-                .setTitle("Event Details")
-                .setPositiveButton("Check In", null)
-                .setNegativeButton("Cancel", null)
-                .create();
     }
 
     private void updateUI() {
