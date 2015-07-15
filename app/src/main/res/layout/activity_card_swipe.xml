@@ -1,19 +1,29 @@
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-             xmlns:tools="http://schemas.android.com/tools"
-             android:layout_width="match_parent"
-             android:layout_height="match_parent"
-             android:gravity="center"
-             tools:context=".LoginActivity">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              xmlns:tools="http://schemas.android.com/tools"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent"
+              android:orientation="vertical">
 
-    <com.lorentzos.flingswipe.SwipeFlingAdapterView
-        xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id= "@+id/frame"
+    <com.facebook.android.projectcrawfish.CrawfishToolbar
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
+
+    <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:rotation_degrees="16"
-        app:max_visible="10"
-        app:min_adapter_stack="6"/>
+        android:gravity="center"
+        tools:context=".LoginActivity">
 
-    <include layout="@layout/buttons" />
+        <com.lorentzos.flingswipe.SwipeFlingAdapterView
+            android:id="@+id/frame"
+            xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:max_visible="10"
+            app:min_adapter_stack="6"
+            app:rotation_degrees="16"/>
 
-</FrameLayout>
+        <include layout="@layout/buttons"/>
+
+    </FrameLayout>
+</LinearLayout>

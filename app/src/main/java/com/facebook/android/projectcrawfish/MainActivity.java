@@ -11,8 +11,11 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.LinearLayout;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
@@ -50,27 +53,13 @@ public class MainActivity extends AppCompatActivity implements
 
         mViewPager.setAdapter(mSectionsPagerAdapter);
 
-        mTabLayout.setTabsFromPagerAdapter(new SectionsPagerAdapter(this.getSupportFragmentManager()));
+        mTabLayout.setupWithViewPager(mViewPager);
+
         mTabLayout.getTabAt(0).setIcon(new IconDrawable(this, Iconify.IconValue.fa_users).actionBarSize());
         mTabLayout.getTabAt(1).setIcon(new IconDrawable(this, Iconify.IconValue.fa_link).actionBarSize());
         mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize());
-        mViewPager.addOnPageChangeListener(new TabLayout.TabLayoutOnPageChangeListener(mTabLayout));
-        mTabLayout.setOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
-            @Override
-            public void onTabSelected(TabLayout.Tab tab) {
-                mViewPager.setCurrentItem(tab.getPosition());
-            }
 
-            @Override
-            public void onTabUnselected(TabLayout.Tab tab) {
-                //Nothing
-            }
-
-            @Override
-            public void onTabReselected(TabLayout.Tab tab) {
-                //Nothing
-            }
-        });
+        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
     }
 
     @Override
