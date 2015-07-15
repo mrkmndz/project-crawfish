@@ -2,20 +2,13 @@
 
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
-import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
+import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-
-import com.parse.ParseException;
-import com.parse.ParseQuery;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -59,6 +52,7 @@ public class PastEventDetailsFragment extends EventDialog {
         mTitleView.setText(mTitle);
         mLocationView.setText(mLocationt);
         mDescriptionView.setText(mDetailst);
+        mDescriptionView.setMovementMethod(new ScrollingMovementMethod());
         mDurationView.setText(Event.DISPLAY_DATE_FORMAT.format(mStartTime) +
                 " - " +
                 Event.DISPLAY_DATE_FORMAT.format(mEndTime));

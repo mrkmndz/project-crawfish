@@ -72,6 +72,10 @@ abstract class EventList extends Fragment implements CustomViewPQA.ClickEventLis
 
         mListView.setAdapter(mAdapter);
 
+
+
+
+
         return v;
     }
 }

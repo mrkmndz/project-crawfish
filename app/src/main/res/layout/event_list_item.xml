@@ -5,46 +5,72 @@
              android:layout_width="fill_parent"
              android:layout_height="wrap_content">
 
+
     <android.support.v7.widget.CardView
-        android:id="@+id/connections_list_card_view"
+        android:id="@+id/event_list_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="8dp"
+        android:layout_marginLeft="8dp"
+        android:layout_marginRight="8dp"
+        android:layout_marginTop="4dp"
+        android:layout_marginBottom="4dp"
+        cardview:cardBackgroundColor="@android:color/holo_blue_light"
         cardview:cardCornerRadius="8dp"
-        cardview:cardElevation="8dp">
+        cardview:cardElevation="2dp">
 
-        <LinearLayout
+        <TextView
+            android:id="@+id/notification_drawer"
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:background="@android:color/transparent"
+            android:gravity="center_horizontal"
+            android:paddingBottom="8dp"
+            android:paddingTop="144dp"
+            android:text="@string/new_connections_notification"
+            android:visibility="gone"/>
+
+        <android.support.v7.widget.CardView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_margin="8dp"
-            android:orientation="vertical">
+            android:layout_height="wrap_content"
+            cardview:cardCornerRadius="8dp"
+            cardview:cardElevation="2dp">
 
-            <TextView
-                android:id="@+id/list_item_event_name"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_margin="4dp"
-                android:textSize="32sp"
-                android:textStyle="bold"
-                tools:text="Event Name"/>
+                android:layout_height="match_parent"
+                android:layout_margin="8dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/list_item_event_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_margin="4dp"
+                    android:textSize="32sp"
+                    android:textStyle="bold"
+                    tools:text="Event Name"/>
+
+                <TextView
+                    android:id="@+id/list_item_event_date"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_clock"
+                    android:gravity="center_vertical"
+                    tools:text="July 17 8:00-11:00PM"/>
+
+                <TextView
+                    android:id="@+id/list_item_event_location"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:drawableLeft="@drawable/ic_location"
+                    android:gravity="center_vertical"
+                    tools:text="Location"/>
+
+            </LinearLayout>
+
+        </android.support.v7.widget.CardView>
 
 
-            <TextView
-                android:id="@+id/list_item_event_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:drawableLeft="@drawable/ic_clock"
-                android:gravity="center_vertical"
-                tools:text="July 17 8:00-11:00PM"/>
-
-            <TextView
-                android:id="@+id/list_item_event_location"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center_vertical"
-                android:drawableLeft="@drawable/ic_location"
-                tools:text="Location"/>
-
-        </LinearLayout>
     </android.support.v7.widget.CardView>
+
 </FrameLayout>

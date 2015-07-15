@@ -9,6 +9,7 @@ import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.text.method.ScrollingMovementMethod;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -22,9 +23,16 @@ import butterknife.OnClick;
  */
 public class UpcomingEventDetailsFragment extends EventDialog {
 
-    @Bind(R.id.text_blob) TextView mTextView;
+    @Bind(R.id.upcoming_event_name)
+    TextView mEventName;
+    @Bind(R.id.upcoming_event_duration)
+    TextView mEventDuration;
+    @Bind(R.id.upcoming_event_location)
+    TextView mEventLocation;
+    @Bind(R.id.upcoming_event_description)
+    TextView mEventDescription;
 
-    public static UpcomingEventDetailsFragment newInstance(String EventID){
+    public static UpcomingEventDetailsFragment newInstance(String EventID) {
         UpcomingEventDetailsFragment fragment = new UpcomingEventDetailsFragment();
         fragment.setArguments(getBundleFromID(EventID));
         return fragment;
@@ -42,12 +50,18 @@ public class UpcomingEventDetailsFragment extends EventDialog {
     }
 
     private void updateUI() {
-        mTextView.setText(mTitle + " @ " + mLocationt);
+        mEventName.setText(mTitle);
+        mEventLocation.setText(mLocationt);
+        mEventDuration.setText(Event.DISPLAY_DATE_FORMAT.format(mStartTime) +
+                " - " +
+                Event.DISPLAY_DATE_FORMAT.format(mEndTime));
+        mEventDescription.setText(mDetailst);
+        mEventDescription.setMovementMethod(new ScrollingMovementMethod());
     }
 
     @OnClick(R.id.check_in_button)
-    public void onClickCheckIn(){
-        mListener.confirmCheckIn(mID,mTitle);
+    public void onClickCheckIn() {
+        mListener.confirmCheckIn(mID, mTitle);
         this.dismiss();
     }
 
