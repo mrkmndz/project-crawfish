@@ -4,6 +4,7 @@ package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
 import android.support.v4.app.Fragment;
@@ -119,7 +120,7 @@ public class MainActivity extends AppCompatActivity implements
                 case 1:
                     return new PastEventList();
                 case 2:
-                    return MeFragment.newInstance("JlweFEU4NJ");
+                    return MeFragment.newInstance();
                 default:
                     return null;
             }
@@ -142,11 +143,18 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onOptionsItemSelected(MenuItem item) {
         switch(item.getItemId()){
             case R.id.action_logout:
-                //ParseUser.logOut();
-                Intent intent = new Intent(this, LoginActivity.class);
-                startActivity(intent);
-                overridePendingTransition(R.anim.fab_in, R.anim.fab_out);
-                finish();
+                ParseUser.logOut();
+                // FLAG_ACTIVITY_CLEAR_TASK only works on API 11, so if the user
+                // logs out on older devices, we'll just exit.
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+                    Intent intent = new Intent(this,
+                            MainDispatchActivity.class);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                            | Intent.FLAG_ACTIVITY_NEW_TASK);
+                    startActivity(intent);
+                } else {
+                    finish();
+                }
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -6,6 +6,7 @@ import android.view.View;
 import android.widget.TextView;
 
 import com.parse.ParseObject;
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,7 +24,8 @@ public class ContactViewHolder extends CustomViewPQA.CustomViewHolder{
 
     @Override
     void bindObject(final ParseObject obj) {
-        final Profile profile = (Profile) obj;
+        final ParseUser user = (ParseUser) obj;
+        Profile profile = Profile.fromUser(user);
 
         ButterKnife.bind(this, mView);
 

@@ -13,6 +13,7 @@ import android.widget.ListView;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -20,7 +21,7 @@ import butterknife.ButterKnife;
 public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener {
 
     public interface OnFragmentInteractionListener {
-        void openContactDetails(Profile profile);
+        void openContactDetails(ParseUser user);
     }
 
     public void refreshList() {
@@ -40,8 +41,7 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
         ParseQueryAdapter.QueryFactory<ParseObject> factory =
                 new ParseQueryAdapter.QueryFactory<ParseObject>() {
                     public ParseQuery<ParseObject> create() {
-                        ParseQuery<ParseObject> query = new ParseQuery<>(Profile.CLASS_NAME);
-                        query.orderByDescending(Profile.LAST_NAME);
+                        ParseQuery<ParseObject> query = new ParseQuery<>("_User");
                         return query;
                     }
                 };
@@ -68,8 +68,8 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
 
     @Override
     public void OnClick(ParseObject obj) {
-        Profile profile = (Profile) obj;
-        mListener.openContactDetails(profile);
+        ParseUser user = (ParseUser) obj;
+        mListener.openContactDetails(user);
     }
 
     @Override

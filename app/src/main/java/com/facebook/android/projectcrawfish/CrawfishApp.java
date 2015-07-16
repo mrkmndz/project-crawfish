@@ -6,7 +6,7 @@ import android.app.Application;
 
 import com.facebook.FacebookSdk;
 import com.parse.Parse;
-import com.parse.ParseCrashReporting;
+//import com.parse.ParseCrashReporting;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
 
@@ -19,11 +19,10 @@ public class CrawfishApp extends Application {
     public void onCreate() {
         super.onCreate();
         FacebookSdk.sdkInitialize(getApplicationContext());
-        ParseCrashReporting.enable(this);
+        //ParseCrashReporting.enable(this);
         Parse.enableLocalDatastore(this);
-        Parse.initialize(this);
+        Parse.initialize(this, "zZ00GLyDLVPJVen8KHQUpiGx2eAKbg8EUajBz87H", "0rGGU81Rr8elNfvTq2e64Uque11lvYGPoxImCEN1");
         ParseFacebookUtils.initialize(this);
         ParseObject.registerSubclass(Event.class);
-        ParseObject.registerSubclass(Profile.class);
     }
 }

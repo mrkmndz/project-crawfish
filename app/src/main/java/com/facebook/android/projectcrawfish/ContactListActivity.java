@@ -8,6 +8,8 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 
+import com.parse.ParseUser;
+
 public class ContactListActivity extends AppCompatActivity
         implements ContactListFragment.OnFragmentInteractionListener {
 
@@ -39,9 +41,9 @@ public class ContactListActivity extends AppCompatActivity
     }
 
     @Override
-    public void openContactDetails(Profile profile) {
+    public void openContactDetails(ParseUser user) {
         FragmentManager manager = getSupportFragmentManager();
-        ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(profile.getObjectId());
+        ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(user);
         contactDetailsFragment.show(manager, DIALOG_CONTACT_DETAILS);
     }
 }

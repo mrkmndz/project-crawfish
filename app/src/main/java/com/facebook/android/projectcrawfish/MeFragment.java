@@ -4,7 +4,6 @@ package com.facebook.android.projectcrawfish;
 
 
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,6 +11,8 @@ import android.widget.EditText;
 import android.widget.IconButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
+
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -44,9 +45,9 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
     @Bind(R.id.contact_email_edit) EditText mEditEmail;
 
 
-    public static MeFragment newInstance(String ContactID) {
+    public static MeFragment newInstance() {
         MeFragment frag = new MeFragment();
-        Bundle args = getBundleFromID(ContactID);
+        Bundle args = getBundleFromUser(ParseUser.getCurrentUser());
         frag.setArguments(args);
         return frag;
     }
@@ -88,23 +89,25 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
         mContactFb.setClickable(false);
         mContactLinkedIn.setClickable(false);
-
+        mProfile.saveToParse();
         mSave.setEnabled(false);
         mSave.setVisibility(View.GONE);
+
+
         mEdit.setEnabled(true);
         mEdit.setVisibility(View.VISIBLE);
         updateUI();
     }
 
     private void updateUI() {
-        mContactName.setText(mFirstName + " " + mLastName);
-        mContactPosition.setText(mPosition);
-        mContactNumber.setText(mNumber);
-        mContactEmail.setText(mEmail);
-        mEditName.setText(mFirstName + " " + mLastName);
-        mEditPosition.setText(mPosition);
-        mEditEmail.setText(mEmail);
-        mEditNumber.setText(mNumber);
+        mContactName.setText(mProfile.getFullName());
+        mContactPosition.setText(mProfile.getPosition());
+        mContactNumber.setText(mProfile.getPhoneNumber());
+        mContactEmail.setText(mProfile.getEmail());
+        mEditName.setText(mProfile.getFullName());
+        mEditPosition.setText(mProfile.getPosition());
+        mEditEmail.setText(mProfile.getEmail());
+        mEditNumber.setText(mProfile.getPhoneNumber());
     }
 
 
@@ -123,30 +126,21 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
     */
     @OnTextChanged(R.id.contact_name_edit)
     void onNameChanged(CharSequence text) {
-        String fullName = text.toString();
-        String[] name = fullName.split(" ");
-
-        if (name.length > 2) {
-            mFirstName = (name[0] + " " + name[1]);
-            mLastName = (name[name.length - 1]);
-        } else {
-            mFirstName = (name[0]);
-            mLastName = (name[name.length - 1]);
-        }
+        mProfile.setFullName(text.toString());
     }
 
     @OnTextChanged(R.id.contact_position_edit)
     void onPositionChanged(CharSequence text) {
-        mPosition = (text.toString());
+        mProfile.setPosition(text.toString());
     }
 
     @OnTextChanged(R.id.contact_number_edit)
     void onNumberChanged(CharSequence text) {
-        mNumber = (text.toString());
+        mProfile.setPhoneNumber(text.toString());
     }
 
     @OnTextChanged(R.id.contact_email_edit)
     void onEmailChanged(CharSequence text) {
-        mEmail = (text.toString());
+        mProfile.setEmail(text.toString());
     }
 }

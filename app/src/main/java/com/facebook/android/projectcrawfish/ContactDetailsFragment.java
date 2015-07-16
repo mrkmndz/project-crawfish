@@ -2,21 +2,15 @@
 
 package com.facebook.android.projectcrawfish;
 
-import android.app.Dialog;
-import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.view.Window;
 import android.widget.IconButton;
 import android.widget.TextView;
 
-import com.parse.ParseException;
-import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -39,9 +33,9 @@ public class ContactDetailsFragment extends ProfileDialog {
 
 
 
-    public static ContactDetailsFragment newInstance(String ContactID) {
+    public static ContactDetailsFragment newInstance(ParseUser user) {
         ContactDetailsFragment frag = new ContactDetailsFragment();
-        Bundle args = getBundleFromID(ContactID);
+        Bundle args = getBundleFromUser(user);
         frag.setArguments(args);
         frag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         return frag;
@@ -62,10 +56,10 @@ public class ContactDetailsFragment extends ProfileDialog {
     }
 
     private void updateUI() {
-        mNameField.setText(mFirstName + " " + mLastName);
-        mPositionField.setText(mPosition);
-        mNumberField.setText(mNumber);
-        mEmailField.setText(mEmail);
+        mNameField.setText(mProfile.getFullName());
+        mPositionField.setText(mProfile.getPosition());
+        mNumberField.setText(mProfile.getPhoneNumber());
+        mEmailField.setText(mProfile.getEmail());
     }
 
 
