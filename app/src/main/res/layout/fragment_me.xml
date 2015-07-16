@@ -211,7 +211,8 @@
                             android:gravity="center_vertical"
                             android:singleLine="true"
                             android:text="@string/email_hint"
-                            android:textSize="18sp"/>
+                            android:textSize="18sp"
+                            />
                     </LinearLayout>
 
                     <LinearLayout
@@ -226,8 +227,7 @@
                             android:ellipsize="end"
                             android:hint="@string/email_hint"
                             android:inputType="textEmailAddress"
-                            android:singleLine="true"
-                            />
+                            android:singleLine="true"/>
                     </LinearLayout>
                 </ViewSwitcher>
             </RelativeLayout>

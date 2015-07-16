@@ -3,10 +3,13 @@
 package com.facebook.android.projectcrawfish;
 
 
+import android.content.Context;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
 import android.widget.IconButton;
 import android.widget.TextView;
@@ -86,16 +89,17 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         positionSwitcher.showNext();
         emailSwitcher.showNext();
         numberSwitcher.showNext();
-
         mContactFb.setClickable(false);
         mContactLinkedIn.setClickable(false);
+
+        // TODO save to parse only if email & phone number are valid and name is not blank
         mProfile.saveToParse();
         mSave.setEnabled(false);
         mSave.setVisibility(View.GONE);
 
-
         mEdit.setEnabled(true);
         mEdit.setVisibility(View.VISIBLE);
+
         updateUI();
     }
 
@@ -108,8 +112,36 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mEditPosition.setText(mProfile.getPosition());
         mEditEmail.setText(mProfile.getEmail());
         mEditNumber.setText(mProfile.getPhoneNumber());
+
+        hideKeyboard();
+        validateInput();
     }
 
+    private boolean isValidEmail(CharSequence email) {
+        return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
+    }
+
+    public void validateInput() {
+
+        if (isValidEmail(mProfile.getEmail())) {
+            mContactEmail.setError(null);
+            mEditEmail.setError(null);
+        } else {
+            mContactEmail.setError("Please enter a valid email.");
+            mEditEmail.setError("Please enter a valid email.");
+        }
+
+        // TODO add other validation, eg phone number, whether name field is blank, etc.
+
+        // if (TextUtils.isEmpty(mContactName.getText())) {
+        //      mContactName.setError("This field cannot be blank");
+        // }
+    }
+
+    private void hideKeyboard() {
+        InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
+        imm.hideSoftInputFromWindow(mEditNumber.getWindowToken(), 0);
+    }
 
     /*
 
@@ -141,6 +173,8 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
     @OnTextChanged(R.id.contact_email_edit)
     void onEmailChanged(CharSequence text) {
-        mProfile.setEmail(text.toString());
+        String formattedEmail = text.toString().replaceAll("\\s", "");
+        validateInput();
+        mProfile.setEmail(formattedEmail);
     }
 }
