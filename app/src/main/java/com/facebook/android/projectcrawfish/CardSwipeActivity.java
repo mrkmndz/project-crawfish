@@ -3,6 +3,7 @@
 package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.CardView;
@@ -10,9 +11,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+
+import org.w3c.dom.Text;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -25,45 +33,19 @@ import butterknife.OnClick;
 
 public class CardSwipeActivity extends AppCompatActivity {
 
+    public static final int BASE_SIZE = 40;
+    public static final int SIZE_SLOPE = 50;
     private CardAdapter mCardAdapter;
     private int mCurrentCardIndex;
     private ArrayList<ProfileDisplayInstance> mPDIs;
 
+    @Bind(R.id.xButton)
+    Button mXButton;
+    @Bind(R.id.checkButton)
+    Button mCheckButton;
+
     @Bind(R.id.frame)
     SwipeFlingAdapterView flingContainer;
-
-    /*TEST CODE */
-        private static final String[] PEOPLE = new String[] {
-                "Grace Kao", "Maria Zlatkova", "Mark Mendoza",  "Sheryl Sandberg", "Mark Zuckerberg", "Josh Skeen"
-        };
-        private ProfileDisplayInstance testFill(String name){
-            Profile profile = new Profile();
-            profile.setName(name);
-            return new ProfileDisplayInstance(profile);
-        }
-        private void fillPDIs(){
-            mPDIs = new ArrayList<>();
-            for(String name : PEOPLE){
-                mPDIs.add(testFill(name));
-            }
-        }
-        private void infiniteConnies(){
-            mPDIs.add(testFill("Connie ".concat(String.valueOf(mCurrentCardIndex))));
-            mCardAdapter.notifyDataSetChanged();
-
-            mCurrentCardIndex++;
-        }
-
-        private class Profile{
-            private String mName;
-            public String getName() {
-                return mName;
-            }
-            public void setName(String name) {
-                mName = name;
-            }
-        }
-    /**/
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,7 +53,20 @@ public class CardSwipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_swipe);
         ButterKnife.bind(this);
 
-        fillPDIs();//TODO actual parse pulldown here
+        mCheckButton.setTextSize(BASE_SIZE);
+        mXButton.setTextSize(BASE_SIZE);
+
+        mPDIs = new ArrayList<>();
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        try {
+            List<ParseUser>  users = query.find();
+            for (ParseUser user : users){
+                ProfileDisplayInstance pdi = new ProfileDisplayInstance(Profile.fromUser(user));
+                mPDIs.add(pdi);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
 
         mCardAdapter = new CardAdapter(this,mPDIs);
 
@@ -79,31 +74,36 @@ public class CardSwipeActivity extends AppCompatActivity {
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
             @Override
             public void removeFirstObjectInAdapter() {
-                mPDIs.remove(0);
-                mCardAdapter.notifyDataSetChanged();
+                if (!mPDIs.isEmpty()) {
+                    mPDIs.remove(0);
+                    mCardAdapter.notifyDataSetChanged();
+                }
+
             }
 
             @Override
             public void onLeftCardExit(Object dataObject) {
-
+                mCheckButton.setTextSize(BASE_SIZE);
+                mXButton.setTextSize(BASE_SIZE);
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
-
+                mCheckButton.setTextSize(BASE_SIZE);
+                mXButton.setTextSize(BASE_SIZE);
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                infiniteConnies();//TODO end of deck handling
+                if(itemsInAdapter==0) finish();
             }
 
             @Override
             public void onScroll(float scrollProgressPercent) {
                 View view = flingContainer.getSelectedView();
                 if(view != null) {
-                    view.findViewById(R.id.item_swipe_right_indicator).setAlpha(scrollProgressPercent < 0 ? -scrollProgressPercent : 0);
-                    view.findViewById(R.id.item_swipe_left_indicator).setAlpha(scrollProgressPercent > 0 ? scrollProgressPercent : 0);
+                    mCheckButton.setTextSize(scrollProgressPercent * SIZE_SLOPE + BASE_SIZE);
+                    mXButton.setTextSize(-scrollProgressPercent * SIZE_SLOPE + BASE_SIZE);
                 }
             }
         });
@@ -122,23 +122,29 @@ public class CardSwipeActivity extends AppCompatActivity {
 
     private class ProfileDisplayInstance{
 
-        private final float RANGE = 10;
+        private final float RANGE = 50;
 
         private final Profile mProfile;
-        private float mWiggleAngle;
+        private float mWiggleY;
+        private float mWiggleX;
 
         public ProfileDisplayInstance(Profile profile){
             mProfile = profile;
-            Float randomOver1 = (new Random()).nextFloat();
-            mWiggleAngle=RANGE*(randomOver1*2-1);
+            Random random = new Random();
+            mWiggleX=RANGE*(random.nextFloat()*2-1);
+            mWiggleY=RANGE*(random.nextFloat()*2-1);
         }
 
         public Profile getProfile() {
             return mProfile;
         }
 
-        public float getWiggleAngle() {
-            return mWiggleAngle;
+        public float getWiggleY() {
+            return mWiggleY;
+        }
+
+        public float getWiggleX() {
+            return mWiggleX;
         }
     }
 
@@ -155,7 +161,6 @@ public class CardSwipeActivity extends AppCompatActivity {
         @Override
         public View getView(int position, View convertView, ViewGroup parent) {
             View view;
-            TextView nameField;
 
             if (convertView == null) {
                 view = mInflater.inflate(R.layout.card, parent, false);
@@ -164,12 +169,20 @@ public class CardSwipeActivity extends AppCompatActivity {
             }
 
             ProfileDisplayInstance pdi = mProfileDisplayInstances.get(position);
-            CardView card = (CardView) view.findViewById(R.id.actual_card);
-            card.setRotation(pdi.getWiggleAngle());
+            view.setTranslationY(pdi.getWiggleY());
+            view.setTranslationX(pdi.getWiggleX());
 
-            nameField = (TextView) view.findViewById(R.id.contact_name);
-            nameField.setText(pdi.getProfile().getName());
+            TextView nameField = (TextView) view.findViewById(R.id.contact_name);
+            nameField.setText(pdi.getProfile().getFullName());
 
+            TextView positionField = (TextView) view.findViewById(R.id.contact_position);
+            positionField.setText(pdi.getProfile().getPosition());
+
+            TextView emailField = (TextView) view.findViewById(R.id.contact_email);
+            emailField.setText(pdi.getProfile().getEmail());
+
+            TextView phoneField = (TextView) view.findViewById(R.id.contact_number);
+            phoneField.setText(pdi.getProfile().getPhoneNumber());
             return view;
         }
     }

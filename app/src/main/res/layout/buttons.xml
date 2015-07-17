@@ -4,25 +4,26 @@
               android:layout_width="wrap_content"
               android:layout_height="wrap_content"
               android:layout_gravity="center_horizontal|bottom"
-              android:layout_marginBottom="20dp"
+              android:layout_marginBottom="4dp"
               android:orientation="horizontal">
 
 
     <android.widget.IconButton
         android:textColor="#e52933"
         android:textSize="20sp"
-        android:layout_margin="40dp"
+        android:layout_marginRight="40dp"
         android:id="@+id/xButton"
         android:text="{fa-remove}"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        style="?android:attr/borderlessButtonStyle"/>
 
     <android.widget.IconButton
         android:textColor="#35e52b"
         android:textSize="20sp"
-        android:layout_margin="40dp"
         android:id="@+id/checkButton"
         android:text="{fa-check}"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content"
+        style="?android:attr/borderlessButtonStyle"/>
 </LinearLayout>

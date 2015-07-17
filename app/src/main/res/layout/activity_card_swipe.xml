@@ -20,8 +20,8 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             app:max_visible="10"
-            app:min_adapter_stack="6"
-            app:rotation_degrees="16"/>
+            app:min_adapter_stack="1"
+            app:rotation_degrees="0"/>
 
         <include layout="@layout/buttons"/>
 
