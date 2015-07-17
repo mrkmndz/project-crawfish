@@ -5,7 +5,9 @@ package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
+import android.util.Patterns;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -65,7 +67,6 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         return v;
     }
 
-
     @OnClick(R.id.edit_button)
     public void onClick(View v) {
         nameSwitcher.showPrevious();
@@ -75,6 +76,8 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
         mContactFb.setClickable(true);
         mContactLinkedIn.setClickable(true);
+
+        mEditNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
 
         mEdit.setEnabled(false);
         mEdit.setVisibility(View.GONE);
@@ -101,6 +104,10 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mEdit.setVisibility(View.VISIBLE);
 
         updateUI();
+    }
+
+    private boolean isValidNumber(CharSequence phone) {
+        return !TextUtils.isEmpty(phone) && Patterns.PHONE.matcher(phone).matches();
     }
 
     private void updateUI() {
@@ -156,6 +163,7 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
     }
     */
+
     @OnTextChanged(R.id.contact_name_edit)
     void onNameChanged(CharSequence text) {
         mProfile.setFullName(text.toString());
@@ -168,7 +176,15 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
     @OnTextChanged(R.id.contact_number_edit)
     void onNumberChanged(CharSequence text) {
+
         mProfile.setPhoneNumber(text.toString());
+        if (isValidNumber(mProfile.getPhoneNumber())) {
+            mContactNumber.setError(null);
+            mEditNumber.setError(null);
+        } else {
+            mContactNumber.setError("Please enter a valid phone number.");
+            mEditNumber.setError("Please enter a valid phone number.");
+        }
     }
 
     @OnTextChanged(R.id.contact_email_edit)

@@ -3,11 +3,12 @@
 package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
+
 import android.content.Intent;
 import android.graphics.Color;
+
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.CardView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,13 +18,13 @@ import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import org.w3c.dom.Text;
 
 import java.io.Serializable;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -113,11 +114,11 @@ public class CardSwipeActivity extends AppCompatActivity {
 
             @Override
             public void onScroll(float scrollProgressPercent) {
-                View view = flingContainer.getSelectedView();
-                if (view != null) {
+
                     mCheckButton.setTextSize(scrollProgressPercent * SIZE_SLOPE + BASE_SIZE);
                     mXButton.setTextSize(-scrollProgressPercent * SIZE_SLOPE + BASE_SIZE);
-                }
+
+
             }
         });
     }
