@@ -24,5 +24,6 @@ public class CrawfishApp extends Application {
         Parse.initialize(this, "zZ00GLyDLVPJVen8KHQUpiGx2eAKbg8EUajBz87H", "0rGGU81Rr8elNfvTq2e64Uque11lvYGPoxImCEN1");
         ParseFacebookUtils.initialize(this);
         ParseObject.registerSubclass(Event.class);
+        ParseObject.registerSubclass(Attendance.class);
     }
 }

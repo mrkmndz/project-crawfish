@@ -9,34 +9,39 @@ import android.view.ViewGroup;
 import com.parse.ParseObject;
 import com.parse.ParseQueryAdapter;
 
-public class CustomViewPQA extends ParseQueryAdapter<ParseObject> {
+public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
 
-    private final int mViewResource;
-
-    public static abstract class CustomViewHolder{
-
-        private final ClickEventListenerd mListenerd;
-
-        interface ClickEventListenerd{
-            void onClick(ParseObject obj);
+    public static abstract class CustomViewHolder<Q> {
+        interface ClickEventListener<X> {
+            void onClick(X obj);
         }
-        public CustomViewHolder(View v, ClickEventListenerd listenerd){
+
+        abstract void bindObject(Q obj);
+
+        private final ClickEventListener<Q> mListenerd;
+
+        public CustomViewHolder(View v, ClickEventListener<Q> listenerd) {
             mListenerd = listenerd;
         }
-        abstract void bindObject(ParseObject obj);
-        protected void onClick(ParseObject object){
+
+        protected void onClick(Q object) {
             mListenerd.onClick(object);
         }
     }
 
-    abstract public static class CustomViewHolderFactory{
-        abstract public CustomViewHolder create(View v, CustomViewHolder.ClickEventListenerd listener);
+    abstract public static class CustomViewHolderFactory<Y> {
+        abstract public CustomViewHolder<Y> create(View v, CustomViewHolder.ClickEventListener<Y> listener);
     }
 
-    private final ClickEventListener mListener;
-    private CustomViewHolderFactory mHolderFactory;
+    interface ClickEventListener<A> {
+        void OnClick(A obj);
+    }
 
-    public CustomViewPQA(Context context, QueryFactory<ParseObject> queryFactory, ClickEventListener listener, CustomViewHolderFactory holderFactory, int viewResource
+    private final int mViewResource;
+    private final ClickEventListener mListener;
+    private CustomViewHolderFactory<T> mHolderFactory;
+
+    public CustomViewPQA(Context context, QueryFactory<T> queryFactory, ClickEventListener listener, CustomViewHolderFactory<T> holderFactory, int viewResource
     ) {
         super(context, queryFactory);
         mHolderFactory = holderFactory;
@@ -44,22 +49,19 @@ public class CustomViewPQA extends ParseQueryAdapter<ParseObject> {
         mViewResource = viewResource;
     }
 
-    interface ClickEventListener{
-        void OnClick(ParseObject obj);
-    }
 
     // Customize the layout by overriding getItemView
     @Override
-    public View getItemView(ParseObject object, View v, ViewGroup parent) {
+    public View getItemView(T object, View v, ViewGroup parent) {
         if (v == null) {
             v = View.inflate(getContext(), mViewResource, null);
         }
 
         super.getItemView(object, v, parent);
 
-        CustomViewHolder holder = mHolderFactory.create(v, new CustomViewHolder.ClickEventListenerd() {
+        CustomViewHolder<T> holder = mHolderFactory.create(v, new CustomViewHolder.ClickEventListener<T>() {
             @Override
-            public void onClick(ParseObject obj) {
+            public void onClick(T obj) {
                 mListener.OnClick(obj);
             }
         });

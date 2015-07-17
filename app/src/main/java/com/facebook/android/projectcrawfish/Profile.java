@@ -43,7 +43,12 @@ public class Profile implements Serializable{
         return builder.create();
     }
     public static Profile fromUser(ParseUser user){
-        String json = user.getString("Profile");
+        String json = null;
+        try {
+            json = (String) user.fetchIfNeeded().get("Profile");
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
         if (json ==null )return Profile.defaultProfile(user);
         return getGson().fromJson(json,Profile.class);
     }

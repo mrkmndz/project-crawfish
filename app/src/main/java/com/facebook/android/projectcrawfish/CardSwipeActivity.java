@@ -3,6 +3,7 @@
 package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -22,6 +23,7 @@ import com.parse.ParseUser;
 
 import org.w3c.dom.Text;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,6 +49,12 @@ public class CardSwipeActivity extends AppCompatActivity {
     @Bind(R.id.frame)
     SwipeFlingAdapterView flingContainer;
 
+    public static Intent newIntent(Context context, String eventID) {
+        Intent intent = new Intent(context, CardSwipeActivity.class);
+        intent.putExtra("eventID", eventID);
+        return intent;
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,18 +65,23 @@ public class CardSwipeActivity extends AppCompatActivity {
         mXButton.setTextSize(BASE_SIZE);
 
         mPDIs = new ArrayList<>();
-        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        ParseQuery<Event> q = ParseQuery.getQuery(Event.class);
         try {
-            List<ParseUser>  users = query.find();
-            for (ParseUser user : users){
-                ProfileDisplayInstance pdi = new ProfileDisplayInstance(Profile.fromUser(user));
+            Event e = q.get(getIntent().getStringExtra("eventID"));
+            ParseQuery<Attendance> query = ParseQuery.getQuery(Attendance.class);
+            query.whereEqualTo(Attendance.EVENT, e);
+            query.whereNotEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+            //TODO where have not already swiped
+            List<Attendance> attendances = query.find();
+            for (Attendance att : attendances) {
+                ProfileDisplayInstance pdi = new ProfileDisplayInstance(Profile.fromUser(att.getUser()));
                 mPDIs.add(pdi);
             }
         } catch (ParseException e) {
             e.printStackTrace();
         }
 
-        mCardAdapter = new CardAdapter(this,mPDIs);
+        mCardAdapter = new CardAdapter(this, mPDIs);
 
         flingContainer.setAdapter(mCardAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
@@ -95,13 +108,13 @@ public class CardSwipeActivity extends AppCompatActivity {
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                if(itemsInAdapter==0) finish();
+                if (itemsInAdapter == 0) finish();
             }
 
             @Override
             public void onScroll(float scrollProgressPercent) {
                 View view = flingContainer.getSelectedView();
-                if(view != null) {
+                if (view != null) {
                     mCheckButton.setTextSize(scrollProgressPercent * SIZE_SLOPE + BASE_SIZE);
                     mXButton.setTextSize(-scrollProgressPercent * SIZE_SLOPE + BASE_SIZE);
                 }
@@ -120,7 +133,7 @@ public class CardSwipeActivity extends AppCompatActivity {
         flingContainer.getTopCardListener().selectLeft();
     }
 
-    private class ProfileDisplayInstance{
+    private class ProfileDisplayInstance {
 
         private final float RANGE = 50;
 
@@ -128,11 +141,11 @@ public class CardSwipeActivity extends AppCompatActivity {
         private float mWiggleY;
         private float mWiggleX;
 
-        public ProfileDisplayInstance(Profile profile){
+        public ProfileDisplayInstance(Profile profile) {
             mProfile = profile;
             Random random = new Random();
-            mWiggleX=RANGE*(random.nextFloat()*2-1);
-            mWiggleY=RANGE*(random.nextFloat()*2-1);
+            mWiggleX = RANGE * (random.nextFloat() * 2 - 1);
+            mWiggleY = RANGE * (random.nextFloat() * 2 - 1);
         }
 
         public Profile getProfile() {
@@ -148,13 +161,13 @@ public class CardSwipeActivity extends AppCompatActivity {
         }
     }
 
-    private class CardAdapter extends ArrayAdapter {
+    private class CardAdapter extends ArrayAdapter<ProfileDisplayInstance> {
         private final LayoutInflater mInflater;
         private final List<ProfileDisplayInstance> mProfileDisplayInstances;
 
         public CardAdapter(Context context, List<ProfileDisplayInstance> objects) {
             super(context, R.layout.card, objects);
-            mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
+            mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mProfileDisplayInstances = objects;
         }
 

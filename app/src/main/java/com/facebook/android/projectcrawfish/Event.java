@@ -6,15 +6,13 @@ import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseUser;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
 
 
-/**
- * Created by markamendoza on 7/6/15.
- */
 @ParseClassName(Event.CLASS_NAME)
 public class Event extends ParseObject {
     public static final String CLASS_NAME = "Event";
@@ -32,7 +30,11 @@ public class Event extends ParseObject {
     public static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
 
     public Date getStartDate() {
-        return (Date) get(START_DATE);
+        try {
+            return (Date) fetchIfNeeded().get(START_DATE);
+        } catch (ParseException e) {
+            throw new RuntimeException("Something bad");
+        }
     }
 
     public void setStartDate(Date startDate) {
@@ -40,7 +42,11 @@ public class Event extends ParseObject {
     }
 
     public Date getEndDate() {
-        return (Date) get(END_DATE);
+        try {
+            return (Date) fetchIfNeeded().get(END_DATE);
+        } catch (ParseException e) {
+            throw new RuntimeException("Something bad");
+        }
     }
 
     public void setEndDate(Date endDate) {
@@ -48,7 +54,11 @@ public class Event extends ParseObject {
     }
 
     public String getTitle() {
-        return (String) get(TITLE);
+        try {
+            return (String) fetchIfNeeded().get(TITLE);
+        } catch (ParseException e) {
+            throw new RuntimeException("Something bad");
+        }
     }
 
     public void setTitle(String title) {
@@ -56,7 +66,11 @@ public class Event extends ParseObject {
     }
 
     public String getLocation() {
-        return (String) get(LOCATION);
+        try {
+            return (String) fetchIfNeeded().get(LOCATION);
+        } catch (ParseException e) {
+            throw new RuntimeException("Something bad");
+        }
     }
 
     public void setLocation(String location) {
@@ -64,7 +78,11 @@ public class Event extends ParseObject {
     }
 
     public String getDescription() {
-        return (String) get(DESCRIPTION);
+        try {
+            return (String) fetchIfNeeded().get(DESCRIPTION);
+        } catch (ParseException e) {
+            throw new RuntimeException("Something bad");
+        }
     }
 
     public void setDescription(String description) {
@@ -72,25 +90,15 @@ public class Event extends ParseObject {
     }
 
     public Boolean isAllDay(){
-        return (Boolean) get(ALL_DAY);
+        try {
+            return (Boolean) fetchIfNeeded().get(ALL_DAY);
+        } catch (ParseException e) {
+            throw new RuntimeException("Something bad");
+        }
     }
 
     public void setIsAllDay(Boolean isAllDay){
         put(ALL_DAY, isAllDay);
-    }
-
-    public static Event getLocalEvent(String eventID){
-        ParseQuery<ParseObject> query = ParseQuery.getQuery(Event.CLASS_NAME);
-        query.fromLocalDatastore();
-        try {
-            return (Event) query.get(eventID);
-        } catch (ParseException e) {
-            e.printStackTrace();
-            return null;
-        } catch (ClassCastException e){
-            e.printStackTrace();
-            return null;
-        }
     }
 
     public String getFormattedStartTime(){
@@ -112,5 +120,16 @@ public class Event extends ParseObject {
     public String getFormattedStartAndEnd() {
         return getFormattedStartDate()+" "+getFormattedStartTime()+
                 "-"+getFormattedEndDate()+" "+getFormattedEndTime();
+    }
+
+    public void checkIn() {
+        Attendance att = new Attendance();
+        att.setEvent(this);
+        att.setUser(ParseUser.getCurrentUser());
+        try {
+            att.save();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
     }
 }

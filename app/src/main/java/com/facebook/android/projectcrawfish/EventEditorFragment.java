@@ -3,13 +3,9 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,8 +98,8 @@ public class EventEditorFragment extends EventDialog {
         mEndTimeButton.setText(Event.DISPLAY_TIME_FORMAT.format(mEndTime));
 
         mTitleEditText.setText(mTitle);
-        mLocationEditText.setText(mLocationt);
-        mDescriptionEditText.setText(mDetailst);
+        mLocationEditText.setText(mLocation);
+        mDescriptionEditText.setText(mDetails);
 
         mAllDay.setChecked(mIsAllDay);
     }
@@ -117,8 +113,8 @@ public class EventEditorFragment extends EventDialog {
             event = query.get(mID);
         }
         event.setTitle(mTitle);
-        event.setDescription(mDetailst);
-        event.setLocation(mLocationt);
+        event.setDescription(mDetails);
+        event.setLocation(mLocation);
         event.setStartDate(mStartTime);
         event.setEndDate(mEndTime);
         event.setIsAllDay(mIsAllDay);
@@ -189,12 +185,12 @@ public class EventEditorFragment extends EventDialog {
 
     @OnTextChanged(R.id.location)
     void onLocationChanged(CharSequence text) {
-        mLocationt = text.toString();
+        mLocation = text.toString();
     }
 
     @OnTextChanged(R.id.description)
     void onDescriptionChanged(CharSequence text) {
-        mDetailst = text.toString();
+        mDetails = text.toString();
     }
 
     @OnCheckedChanged(R.id.all_day_switch)

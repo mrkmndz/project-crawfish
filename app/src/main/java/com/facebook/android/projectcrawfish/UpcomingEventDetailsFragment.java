@@ -3,11 +3,8 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
-import android.app.Dialog;
 import android.os.Bundle;
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.text.method.ScrollingMovementMethod;
 import android.view.View;
@@ -51,24 +48,24 @@ public class UpcomingEventDetailsFragment extends EventDialog {
 
     private void updateUI() {
         mEventName.setText(mTitle);
-        mEventLocation.setText(mLocationt);
+        mEventLocation.setText(mLocation);
         mEventDuration.setText(Event.DISPLAY_DATE_FORMAT.format(mStartTime) +
                 " - " +
                 Event.DISPLAY_DATE_FORMAT.format(mEndTime));
-        mEventDescription.setText(mDetailst);
+        mEventDescription.setText(mDetails);
         mEventDescription.setMovementMethod(new ScrollingMovementMethod());
     }
 
     @OnClick(R.id.check_in_button)
     public void onClickCheckIn() {
-        mListener.confirmCheckIn(mID, mTitle);
+        mListener.checkInToEvent(mID, mTitle);
         this.dismiss();
     }
 
     private OnFragmentInteractionListener mListener;
 
     interface OnFragmentInteractionListener {
-        void confirmCheckIn(String eventID, String cachedTitle);
+        void checkInToEvent(String eventID, String cachedTitle);
     }
 
     @Override

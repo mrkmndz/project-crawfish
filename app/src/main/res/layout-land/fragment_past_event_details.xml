@@ -90,25 +90,6 @@
                 android:gravity="end"
                 android:orientation="vertical">
 
-                <android.support.v7.widget.CardView
-
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_gravity="end"
-                    android:layout_margin="8dp"
-                    android:layout_weight="1"
-                    android:minHeight="250dp"
-                    cardview:cardCornerRadius="16dp"
-                    cardview:cardElevation="4dp">
-
-                    <Button
-                        android:id="@+id/fragment_past_event_connections_button"
-                        android:layout_width="fill_parent"
-                        android:layout_height="fill_parent"
-                        android:background="@android:color/transparent"
-                        android:text="@string/past_event_view_connections"/>
-
-                </android.support.v7.widget.CardView>
 
                 <android.support.v7.widget.CardView
                     android:layout_width="match_parent"

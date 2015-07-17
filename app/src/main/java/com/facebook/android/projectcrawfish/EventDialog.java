@@ -11,9 +11,7 @@ import android.support.v4.app.DialogFragment;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 
-import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 /**
  * Created by markamendoza on 7/13/15.
@@ -28,8 +26,8 @@ public abstract class EventDialog extends DialogFragment {
     public static final String ID = "ID";
 
     protected String mTitle;
-    protected String mLocationt;
-    protected String mDetailst;
+    protected String mLocation;
+    protected String mDetails;
     protected Date mStartTime;
     protected Date mEndTime;
     protected boolean mIsAllDay;
@@ -66,8 +64,8 @@ public abstract class EventDialog extends DialogFragment {
         }
         mID = bundle.getString(ID);
         mTitle = bundle.getString(TITLE);
-        mLocationt = bundle.getString(LOCATION);
-        mDetailst = bundle.getString(DETAILS);
+        mLocation = bundle.getString(LOCATION);
+        mDetails = bundle.getString(DETAILS);
         mStartTime = (Date) bundle.getSerializable(START_TIME);
         mEndTime = (Date) bundle.getSerializable(END_TIME);
         mIsAllDay = bundle.getBoolean(ALL_DAY);
@@ -86,8 +84,8 @@ public abstract class EventDialog extends DialogFragment {
         super.onSaveInstanceState(outState);
         outState.putString(ID,mID);
         outState.putString(TITLE,mTitle);
-        outState.putString(LOCATION,mLocationt);
-        outState.putString(DETAILS,mDetailst);
+        outState.putString(LOCATION, mLocation);
+        outState.putString(DETAILS, mDetails);
         outState.putSerializable(START_TIME,mStartTime);
         outState.putSerializable(END_TIME,mEndTime);
         outState.putBoolean(ALL_DAY,mIsAllDay);

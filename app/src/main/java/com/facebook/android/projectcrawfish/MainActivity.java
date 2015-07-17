@@ -20,6 +20,8 @@ import android.widget.LinearLayout;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
+import com.parse.ParseException;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import butterknife.Bind;
@@ -29,13 +31,15 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
         UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener,
-        UpcomingEventDetailsFragment.OnFragmentInteractionListener
+        UpcomingEventDetailsFragment.OnFragmentInteractionListener,
+        ContactListFragment.OnFragmentInteractionListener
 {
 
     public static final int NEW_EVENT = 1;
     public static final int PAST_EVENTS = 3;
     public static final String DIALOG_CHECK_IN = "CheckInDialog";
     public static final String PAST_EVENT_DETAILS = "PastEventDetails";
+    public static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
 
     @Bind(R.id.main_pager)
     ViewPager mViewPager;
@@ -78,17 +82,28 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void checkIntoEvent(Event event) {
+    public void openUpcomingEventDetails(Event event) {
         FragmentManager manager = getSupportFragmentManager();
         UpcomingEventDetailsFragment cf = UpcomingEventDetailsFragment.newInstance(event.getObjectId());
         cf.show(manager, DIALOG_CHECK_IN);
     }
 
     @Override
-    public void openEventDetails(Event event) {
+    public void openPastEventDetails(Attendance attendance) {
         FragmentManager manager = getSupportFragmentManager();
-        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(event.getObjectId());
+        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(attendance.getEvent().getObjectId());
         detailsFragment.show(manager, PAST_EVENT_DETAILS);
+    }
+    @Override
+    public void openContactDetails(ParseUser user) {
+        FragmentManager manager = getSupportFragmentManager();
+        if (user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
+            MeFragment meFragment = MeFragment.newInstance();
+            meFragment.show(manager, DIALOG_CONTACT_DETAILS);
+        } else {
+            ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(user);
+            contactDetailsFragment.show(manager, DIALOG_CONTACT_DETAILS);
+        }
     }
 
     private UpcomingEventsFragment getUpcomingEventsTab() {
@@ -97,12 +112,26 @@ public class MainActivity extends AppCompatActivity implements
         return (UpcomingEventsFragment) manager.findFragmentByTag(tag);
     }
 
+    private PastEventList getPastEventsTab() {
+        FragmentManager manager = this.getSupportFragmentManager();
+        String tag = makeFragmentName(R.id.main_pager, 1);
+        return (PastEventList) manager.findFragmentByTag(tag);
+    }
+
     private static String makeFragmentName(int viewPagerId, int index) {
         return "android:switcher:" + viewPagerId + ":" + index;
     }
 
     @Override
-    public void confirmCheckIn(String eventID, String cachedTitle) {
+    public void checkInToEvent(String eventID, String cachedTitle) {
+        ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
+        try {
+            Event event = query.get(eventID);
+            event.checkIn();
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        getPastEventsTab().refreshList();
         getUpcomingEventsTab().confirmCheckIn(eventID, cachedTitle);
     }
 
@@ -120,7 +149,7 @@ public class MainActivity extends AppCompatActivity implements
                 case 1:
                     return new PastEventList();
                 case 2:
-                    return MeFragment.newInstance();
+                    return new ContactListFragment();
                 default:
                     return null;
             }

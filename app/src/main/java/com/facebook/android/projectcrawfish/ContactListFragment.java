@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
@@ -18,7 +17,7 @@ import com.parse.ParseUser;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener {
+public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener<ParseUser> {
 
     public interface OnFragmentInteractionListener {
         void openContactDetails(ParseUser user);
@@ -28,7 +27,7 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
         mAdapter.loadObjects();
     }
 
-    private CustomViewPQA mAdapter;
+    private CustomViewPQA<ParseUser> mAdapter;
     private OnFragmentInteractionListener mListener;
 
     @Bind(R.id.list_view)
@@ -38,18 +37,19 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ParseQueryAdapter.QueryFactory<ParseObject> factory =
-                new ParseQueryAdapter.QueryFactory<ParseObject>() {
-                    public ParseQuery<ParseObject> create() {
-                        ParseQuery<ParseObject> query = new ParseQuery<>("_User");
+        ParseQueryAdapter.QueryFactory<ParseUser> factory =
+                new ParseQueryAdapter.QueryFactory<ParseUser>() {
+                    public ParseQuery<ParseUser> create() {
+                        ParseQuery<ParseUser> query = ParseUser.getQuery();
+                        //TODO ONLY GIVE CONNECTED CONTACTS
                         return query;
                     }
                 };
 
-        mAdapter = new CustomViewPQA(getActivity(), factory, this,
-                new CustomViewPQA.CustomViewHolderFactory() {
+        mAdapter = new CustomViewPQA<>(getActivity(), factory, this,
+                new CustomViewPQA.CustomViewHolderFactory<ParseUser>() {
                     @Override
-                    public CustomViewPQA.CustomViewHolder create(View v, CustomViewPQA.CustomViewHolder.ClickEventListenerd listener) {
+                    public CustomViewPQA.CustomViewHolder<ParseUser> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<ParseUser> listener) {
                         return new ContactViewHolder(v, listener);
                     }
                 }
@@ -67,8 +67,7 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
     }
 
     @Override
-    public void OnClick(ParseObject obj) {
-        ParseUser user = (ParseUser) obj;
+    public void OnClick(ParseUser user) {
         mListener.openContactDetails(user);
     }
 

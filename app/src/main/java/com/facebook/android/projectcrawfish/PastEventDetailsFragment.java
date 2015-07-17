@@ -50,8 +50,8 @@ public class PastEventDetailsFragment extends EventDialog {
 
     private void updateUI() {
         mTitleView.setText(mTitle);
-        mLocationView.setText(mLocationt);
-        mDescriptionView.setText(mDetailst);
+        mLocationView.setText(mLocation);
+        mDescriptionView.setText(mDetails);
         mDescriptionView.setMovementMethod(new ScrollingMovementMethod());
         mDurationView.setText(Event.DISPLAY_DATE_FORMAT.format(mStartTime) +
                 " - " +
@@ -68,13 +68,7 @@ public class PastEventDetailsFragment extends EventDialog {
 
     @OnClick(R.id.fragment_past_event_deck_button)
     public void openDeckClick(View view) {
-        Intent intent = new Intent(getActivity(), CardSwipeActivity.class);
-        startActivity(intent);
-    }
-
-    @OnClick(R.id.fragment_past_event_connections_button)
-    public void openConnectionsClick(View view) {
-        Intent intent = new Intent(getActivity(), ContactListActivity.class);
+        Intent intent = CardSwipeActivity.newIntent(getActivity(),mID);
         startActivity(intent);
     }
 

@@ -3,34 +3,80 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
+import android.os.Bundle;
+import android.support.v4.app.Fragment;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ListView;
 
-import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.ParseQueryAdapter;
 
 import java.util.Date;
+
+import butterknife.Bind;
+import butterknife.ButterKnife;
 
 /**
  * Created by markamendoza on 7/9/15.
  */
-public class UpcomingEventListFragment extends EventList {
+public class UpcomingEventListFragment extends Fragment implements CustomViewPQA.ClickEventListener<Event>{
 
     private OnFragmentInteractionListener mListener;
 
+    CustomViewPQA<Event> mAdapter;
+
+    @Bind(R.id.list_view)
+    ListView mListView;
+
+    public void refreshList() {
+        mAdapter.loadObjects();
+    }
+
+    @Override
+    public void OnClick(Event obj) {
+        mListener.openUpcomingEventDetails(obj);
+    }
+
     interface OnFragmentInteractionListener{
-        void checkIntoEvent(Event event);
+        void openUpcomingEventDetails(Event event);
+    }
+
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ParseQueryAdapter.QueryFactory<Event> factory =
+                new ParseQueryAdapter.QueryFactory<Event>() {
+                    public ParseQuery<Event> create() {
+                        ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
+                        query.orderByAscending(Event.START_DATE);
+                        query.whereGreaterThan(Event.END_DATE, new Date());//Not over
+                        return query;
+                    }
+                };
+
+        mAdapter = new CustomViewPQA<>(getActivity(), factory, this,
+                new CustomViewPQA.CustomViewHolderFactory<Event>() {
+                    @Override
+                    public CustomViewPQA.CustomViewHolder<Event> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Event> listener) {
+                        return new EventViewHolder(v, listener);
+                    }
+                }
+                ,R.layout.event_list_item
+        );
     }
 
     @Override
-    protected ParseQuery<ParseObject> query() {
-                ParseQuery<ParseObject> query = new ParseQuery<>(Event.CLASS_NAME);
-                query.orderByAscending(Event.START_DATE);
-                query.whereGreaterThan(Event.END_DATE, new Date());//Not over
-                return query;
-    }
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        View v= inflater.inflate(R.layout.fragment_list_view, container, false);
+        ButterKnife.bind(this, v);
 
-    @Override
-    protected void onReceiveClickEvent(Event event) {
-        mListener.checkIntoEvent(event);
+        mListView.setAdapter(mAdapter);
+
+        return v;
     }
 
     @Override
