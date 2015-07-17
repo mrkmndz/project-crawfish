@@ -38,7 +38,7 @@
                 android:gravity="start"
                 android:orientation="vertical">
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/past_event_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -46,27 +46,29 @@
                     android:gravity="start"
                     android:paddingBottom="16dp"
                     android:paddingTop="4dp"
-                    android:textSize="32sp"
+                    android:textSize="36sp"
                     tools:text="Event Name"/>
 
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/past_event_duration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_clock"
                     android:gravity="center_vertical"
+                    android:textSize="16sp"
                     tools:text="Time and Date"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/past_event_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:drawableStart="@drawable/ic_location"
                     android:gravity="center_vertical"
+                    android:textSize="16sp"
                     tools:text="Location"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/past_event_description"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -75,18 +77,20 @@
                     android:maxLines="5"
                     android:paddingTop="4dp"
                     android:scrollbars="vertical"
+                    android:textSize="16sp"
                     tools:text="Event Details"/>
 
             </LinearLayout>
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="160dp"
                 android:layout_marginBottom="24dp"
                 android:layout_marginLeft="24dp"
                 android:layout_marginRight="24dp"
                 android:layout_marginTop="24dp"
                 android:layout_weight="1"
+                android:layout_gravity="center_vertical|center_horizontal"
                 android:gravity="end"
                 android:orientation="vertical">
 
@@ -96,12 +100,11 @@
                     android:layout_height="match_parent"
                     android:layout_gravity="end"
                     android:layout_margin="8dp"
-                    android:layout_weight="1"
                     android:minHeight="250dp"
                     cardview:cardCornerRadius="16dp"
                     cardview:cardElevation="4dp">
 
-                    <Button
+                    <com.facebook.android.projectcrawfish.CustomFontButton
                         android:id="@+id/fragment_past_event_deck_button"
                         android:layout_width="fill_parent"
                         android:layout_height="fill_parent"

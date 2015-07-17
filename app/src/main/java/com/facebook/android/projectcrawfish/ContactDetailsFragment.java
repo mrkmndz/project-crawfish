@@ -18,20 +18,12 @@ import butterknife.OnClick;
 
 public class ContactDetailsFragment extends ProfileDialog {
 
-
-
     IconButton mContactFb;
     IconButton mContactLinkedIn;
-    @Bind(R.id.contact_name)
-    TextView mNameField;
-    @Bind(R.id.contact_position)
-    TextView mPositionField;
-    @Bind(R.id.contact_number)
-    TextView mNumberField;
-    @Bind(R.id.contact_email)
-    TextView mEmailField;
-
-
+    @Bind(R.id.contact_name) TextView mNameField;
+    @Bind(R.id.contact_position) TextView mPositionField;
+    @Bind(R.id.contact_number) TextView mNumberField;
+    @Bind(R.id.contact_email) TextView mEmailField;
 
     public static ContactDetailsFragment newInstance(ParseUser user) {
         ContactDetailsFragment frag = new ContactDetailsFragment();

@@ -5,7 +5,6 @@ package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook.
 import android.view.View;
 import android.widget.TextView;
 
-import com.parse.Parse;
 import com.parse.ParseUser;
 
 import butterknife.Bind;
@@ -38,6 +37,5 @@ public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<Swipe>{
                 ContactViewHolder.this.onClick(swipe);
             }
         });
-
     }
 }

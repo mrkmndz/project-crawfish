@@ -87,7 +87,7 @@
             android:layout_marginTop="32dp"
             android:orientation="vertical">
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/contact_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -112,7 +112,7 @@
                     android:textColor="@color/editButton"
                     android:textSize="24sp"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/contact_position"
                     android:layout_width="320dp"
                     android:layout_height="wrap_content"
@@ -147,7 +147,7 @@
                     android:textColor="@color/editButton"
                     android:textSize="24sp"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/contact_email"
                     android:layout_width="320dp"
                     android:layout_height="wrap_content"
@@ -182,7 +182,7 @@
                     android:textColor="@color/editButton"
                     android:textSize="24sp"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/contact_number"
                     android:layout_width="320dp"
                     android:layout_height="wrap_content"

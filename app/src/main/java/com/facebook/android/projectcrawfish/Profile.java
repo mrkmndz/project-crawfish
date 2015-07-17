@@ -2,17 +2,12 @@
  package com.facebook.android.projectcrawfish;
 
         import com.google.gson.Gson;
-        import com.google.gson.GsonBuilder;
-        import com.google.gson.annotations.SerializedName;
-        import com.parse.ParseClassName;
+import com.google.gson.GsonBuilder;
+import com.google.gson.annotations.SerializedName;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
-        import com.parse.ParseException;
-        import com.parse.ParseObject;
-        import com.parse.ParseUser;
-        import com.parse.SaveCallback;
-
-        import java.io.Serializable;
-        import java.util.PropertyPermission;
+import java.io.Serializable;
 
 // Copyright 2004-present Facebook. All Rights Reserved.
 

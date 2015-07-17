@@ -1,9 +1,10 @@
-<TextView
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:id="@+id/toolbar_title"
-        style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_margin="5dp"
-        android:text="Crawfish"
-        android:textSize="20sp"/>
+<com.facebook.android.projectcrawfish.CustomFontTextView
+    android:id="@+id/toolbar_title"
+    style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:layout_margin="5dp"
+    android:text="Crawfish"
+    android:textSize="24sp"
+    android:textStyle="bold"/>

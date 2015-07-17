@@ -12,7 +12,7 @@
         android:id="@+id/connections_list_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        cardview:cardCornerRadius="16dp"
+        cardview:cardCornerRadius="2dp"
         cardview:cardElevation="4dp"
         android:layout_marginTop="4dp"
         android:layout_marginBottom="4dp"
@@ -35,7 +35,7 @@
                 android:padding="40dp"
                 />
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/list_item_contact_name"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
@@ -47,7 +47,7 @@
                 tools:text="Contact Name"
                 />
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/list_item_contact_position"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"

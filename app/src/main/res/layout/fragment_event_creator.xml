@@ -14,7 +14,7 @@
         android:layout_height="match_parent"
         android:orientation="vertical">
 
-        <EditText
+        <com.facebook.android.projectcrawfish.CustomFontEditText
             android:id="@+id/event_title"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -34,7 +34,7 @@
                 android:src="@drawable/ic_clock"
                 android:id="@+id/clock_icon"/>
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:layout_toRightOf="@id/clock_icon"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -54,7 +54,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp">
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/start_label"
                 android:layout_width="32dp"
                 android:layout_height="wrap_content"
@@ -62,7 +62,7 @@
                 android:layout_marginLeft="56dp"
                 android:text="@string/start_date_label"/>
 
-            <Button
+            <com.facebook.android.projectcrawfish.CustomFontButton
                 android:id="@+id/start_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -74,7 +74,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 />
 
-            <Button
+            <com.facebook.android.projectcrawfish.CustomFontButton
                 android:id="@+id/start_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -91,7 +91,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="16dp">
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/end_label"
                 android:layout_width="32dp"
                 android:layout_height="wrap_content"
@@ -99,7 +99,7 @@
                 android:layout_marginLeft="56dp"
                 android:text="@string/end_date_label"/>
 
-            <Button
+            <com.facebook.android.projectcrawfish.CustomFontButton
                 android:id="@+id/end_date"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -111,7 +111,7 @@
                 style="?android:attr/borderlessButtonStyle"
                 />
 
-            <Button
+            <com.facebook.android.projectcrawfish.CustomFontButton
                 android:id="@+id/end_time"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
@@ -144,7 +144,7 @@
                 android:src="@drawable/ic_location"
                 android:id="@+id/location_icon"/>
 
-            <EditText
+            <com.facebook.android.projectcrawfish.CustomFontEditText
                 android:id="@+id/location"
                 android:layout_toRightOf="@id/location_icon"
                 android:layout_width="match_parent"
@@ -177,7 +177,7 @@
                 android:src="@drawable/ic_text"
                 android:id="@+id/text_icon"/>
 
-            <EditText
+            <com.facebook.android.projectcrawfish.CustomFontEditText
                 android:id="@+id/description"
                 android:layout_toRightOf="@id/text_icon"
                 android:layout_width="match_parent"

@@ -5,14 +5,17 @@ package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.telephony.PhoneNumberFormattingTextWatcher;
 import android.text.TextUtils;
 import android.util.Patterns;
+import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.FrameLayout;
 import android.widget.IconButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
@@ -25,8 +28,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import butterknife.OnTextChanged;
-
-
 
 
 public class MeFragment extends ProfileDialog implements View.OnClickListener {
@@ -50,6 +51,7 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
     @Bind(R.id.contact_position_edit) EditText mEditPosition;
     @Bind(R.id.contact_number_edit) EditText mEditNumber;
     @Bind(R.id.contact_email_edit) EditText mEditEmail;
+
 
 
     public static MeFragment newInstance() {
@@ -97,7 +99,6 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mContactFb.setClickable(false);
         mContactLinkedIn.setClickable(false);
 
-        // TODO save to parse only if email & phone number are valid and name is not blank
         mProfile.saveToParse(new SaveCallback() {
             @Override
             public void done(ParseException e) {
@@ -109,10 +110,6 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mSave.setVisibility(View.GONE);
 
         updateUI();
-    }
-
-    private boolean isValidNumber(CharSequence phone) {
-        return !TextUtils.isEmpty(phone) && Patterns.PHONE.matcher(phone).matches();
     }
 
     private void updateUI() {
@@ -133,21 +130,31 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         return !TextUtils.isEmpty(email) && android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches();
     }
 
-    public void validateInput() {
+    private boolean isValidNumber(CharSequence phone) {
+        return !TextUtils.isEmpty(phone) && Patterns.PHONE.matcher(phone).matches();
+    }
 
+    public void validateInput() {
         if (isValidEmail(mProfile.getEmail())) {
             mContactEmail.setError(null);
-            mEditEmail.setError(null);
         } else {
             mContactEmail.setError("Please enter a valid email.");
-            mEditEmail.setError("Please enter a valid email.");
+            Snackbar.make(mContactEmail, "Please enter a valid email.", Snackbar.LENGTH_LONG)
+                    .show();
         }
 
-        // TODO add other validation, eg phone number, whether name field is blank, etc.
+        if (isValidNumber(mProfile.getPhoneNumber())) {
+            mContactNumber.setError(null);
+        } else {
+            mContactNumber.setError("Please enter a valid phone number.");
+            Snackbar.make(mContactEmail, "Please enter a valid phone number.", Snackbar.LENGTH_LONG)
+                    .show();
+        }
 
-        // if (TextUtils.isEmpty(mContactName.getText())) {
-        //      mContactName.setError("This field cannot be blank");
-        // }
+        if (!isValidEmail(mProfile.getEmail()) && !isValidNumber(mProfile.getPhoneNumber())) {
+            Snackbar.make(mContactEmail, "Please enter a valid email & phone number.", Snackbar.LENGTH_LONG)
+                    .show();
+        }
     }
 
     private void hideKeyboard() {
@@ -171,7 +178,20 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
     @OnTextChanged(R.id.contact_name_edit)
     void onNameChanged(CharSequence text) {
-        mProfile.setFullName(text.toString());
+        String[] name = text.toString().split(" ");
+
+        if (name.length < 2) {
+            mSave.setEnabled(false);
+            Snackbar snack = Snackbar.make(mContactEmail, "Please enter your full name.", Snackbar.LENGTH_LONG);
+            View view = snack.getView();
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)view.getLayoutParams();
+            params.gravity = Gravity.TOP;
+            view.setLayoutParams(params);
+            snack.show();
+        } else {
+            mSave.setEnabled(true);
+            mProfile.setFullName(text.toString());
+        }
     }
 
     @OnTextChanged(R.id.contact_position_edit)
@@ -181,21 +201,12 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
     @OnTextChanged(R.id.contact_number_edit)
     void onNumberChanged(CharSequence text) {
-
         mProfile.setPhoneNumber(text.toString());
-        if (isValidNumber(mProfile.getPhoneNumber())) {
-            mContactNumber.setError(null);
-            mEditNumber.setError(null);
-        } else {
-            mContactNumber.setError("Please enter a valid phone number.");
-            mEditNumber.setError("Please enter a valid phone number.");
-        }
     }
 
     @OnTextChanged(R.id.contact_email_edit)
     void onEmailChanged(CharSequence text) {
         String formattedEmail = text.toString().replaceAll("\\s", "");
-        validateInput();
         mProfile.setEmail(formattedEmail);
     }
 }

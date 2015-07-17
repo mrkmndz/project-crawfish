@@ -5,8 +5,8 @@ package com.facebook.android.projectcrawfish;
 import android.app.Activity;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
-import android.view.LayoutInflater;
 import android.text.method.ScrollingMovementMethod;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
@@ -37,7 +37,6 @@ public class UpcomingEventDetailsFragment extends EventDialog {
         fragment.mCachedEvent = event;
         return fragment;
     }
-
 
     @Nullable
     @Override

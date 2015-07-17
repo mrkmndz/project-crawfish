@@ -15,7 +15,7 @@
     android:layout_marginLeft="24dp"
     android:layout_marginRight="24dp"
     android:layout_marginTop="64dp"
-    cardview:cardCornerRadius="8dp"
+    cardview:cardCornerRadius="4dp"
     cardview:cardElevation="8dp"
     android:minWidth="600dp"
     android:minHeight="600dp">
@@ -30,34 +30,36 @@
         android:paddingRight="16dp"
         android:paddingTop="24dp">
 
-        <TextView
+        <com.facebook.android.projectcrawfish.CustomFontTextView
             android:id="@+id/upcoming_event_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:gravity="center_horizontal"
             android:paddingBottom="24dp"
-            android:textSize="40sp"
+            android:textSize="36sp"
             tools:text="Event Name"/>
 
 
-        <TextView
+        <com.facebook.android.projectcrawfish.CustomFontTextView
             android:id="@+id/upcoming_event_duration"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_clock"
             android:gravity="center_vertical"
+            android:textSize="16sp"
             tools:text="Time and Date"/>
 
-        <TextView
+        <com.facebook.android.projectcrawfish.CustomFontTextView
             android:id="@+id/upcoming_event_location"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:drawableStart="@drawable/ic_location"
             android:gravity="center_vertical"
+            android:textSize="16sp"
             tools:text="Location"/>
 
-        <TextView
+        <com.facebook.android.projectcrawfish.CustomFontTextView
             android:id="@+id/upcoming_event_description"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
@@ -67,6 +69,7 @@
             android:scrollbars="vertical"
             android:paddingBottom="20dp"
             android:paddingTop="8dp"
+            android:textSize="16sp"
             tools:text="Event Details"/>
 
 
@@ -79,7 +82,7 @@
             cardview:cardCornerRadius="16dp"
             cardview:cardElevation="4dp">
 
-            <Button
+            <com.facebook.android.projectcrawfish.CustomFontButton
                 android:id="@+id/check_in_button"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"

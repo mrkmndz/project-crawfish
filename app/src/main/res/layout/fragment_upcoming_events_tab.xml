@@ -23,7 +23,6 @@
             android:id="@+id/checked_in_view"
             layout="@layout/checked_in_layout"
             />
-
     </ViewSwitcher>
 
     <android.support.design.widget.FloatingActionButton

@@ -9,14 +9,12 @@
     android:layout_marginLeft="24dp"
     android:layout_marginRight="24dp"
     android:layout_marginTop="16dp"
-    cardview:cardCornerRadius="8dp"
-    android:id="@+id/actual_card"
-
-    >
+    cardview:cardCornerRadius="4dp"
+    android:id="@+id/actual_card">
 
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="420dp"
+        android:layout_height="430dp"
         android:orientation="vertical">
 
         <RelativeLayout
@@ -42,7 +40,7 @@
             android:layout_height="wrap_content"
            >
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/contact_name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -72,7 +70,7 @@
                 android:textColor="@color/editButton"
                 android:textSize="24sp"/>
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/contact_position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -107,7 +105,7 @@
                 android:textColor="@color/editButton"
                 android:textSize="24sp"/>
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/contact_email"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -142,7 +140,7 @@
                 android:textColor="@color/editButton"
                 android:textSize="24sp"/>
 
-            <TextView
+            <com.facebook.android.projectcrawfish.CustomFontTextView
                 android:id="@+id/contact_number"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"

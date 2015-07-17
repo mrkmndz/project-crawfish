@@ -10,7 +10,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
-import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
@@ -68,7 +67,6 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
                     }
                 }
                 , R.layout.list_item_contact);
-
     }
 
     @Override
@@ -89,7 +87,6 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
         });
 
         mListView.setAdapter(mAdapter);
-
 
         return view;
     }

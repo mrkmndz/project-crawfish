@@ -18,7 +18,7 @@
         cardview:cardCornerRadius="2dp"
         cardview:cardElevation="2dp">
 
-        <TextView
+        <com.facebook.android.projectcrawfish.CustomFontTextView
             android:id="@+id/notification_drawer"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
@@ -41,16 +41,16 @@
                 android:layout_margin="8dp"
                 android:orientation="vertical">
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/list_item_event_name"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_margin="4dp"
-                    android:textSize="32sp"
+                    android:textSize="24sp"
                     android:textStyle="bold"
                     tools:text="Event Name"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/list_item_event_date"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -58,7 +58,7 @@
                     android:gravity="center_vertical"
                     tools:text="July 17 8:00-11:00PM"/>
 
-                <TextView
+                <com.facebook.android.projectcrawfish.CustomFontTextView
                     android:id="@+id/list_item_event_location"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"

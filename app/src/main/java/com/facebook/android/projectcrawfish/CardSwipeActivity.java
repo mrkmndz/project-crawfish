@@ -3,10 +3,7 @@
 package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
-
 import android.content.Intent;
-import android.graphics.Color;
-
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -21,10 +18,6 @@ import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
-
-import org.w3c.dom.Text;
-
-import java.io.Serializable;
 
 import java.util.ArrayList;
 import java.util.List;
