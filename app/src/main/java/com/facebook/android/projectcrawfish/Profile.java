@@ -18,6 +18,7 @@
 
 public class Profile implements Serializable{
 
+    public static final String KEY = "Profile";
     @SerializedName("first_name")
     private String mFirstName;
     @SerializedName("last_name")
@@ -45,7 +46,7 @@ public class Profile implements Serializable{
     public static Profile fromUser(ParseUser user){
         String json = null;
         try {
-            json = (String) user.fetchIfNeeded().get("Profile");
+            json = (String) user.fetchIfNeeded().get(KEY);
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -54,7 +55,7 @@ public class Profile implements Serializable{
     }
 
     public void saveToParse(){
-        ParseUser.getCurrentUser().put("Profile", this.toJSON());
+        ParseUser.getCurrentUser().put(KEY, this.toJSON());
         try {
             ParseUser.getCurrentUser().save();
         } catch (ParseException e) {

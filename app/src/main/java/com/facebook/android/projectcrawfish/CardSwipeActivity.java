@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
@@ -50,6 +51,8 @@ public class CardSwipeActivity extends AppCompatActivity {
     @Bind(R.id.frame)
     SwipeFlingAdapterView flingContainer;
 
+    private Event e;
+
     public static Intent newIntent(Context context, String eventID) {
         Intent intent = new Intent(context, CardSwipeActivity.class);
         intent.putExtra("eventID", eventID);
@@ -68,14 +71,23 @@ public class CardSwipeActivity extends AppCompatActivity {
         mPDIs = new ArrayList<>();
         ParseQuery<Event> q = ParseQuery.getQuery(Event.class);
         try {
-            Event e = q.get(getIntent().getStringExtra("eventID"));
+            e = q.get(getIntent().getStringExtra("eventID"));
+
+            ParseQuery<Swipe> innerQueryA = ParseQuery.getQuery(Swipe.class);
+            innerQueryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//All right swipes
+
+            ParseQuery<Swipe> innerQueryB = ParseQuery.getQuery(Swipe.class);
+            innerQueryB.whereEqualTo(Swipe.EVENT, e);//All swipes at this event
+
             ParseQuery<Attendance> query = ParseQuery.getQuery(Attendance.class);
             query.whereEqualTo(Attendance.EVENT, e);
             query.whereNotEqualTo(Attendance.USER, ParseUser.getCurrentUser());
-            //TODO where have not already swiped
+            query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQueryA);//
+            query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQueryB);
+
             List<Attendance> attendances = query.find();
             for (Attendance att : attendances) {
-                ProfileDisplayInstance pdi = new ProfileDisplayInstance(Profile.fromUser(att.getUser()));
+                ProfileDisplayInstance pdi = new ProfileDisplayInstance(att.getUser());
                 mPDIs.add(pdi);
             }
         } catch (ParseException e) {
@@ -99,12 +111,30 @@ public class CardSwipeActivity extends AppCompatActivity {
             public void onLeftCardExit(Object dataObject) {
                 mCheckButton.setTextSize(BASE_SIZE);
                 mXButton.setTextSize(BASE_SIZE);
+                ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                try {
+                    ParseUser user = query.get(pdi.getUserID());
+                    Swipe leftSwipe = Swipe.leftSwipe(user,e);
+                    leftSwipe.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
             public void onRightCardExit(Object dataObject) {
                 mCheckButton.setTextSize(BASE_SIZE);
                 mXButton.setTextSize(BASE_SIZE);
+                ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                try {
+                    ParseUser user = query.get(pdi.getUserID());
+                    Swipe leftSwipe = Swipe.rightSwipe(user, e);
+                    leftSwipe.save();
+                } catch (ParseException e) {
+                    e.printStackTrace();
+                }
             }
 
             @Override
@@ -141,9 +171,11 @@ public class CardSwipeActivity extends AppCompatActivity {
         private final Profile mProfile;
         private float mWiggleY;
         private float mWiggleX;
+        private String mUserID;
 
-        public ProfileDisplayInstance(Profile profile) {
-            mProfile = profile;
+        public ProfileDisplayInstance(ParseUser user) {
+            mUserID  =user.getObjectId();
+            mProfile = Profile.fromUser(user);
             Random random = new Random();
             mWiggleX = RANGE * (random.nextFloat() * 2 - 1);
             mWiggleY = RANGE * (random.nextFloat() * 2 - 1);
@@ -160,6 +192,8 @@ public class CardSwipeActivity extends AppCompatActivity {
         public float getWiggleX() {
             return mWiggleX;
         }
+
+        public String getUserID(){return mUserID;}
     }
 
     private class CardAdapter extends ArrayAdapter<ProfileDisplayInstance> {

@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
 
+import com.parse.Parse;
 import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
@@ -17,7 +18,7 @@ import com.parse.ParseUser;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener<ParseUser> {
+public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener<Swipe> {
 
     public interface OnFragmentInteractionListener {
         void openContactDetails(ParseUser user);
@@ -27,7 +28,7 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
         mAdapter.loadObjects();
     }
 
-    private CustomViewPQA<ParseUser> mAdapter;
+    private CustomViewPQA<Swipe> mAdapter;
     private OnFragmentInteractionListener mListener;
 
     @Bind(R.id.list_view)
@@ -37,19 +38,27 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        ParseQueryAdapter.QueryFactory<ParseUser> factory =
-                new ParseQueryAdapter.QueryFactory<ParseUser>() {
-                    public ParseQuery<ParseUser> create() {
-                        ParseQuery<ParseUser> query = ParseUser.getQuery();
-                        //TODO ONLY GIVE CONNECTED CONTACTS
-                        return query;
+        ParseQueryAdapter.QueryFactory<Swipe> factory =
+                new ParseQueryAdapter.QueryFactory<Swipe>() {
+                    public ParseQuery<Swipe> create() {
+
+                        ParseQuery<Swipe> queryB = ParseQuery.getQuery(Swipe.class);
+                        queryB.whereEqualTo(Swipe.SWIPEE, ParseUser.getCurrentUser());
+                        queryB.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);
+
+                        ParseQuery<Swipe> queryA = ParseQuery.getQuery(Swipe.class);
+                        queryA.whereEqualTo(Swipe.SWIPER, ParseUser.getCurrentUser());
+                        queryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//People you swiped right
+                        queryA.whereMatchesKeyInQuery(Swipe.SWIPEE, Swipe.SWIPER, queryB);//People who swiped right on you
+                        queryA.include(Swipe.SWIPEE);
+                        return queryA;
                     }
                 };
 
         mAdapter = new CustomViewPQA<>(getActivity(), factory, this,
-                new CustomViewPQA.CustomViewHolderFactory<ParseUser>() {
+                new CustomViewPQA.CustomViewHolderFactory<Swipe>() {
                     @Override
-                    public CustomViewPQA.CustomViewHolder<ParseUser> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<ParseUser> listener) {
+                    public CustomViewPQA.CustomViewHolder<Swipe> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Swipe> listener) {
                         return new ContactViewHolder(v, listener);
                     }
                 }
@@ -67,8 +76,8 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
     }
 
     @Override
-    public void OnClick(ParseUser user) {
-        mListener.openContactDetails(user);
+    public void OnClick(Swipe swipe) {
+        mListener.openContactDetails(swipe.getParseUser(Swipe.SWIPEE));
     }
 
     @Override

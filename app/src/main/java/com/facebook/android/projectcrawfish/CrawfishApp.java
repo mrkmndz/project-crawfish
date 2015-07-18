@@ -25,5 +25,6 @@ public class CrawfishApp extends Application {
         ParseFacebookUtils.initialize(this);
         ParseObject.registerSubclass(Event.class);
         ParseObject.registerSubclass(Attendance.class);
+        ParseObject.registerSubclass(Swipe.class);
     }
 }
