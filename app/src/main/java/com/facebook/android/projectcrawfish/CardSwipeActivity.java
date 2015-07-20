@@ -84,6 +84,7 @@ public class CardSwipeActivity extends AppCompatActivity {
             query.whereNotEqualTo(Attendance.USER, ParseUser.getCurrentUser());
             query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQueryA);//
             query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQueryB);
+            query.include(Attendance.USER);
 
             List<Attendance> attendances = query.find();
             for (Attendance att : attendances) {

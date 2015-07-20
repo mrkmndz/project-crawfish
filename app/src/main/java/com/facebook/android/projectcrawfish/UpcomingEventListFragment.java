@@ -14,6 +14,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 
 import java.util.Date;
+import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -29,6 +30,8 @@ public class UpcomingEventListFragment extends Fragment implements CustomViewPQA
 
     @Bind(R.id.list_view)
     ListView mListView;
+    @Bind(R.id.progress_switcher)
+    ProgressSwitcher mSwitcher;
 
     public void refreshList() {
         mAdapter.loadObjects();
@@ -66,6 +69,7 @@ public class UpcomingEventListFragment extends Fragment implements CustomViewPQA
                 }
                 ,R.layout.event_list_item
         );
+
     }
 
     @Override
@@ -73,6 +77,18 @@ public class UpcomingEventListFragment extends Fragment implements CustomViewPQA
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, v);
+
+        mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Event>() {
+            @Override
+            public void onLoading() {
+                mSwitcher.showBar();
+            }
+
+            @Override
+            public void onLoaded(List<Event> list, Exception e) {
+                mSwitcher.showContent();
+            }
+        });
 
         mListView.setAdapter(mAdapter);
 

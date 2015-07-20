@@ -20,8 +20,7 @@ import android.widget.LinearLayout;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
-import com.parse.ParseException;
-import com.parse.ParseQuery;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import butterknife.Bind;
@@ -32,8 +31,7 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener,
         UpcomingEventDetailsFragment.OnFragmentInteractionListener,
-        ContactListFragment.OnFragmentInteractionListener
-{
+        ContactListFragment.OnFragmentInteractionListener {
 
     public static final int NEW_EVENT = 1;
     public static final int PAST_EVENTS = 3;
@@ -84,26 +82,22 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void openUpcomingEventDetails(Event event) {
         FragmentManager manager = getSupportFragmentManager();
-        UpcomingEventDetailsFragment cf = UpcomingEventDetailsFragment.newInstance(event.getObjectId());
+        UpcomingEventDetailsFragment cf = UpcomingEventDetailsFragment.newInstance(event);
         cf.show(manager, DIALOG_CHECK_IN);
     }
 
     @Override
     public void openPastEventDetails(Attendance attendance) {
         FragmentManager manager = getSupportFragmentManager();
-        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(attendance.getEvent().getObjectId());
+        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(attendance.getEvent());
         detailsFragment.show(manager, PAST_EVENT_DETAILS);
     }
+
     @Override
     public void openContactDetails(ParseUser user) {
         FragmentManager manager = getSupportFragmentManager();
-        if (user.getObjectId().equals(ParseUser.getCurrentUser().getObjectId())){
-            MeFragment meFragment = MeFragment.newInstance();
-            meFragment.show(manager, DIALOG_CONTACT_DETAILS);
-        } else {
-            ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(user);
-            contactDetailsFragment.show(manager, DIALOG_CONTACT_DETAILS);
-        }
+        MeFragment meFragment = MeFragment.newInstance();
+        meFragment.show(manager, DIALOG_CONTACT_DETAILS);
     }
 
     private UpcomingEventsFragment getUpcomingEventsTab() {
@@ -123,17 +117,18 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void checkInToEvent(String eventID, String cachedTitle) {
-        ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
-        try {
-            Event event = query.get(eventID);
-            event.checkIn();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        getPastEventsTab().refreshList();
-        getUpcomingEventsTab().confirmCheckIn(eventID, cachedTitle);
+    public void checkInToEvent(String eventID) {
+        getUpcomingEventsTab().startCheckIn();
+        Event event = ParseObject.createWithoutData(Event.class, eventID);
+        event.checkIn(new Event.CheckInCallback() {
+            @Override
+            public void checkedIn(Attendance attendance) {
+                getPastEventsTab().refreshList();
+                getUpcomingEventsTab().confirmCheckIn(attendance);
+            }
+        });
     }
+
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -159,6 +154,7 @@ public class MainActivity extends AppCompatActivity implements
         public int getCount() {
             return 3;
         }
+
     }
 
     @Override
@@ -170,7 +166,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch(item.getItemId()){
+        switch (item.getItemId()) {
             case R.id.action_logout:
                 ParseUser.logOut();
                 // FLAG_ACTIVITY_CLEAR_TASK only works on API 11, so if the user
@@ -184,6 +180,10 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     finish();
                 }
+            case R.id.action_my_profile:
+                FragmentManager manager = getSupportFragmentManager();
+                MeFragment meFragment = MeFragment.newInstance();
+                meFragment.show(manager, DIALOG_CONTACT_DETAILS);
             default:
                 return super.onOptionsItemSelected(item);
         }

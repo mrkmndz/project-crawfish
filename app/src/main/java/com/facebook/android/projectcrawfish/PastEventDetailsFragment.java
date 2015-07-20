@@ -30,9 +30,9 @@ public class PastEventDetailsFragment extends EventDialog {
 
     boolean hasInflated = false;
 
-    public static PastEventDetailsFragment newInstance(String EventID) {
+    public static PastEventDetailsFragment newInstance(Event event) {
         PastEventDetailsFragment fragment = new PastEventDetailsFragment();
-        Bundle args = getBundleFromID(EventID);
+        Bundle args = getBundleFromEvent(event);
         fragment.setArguments(args);
         return fragment;
     }

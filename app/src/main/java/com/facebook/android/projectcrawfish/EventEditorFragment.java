@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 
 import java.util.Calendar;
@@ -59,9 +60,9 @@ public class EventEditorFragment extends EventDialog {
 
     public static final String DIALOG_DATE = "DialogDate";
 
-    public static EventEditorFragment newInstance(String EventID) {
+    public static EventEditorFragment newInstance(Event event) {
         EventEditorFragment fragment = new EventEditorFragment();
-        Bundle args = (EventID == null) ? getBundleWithNoID() : getBundleFromID(EventID);
+        Bundle args = (event == null) ? getBundleWithNoID() : getBundleFromEvent(event);
         fragment.setArguments(args);
         return fragment;
     }
@@ -109,8 +110,7 @@ public class EventEditorFragment extends EventDialog {
         if (mID == null) {
             event = new Event();
         } else {
-            ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
-            event = query.get(mID);
+            event = ParseObject.createWithoutData(Event.class, mID);
         }
         event.setTitle(mTitle);
         event.setDescription(mDetails);

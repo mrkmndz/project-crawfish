@@ -14,6 +14,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -25,6 +27,9 @@ public class PastEventList extends Fragment implements CustomViewPQA.ClickEventL
 
     @Bind(R.id.list_view)
     ListView mListView;
+
+    @Bind(R.id.progress_switcher)
+    ProgressSwitcher mSwitcher;
 
     public void refreshList() {
         mAdapter.loadObjects();
@@ -47,6 +52,7 @@ public class PastEventList extends Fragment implements CustomViewPQA.ClickEventL
                     public ParseQuery<Attendance> create() {
                         ParseQuery<Attendance> query = new ParseQuery<Attendance>(Attendance.CLASS_NAME);
                         query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+                        query.include(Attendance.EVENT);
                         return query;
                     }
                 };
@@ -67,6 +73,18 @@ public class PastEventList extends Fragment implements CustomViewPQA.ClickEventL
                              Bundle savedInstanceState) {
         View v= inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, v);
+
+        mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Attendance>() {
+            @Override
+            public void onLoading() {
+                mSwitcher.showBar();
+            }
+
+            @Override
+            public void onLoaded(List<Attendance> list, Exception e) {
+                mSwitcher.showContent();
+            }
+        });
 
         mListView.setAdapter(mAdapter);
 

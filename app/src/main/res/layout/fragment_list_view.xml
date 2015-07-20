@@ -1,7 +1,12 @@
-<ListView
-    android:id="@+id/list_view"
+<com.facebook.android.projectcrawfish.ProgressSwitcher
     xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/progress_switcher"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <ListView
+    android:id="@+id/list_view"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:divider="@android:color/transparent"/>
+</com.facebook.android.projectcrawfish.ProgressSwitcher>

@@ -14,6 +14,7 @@ public class Attendance extends ParseObject {
     public static final String CLASS_NAME = "Attendance";
     public static final String USER = "USER";
     public static final String EVENT = "EVENT";
+    public static final String HAS_LEFT = "HAS_LEFT";
 
     public void setUser(ParseUser user) {
         put(USER,user);
@@ -30,4 +31,7 @@ public class Attendance extends ParseObject {
         return (Event) get(EVENT);
     }
 
+    public void setHasLeft (Boolean hasLeft){
+        put(HAS_LEFT, hasLeft);
+    }
 }

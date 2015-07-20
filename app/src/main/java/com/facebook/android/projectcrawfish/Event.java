@@ -2,14 +2,17 @@
 
 package com.facebook.android.projectcrawfish;
 
+import com.parse.FindCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
 import java.util.Locale;
 
 
@@ -30,11 +33,7 @@ public class Event extends ParseObject {
     public static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
 
     public Date getStartDate() {
-        try {
-            return (Date) fetchIfNeeded().get(START_DATE);
-        } catch (ParseException e) {
-            throw new RuntimeException("Something bad");
-        }
+            return (Date) get(START_DATE);
     }
 
     public void setStartDate(Date startDate) {
@@ -42,11 +41,8 @@ public class Event extends ParseObject {
     }
 
     public Date getEndDate() {
-        try {
-            return (Date) fetchIfNeeded().get(END_DATE);
-        } catch (ParseException e) {
-            throw new RuntimeException("Something bad");
-        }
+            return (Date) get(END_DATE);
+
     }
 
     public void setEndDate(Date endDate) {
@@ -54,11 +50,7 @@ public class Event extends ParseObject {
     }
 
     public String getTitle() {
-        try {
-            return (String) fetchIfNeeded().get(TITLE);
-        } catch (ParseException e) {
-            throw new RuntimeException("Something bad");
-        }
+            return (String) get(TITLE);
     }
 
     public void setTitle(String title) {
@@ -66,11 +58,7 @@ public class Event extends ParseObject {
     }
 
     public String getLocation() {
-        try {
-            return (String) fetchIfNeeded().get(LOCATION);
-        } catch (ParseException e) {
-            throw new RuntimeException("Something bad");
-        }
+            return (String) get(LOCATION);
     }
 
     public void setLocation(String location) {
@@ -78,11 +66,7 @@ public class Event extends ParseObject {
     }
 
     public String getDescription() {
-        try {
-            return (String) fetchIfNeeded().get(DESCRIPTION);
-        } catch (ParseException e) {
-            throw new RuntimeException("Something bad");
-        }
+            return (String) get(DESCRIPTION);
     }
 
     public void setDescription(String description) {
@@ -90,11 +74,7 @@ public class Event extends ParseObject {
     }
 
     public Boolean isAllDay(){
-        try {
-            return (Boolean) fetchIfNeeded().get(ALL_DAY);
-        } catch (ParseException e) {
-            throw new RuntimeException("Something bad");
-        }
+            return (Boolean) get(ALL_DAY);
     }
 
     public void setIsAllDay(Boolean isAllDay){
@@ -122,14 +102,41 @@ public class Event extends ParseObject {
                 "-"+getFormattedEndDate()+" "+getFormattedEndTime();
     }
 
-    public void checkIn() {
-        Attendance att = new Attendance();
-        att.setEvent(this);
-        att.setUser(ParseUser.getCurrentUser());
-        try {
-            att.save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+    public void checkIn(final CheckInCallback callback) {
+        ParseQuery<Attendance> query =  ParseQuery.getQuery(Attendance.class);
+        query.whereEqualTo(Attendance.EVENT, this);
+        query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+        query.findInBackground(new FindCallback<Attendance>() {
+            @Override
+            public void done(List<Attendance> list, ParseException e) {
+                if(list.size()==0){
+                    final Attendance att = new Attendance();
+                    att.setEvent(Event.this);
+                    att.setUser(ParseUser.getCurrentUser());
+                    att.setHasLeft(false);
+                    att.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            callback.checkedIn(att);
+                        }
+                    });
+                } else {
+                    final Attendance att = list.get(0);
+                    att.setHasLeft(false);
+                    att.saveInBackground(new SaveCallback() {
+                        @Override
+                        public void done(ParseException e) {
+                            callback.checkedIn(att);
+                        }
+                    });
+                }
+            }
+        });
+
     }
+
+    public interface CheckInCallback{
+        void checkedIn(Attendance attendance);
+    }
+
 }

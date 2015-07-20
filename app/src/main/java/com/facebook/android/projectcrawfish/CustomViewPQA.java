@@ -18,14 +18,14 @@ public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
 
         abstract void bindObject(Q obj);
 
-        private final ClickEventListener<Q> mListenerd;
+        private final ClickEventListener<Q> mListener;
 
-        public CustomViewHolder(View v, ClickEventListener<Q> listenerd) {
-            mListenerd = listenerd;
+        public CustomViewHolder(View v, ClickEventListener<Q> listener) {
+            mListener = listener;
         }
 
         protected void onClick(Q object) {
-            mListenerd.onClick(object);
+            mListener.onClick(object);
         }
     }
 
@@ -38,10 +38,10 @@ public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
     }
 
     private final int mViewResource;
-    private final ClickEventListener mListener;
+    private final ClickEventListener<T> mListener;
     private CustomViewHolderFactory<T> mHolderFactory;
 
-    public CustomViewPQA(Context context, QueryFactory<T> queryFactory, ClickEventListener listener, CustomViewHolderFactory<T> holderFactory, int viewResource
+    public CustomViewPQA(Context context, QueryFactory<T> queryFactory, ClickEventListener<T> listener, CustomViewHolderFactory<T> holderFactory, int viewResource
     ) {
         super(context, queryFactory);
         mHolderFactory = holderFactory;

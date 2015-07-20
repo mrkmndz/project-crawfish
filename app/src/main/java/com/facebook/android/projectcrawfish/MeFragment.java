@@ -17,7 +17,9 @@ import android.widget.IconButton;
 import android.widget.TextView;
 import android.widget.ViewSwitcher;
 
+import com.parse.ParseException;
 import com.parse.ParseUser;
+import com.parse.SaveCallback;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -96,12 +98,15 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mContactLinkedIn.setClickable(false);
 
         // TODO save to parse only if email & phone number are valid and name is not blank
-        mProfile.saveToParse();
+        mProfile.saveToParse(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                mEdit.setEnabled(true);
+                mEdit.setVisibility(View.VISIBLE);
+            }
+        });
         mSave.setEnabled(false);
         mSave.setVisibility(View.GONE);
-
-        mEdit.setEnabled(true);
-        mEdit.setVisibility(View.VISIBLE);
 
         updateUI();
     }

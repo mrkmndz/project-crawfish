@@ -15,6 +15,8 @@ import com.parse.ParseQuery;
 import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -33,6 +35,9 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
 
     @Bind(R.id.list_view)
     protected ListView mListView;
+
+    @Bind(R.id.progress_switcher)
+    ProgressSwitcher mSwitcher;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -63,6 +68,7 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
                     }
                 }
                 , R.layout.list_item_contact);
+
     }
 
     @Override
@@ -70,7 +76,20 @@ public class ContactListFragment extends Fragment implements CustomViewPQA.Click
         View view = inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, view);
 
+        mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Swipe>() {
+            @Override
+            public void onLoading() {
+                mSwitcher.showBar();
+            }
+
+            @Override
+            public void onLoaded(List<Swipe> list, Exception e) {
+                mSwitcher.showContent();
+            }
+        });
+
         mListView.setAdapter(mAdapter);
+
 
         return view;
     }

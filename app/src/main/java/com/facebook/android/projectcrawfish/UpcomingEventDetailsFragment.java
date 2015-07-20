@@ -29,9 +29,12 @@ public class UpcomingEventDetailsFragment extends EventDialog {
     @Bind(R.id.upcoming_event_description)
     TextView mEventDescription;
 
-    public static UpcomingEventDetailsFragment newInstance(String EventID) {
+    private Event mCachedEvent;
+
+    public static UpcomingEventDetailsFragment newInstance(Event event) {
         UpcomingEventDetailsFragment fragment = new UpcomingEventDetailsFragment();
-        fragment.setArguments(getBundleFromID(EventID));
+        fragment.setArguments(getBundleFromEvent(event));
+        fragment.mCachedEvent = event;
         return fragment;
     }
 
@@ -58,14 +61,14 @@ public class UpcomingEventDetailsFragment extends EventDialog {
 
     @OnClick(R.id.check_in_button)
     public void onClickCheckIn() {
-        mListener.checkInToEvent(mID, mTitle);
+        mListener.checkInToEvent(mID);
         this.dismiss();
     }
 
     private OnFragmentInteractionListener mListener;
 
     interface OnFragmentInteractionListener {
-        void checkInToEvent(String eventID, String cachedTitle);
+        void checkInToEvent(String eventID);
     }
 
     @Override

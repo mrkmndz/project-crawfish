@@ -17,6 +17,16 @@ import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
 
+import com.parse.FindCallback;
+import com.parse.GetCallback;
+import com.parse.ParseException;
+import com.parse.ParseObject;
+import com.parse.ParseQuery;
+import com.parse.ParseUser;
+import com.parse.SaveCallback;
+
+import java.util.List;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -24,20 +34,23 @@ import butterknife.OnClick;
 /**
  * Created by markamendoza on 7/9/15.
  */
-public class UpcomingEventsFragment extends Fragment {
+public class UpcomingEventsFragment extends Fragment{
 
     public static final int CHECK_IN = 2;
     public static final String IS_CHECKED_IN = "IS_CHECKED_IN";
-    public static final String EVENT_ID = "EVENT_ID";
+    public static final String ATTENDANCE_ID = "ATTENDANCE_ID";
     public static final String CACHED_EVENT_NAME = "CACHED_EVENT_NAME";
 
     private OnFragmentInteractionListener mListener;
     private UpcomingEventListFragment mListFragment;
     private boolean mIsCheckedIn;
-    private String mCheckedInEventID;
+    private String mCheckedInAttendanceID;
 
     @Bind(R.id.switcher)
     ViewSwitcher mSwitcher;
+
+    @Bind(R.id.checked_in_view)
+    ProgressSwitcher mProgressSwitcher;
 
     @Bind(R.id.checked_into_title)
     TextView mCheckedInTitle;
@@ -47,11 +60,17 @@ public class UpcomingEventsFragment extends Fragment {
         mListFragment.refreshList();
     }
 
-    public void confirmCheckIn(String eventID, String cachedTitle) {
-        mCachedEventName = cachedTitle;
-        mCheckedInEventID=eventID;
-        mIsCheckedIn=true;
+    public void confirmCheckIn(Attendance attendance) {
+        mCheckedInAttendanceID = attendance.getObjectId();
+        mCachedEventName = attendance.getEvent().getTitle();
         updateUI();
+        mProgressSwitcher.showContent();
+    }
+
+    public void startCheckIn() {
+        mIsCheckedIn=true;
+        showCheckedIn();
+        mProgressSwitcher.showBar();
     }
 
     interface OnFragmentInteractionListener {
@@ -66,7 +85,7 @@ public class UpcomingEventsFragment extends Fragment {
         } else {
             mIsCheckedIn = savedInstanceState.getBoolean(IS_CHECKED_IN);
             if (mIsCheckedIn){
-                mCheckedInEventID = savedInstanceState.getString(EVENT_ID);
+                mCheckedInAttendanceID = savedInstanceState.getString(ATTENDANCE_ID);
                 mCachedEventName = savedInstanceState.getString(CACHED_EVENT_NAME);
             }
         }
@@ -74,7 +93,6 @@ public class UpcomingEventsFragment extends Fragment {
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        //TODO check for already checkedin
         View view = inflater.inflate(R.layout.fragment_upcoming_events_tab, container, false);
         ButterKnife.bind(this, view);
         FragmentManager manager = getChildFragmentManager();
@@ -85,7 +103,28 @@ public class UpcomingEventsFragment extends Fragment {
                     .add(R.id.list_fragment_container, mListFragment)
                     .commit();
         }
-        updateUI();
+        mProgressSwitcher.showBar();
+        showCheckedIn();
+        ParseQuery<Attendance> query = ParseQuery.getQuery(Attendance.class);
+        query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+        query.whereEqualTo(Attendance.HAS_LEFT, false);
+        query.include(Attendance.EVENT);
+        query.findInBackground(new FindCallback<Attendance>() {
+            @Override
+            public void done(List<Attendance> list, ParseException e) {
+                if (list.size()==0){
+                    mIsCheckedIn = false;
+                    showList();
+                } else {
+                    mIsCheckedIn = true;
+                    Attendance attendance = list.get(0);
+                    mCachedEventName = attendance.getEvent().getTitle();
+                    mCheckedInAttendanceID = attendance.getObjectId();
+                    showCheckedIn();
+                }
+                mProgressSwitcher.showContent();
+            }
+        });
         return view;
     }
 
@@ -107,18 +146,17 @@ public class UpcomingEventsFragment extends Fragment {
 
     @OnClick(R.id.check_out_button)
     public void onClickCheckOut(){
-        //TODO send to Parse
-        mIsCheckedIn=false;
-        updateUI();
-    }
-
-    void updateUI(){
-            if (mIsCheckedIn) {
-                mCheckedInTitle.setText(mCachedEventName);
-                showCheckedIn();
-            } else {
+        mProgressSwitcher.showBar();
+        Attendance attendance = ParseObject.createWithoutData(Attendance.class, mCheckedInAttendanceID);
+        attendance.setHasLeft(true);
+        attendance.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                mIsCheckedIn = true;
                 showList();
+                mProgressSwitcher.showContent();
             }
+        });
     }
 
     void showList(){
@@ -132,13 +170,17 @@ public class UpcomingEventsFragment extends Fragment {
         }
     }
 
+    void updateUI(){
+        mCheckedInTitle.setText(mCachedEventName);
+    }
+
 
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_CHECKED_IN,mIsCheckedIn);
         if(mIsCheckedIn) {
-            outState.putString(EVENT_ID, mCheckedInEventID);
+            outState.putString(ATTENDANCE_ID, mCheckedInAttendanceID);
             outState.putString(CACHED_EVENT_NAME,mCachedEventName);
         }
     }

@@ -9,6 +9,7 @@
         import com.parse.ParseException;
         import com.parse.ParseObject;
         import com.parse.ParseUser;
+        import com.parse.SaveCallback;
 
         import java.io.Serializable;
         import java.util.PropertyPermission;
@@ -44,23 +45,14 @@ public class Profile implements Serializable{
         return builder.create();
     }
     public static Profile fromUser(ParseUser user){
-        String json = null;
-        try {
-            json = (String) user.fetchIfNeeded().get(KEY);
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        String json = (String) user.get(KEY);
         if (json ==null )return Profile.defaultProfile(user);
         return getGson().fromJson(json,Profile.class);
     }
 
-    public void saveToParse(){
+    public void saveToParse(SaveCallback callback){
         ParseUser.getCurrentUser().put(KEY, this.toJSON());
-        try {
-            ParseUser.getCurrentUser().save();
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        ParseUser.getCurrentUser().saveInBackground(callback);
     }
 
     public String getFirstName() {
