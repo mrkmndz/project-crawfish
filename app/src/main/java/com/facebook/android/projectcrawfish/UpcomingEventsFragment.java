@@ -3,22 +3,16 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
-import android.app.TimePickerDialog;
-import android.content.Intent;
 import android.os.Bundle;
-import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
-import android.widget.Toast;
 import android.widget.ViewSwitcher;
 
-
 import com.parse.FindCallback;
-import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -128,10 +122,7 @@ public class UpcomingEventsFragment extends Fragment{
         return view;
     }
 
-    @OnClick(R.id.new_event_button)
-    public void onFABClick() {
-        mListener.createNewEvent();
-    }
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -190,4 +181,5 @@ public class UpcomingEventsFragment extends Fragment{
         super.onDetach();
         mListener = null;
     }
+
 }

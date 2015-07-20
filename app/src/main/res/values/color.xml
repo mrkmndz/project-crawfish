@@ -5,4 +5,9 @@
     <color name="editButton">#C0C0C0</color>
     <color name="toolbar">#f36966</color>
     <color name="apptheme_color">#DA4A38</color>
+    <color name="toolbar_2">#FF5722</color>
+    <color name="white">#FFFFFF</color>
+    <color name="offWhite">#B3FBE9E7</color>
+    <color name="notificationsBar">#FF7043</color>
+
 </resources>

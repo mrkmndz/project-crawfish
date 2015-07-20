@@ -74,6 +74,7 @@ public class PastEventList extends Fragment implements CustomViewPQA.ClickEventL
         View v= inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, v);
 
+
         mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Attendance>() {
             @Override
             public void onLoading() {

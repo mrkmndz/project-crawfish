@@ -1,3 +1,4 @@
+
 <com.facebook.android.projectcrawfish.CustomFontTextView
     android:id="@+id/toolbar_title"
     style="@style/TextAppearance.AppCompat.Widget.ActionBar.Title"
@@ -7,4 +8,5 @@
     android:layout_margin="5dp"
     android:text="Crawfish"
     android:textSize="24sp"
-    android:textStyle="bold"/>
+    android:textColor="@color/white"/>
+

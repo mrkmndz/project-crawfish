@@ -25,18 +25,5 @@
             />
     </ViewSwitcher>
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/new_event_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|end"
-        android:layout_margin="16dp"
-        android:clickable="true"
-        android:elevation="16dp"
-        android:focusableInTouchMode="true"
-        android:src="@android:drawable/ic_input_add"
-        android:tint="@android:color/background_light"
-        app:backgroundTint="#FF5722"
-        app:borderWidth="0dp"
-        app:elevation="16dp"/>
+
 </FrameLayout>

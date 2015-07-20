@@ -15,7 +15,7 @@
             android:id="@+id/tab_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/toolbar"
+            android:background="@color/toolbar_2"
             />
 
     </com.facebook.android.projectcrawfish.CrawfishToolbar>

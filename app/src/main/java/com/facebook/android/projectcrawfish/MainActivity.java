@@ -55,9 +55,9 @@ public class MainActivity extends AppCompatActivity implements
 
         mTabLayout.setupWithViewPager(mViewPager);
 
-        mTabLayout.getTabAt(0).setIcon(new IconDrawable(this, Iconify.IconValue.fa_users).actionBarSize());
-        mTabLayout.getTabAt(1).setIcon(new IconDrawable(this, Iconify.IconValue.fa_link).actionBarSize());
-        mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize());
+        mTabLayout.getTabAt(0).setIcon(new IconDrawable(this, Iconify.IconValue.fa_users).actionBarSize().colorRes(R.color.offWhite));
+        mTabLayout.getTabAt(1).setIcon(new IconDrawable(this, Iconify.IconValue.fa_link).actionBarSize().colorRes(R.color.offWhite));
+        mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize().colorRes(R.color.offWhite));
 
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
     }
@@ -181,6 +181,16 @@ public class MainActivity extends AppCompatActivity implements
                 FragmentManager manager = getSupportFragmentManager();
                 MeFragment meFragment = MeFragment.newInstance();
                 meFragment.show(manager, DIALOG_CONTACT_DETAILS);
+
+
+            case R.id.action_search:
+                return true;
+
+            case R.id.action_add:
+                createNewEvent();
+                return true;
+
+
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -44,5 +44,7 @@
     <string name="attending_string">You are attending:</string>
     <string name="leave_early_string">Leave Early</string>
     <string name="new_connections_notification">You have new connections!</string>
+    <string name="action_new_event">New Event</string>
+    <string name="action_search">Search</string>
 
 </resources>
