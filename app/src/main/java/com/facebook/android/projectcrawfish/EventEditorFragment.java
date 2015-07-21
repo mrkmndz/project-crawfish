@@ -16,7 +16,9 @@ import android.widget.Switch;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
+import com.parse.SaveCallback;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
@@ -53,6 +55,9 @@ public class EventEditorFragment extends EventDialog {
     @Bind(R.id.all_day_switch)
     Switch mAllDay;
 
+    @Bind(R.id.switcher)
+    ProgressSwitcher mSwitcher;
+
     public static final int REQUEST_START_DATE = 0;
     public static final int REQUEST_START_TIME = 1;
     public static final int REQUEST_END_DATE = 2;
@@ -69,16 +74,18 @@ public class EventEditorFragment extends EventDialog {
 
     static private Bundle getBundleWithNoID() {
         Bundle bundle = new Bundle();
-        bundle.putString(TITLE, "");
-        bundle.putString(LOCATION, "");
-        bundle.putString(DETAILS, "");
+        Event newEvent = new Event();
+        newEvent.setTitle("");
+        newEvent.setLocation("");
+        newEvent.setDescription("");
+        newEvent.setIsAllDay(false);
         Date now = new Date();
-        bundle.putSerializable(START_TIME, now);
+        newEvent.setStartDate(now);
         Calendar cal = new GregorianCalendar();
         cal.setTime(now);
         cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
-        bundle.putSerializable(END_TIME, cal.getTime());
-        bundle.putBoolean(ALL_DAY, false);
+        newEvent.setEndDate(cal.getTime());
+        bundle.putSerializable(PROXY,newEvent.toProxy());
         return bundle;
     }
 
@@ -87,38 +94,57 @@ public class EventEditorFragment extends EventDialog {
                              Bundle savedInstanceState) {
         View v = inflater.inflate(R.layout.fragment_event_creator, container, false);
         ButterKnife.bind(this, v);
+        mSwitcher.showContent();
         updateUI();
         return v;
     }
 
     private void updateUI() {
-        mStartDateButton.setText(Event.DISPLAY_DATE_FORMAT.format(mStartTime));
-        mEndDateButton.setText(Event.DISPLAY_DATE_FORMAT.format(mEndTime));
+        mStartDateButton.setText(Event.DISPLAY_DATE_FORMAT.format(mEvent.getStartDate()));
+        mEndDateButton.setText(Event.DISPLAY_DATE_FORMAT.format(mEvent.getEndDate()));
 
-        mStartTimeButton.setText(Event.DISPLAY_TIME_FORMAT.format(mStartTime));
-        mEndTimeButton.setText(Event.DISPLAY_TIME_FORMAT.format(mEndTime));
+        mStartTimeButton.setText(Event.DISPLAY_TIME_FORMAT.format(mEvent.getStartDate()));
+        mEndTimeButton.setText(Event.DISPLAY_TIME_FORMAT.format(mEvent.getEndDate()));
 
-        mTitleEditText.setText(mTitle);
-        mLocationEditText.setText(mLocation);
-        mDescriptionEditText.setText(mDetails);
+        mTitleEditText.setText(mEvent.getTitle());
+        mLocationEditText.setText(mEvent.getLocation());
+        mDescriptionEditText.setText(mEvent.getDescription());
 
-        mAllDay.setChecked(mIsAllDay);
+        mAllDay.setChecked(mEvent.isAllDay());
     }
 
-    public void saveToParse() throws ParseException {
-        Event event;
-        if (mID == null) {
-            event = new Event();
-        } else {
-            event = ParseObject.createWithoutData(Event.class, mID);
+    public void saveToParse(){
+        mSwitcher.showBar();
+        mEvent.saveInBackground(new SaveCallback() {
+            @Override
+            public void done(ParseException e) {
+                mSwitcher.showContent();
+                mListener.done();
+            }
+        });
+    }
+
+    private OnFragmentInteractionListener mListener;
+
+    interface OnFragmentInteractionListener {
+        void done();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
         }
-        event.setTitle(mTitle);
-        event.setDescription(mDetails);
-        event.setLocation(mLocation);
-        event.setStartDate(mStartTime);
-        event.setEndDate(mEndTime);
-        event.setIsAllDay(mIsAllDay);
-        event.save();
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
 
@@ -130,18 +156,18 @@ public class EventEditorFragment extends EventDialog {
         switch (requestCode) {
             case REQUEST_START_DATE:
             case REQUEST_START_TIME:
-                mStartTime = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+                mEvent.setStartDate( (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
                 break;
             case REQUEST_END_DATE:
             case REQUEST_END_TIME:
-                mEndTime = (Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE);
+                mEvent.setEndDate((Date) data.getSerializableExtra(DatePickerFragment.EXTRA_DATE));
                 break;
         }
-        if (mEndTime.before(mStartTime)) {
+        if (mEvent.getEndDate().before(mEvent.getStartDate())) {
             Calendar cal = Calendar.getInstance();
-            cal.setTime(mEndTime);
+            cal.setTime(mEvent.getStartDate());
             cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
-            mEndTime = cal.getTime();
+            mEvent.setEndDate(cal.getTime());
         }
         updateUI();
     }
@@ -149,7 +175,7 @@ public class EventEditorFragment extends EventDialog {
     @OnClick(R.id.start_date)
     public void startDateClick(View view) {
         FragmentManager manager = getFragmentManager();
-        DatePickerFragment dialog = DatePickerFragment.newInstance(mStartTime);
+        DatePickerFragment dialog = DatePickerFragment.newInstance(mEvent.getStartDate());
         dialog.setTargetFragment(EventEditorFragment.this, REQUEST_START_DATE);
         dialog.show(manager, DIALOG_DATE);
     }
@@ -157,7 +183,7 @@ public class EventEditorFragment extends EventDialog {
     @OnClick(R.id.end_date)
     public void endDateClick(View view) {
         FragmentManager manager = getFragmentManager();
-        DatePickerFragment dialog = DatePickerFragment.newInstance(mEndTime);
+        DatePickerFragment dialog = DatePickerFragment.newInstance(mEvent.getEndDate());
         dialog.setTargetFragment(EventEditorFragment.this, REQUEST_END_DATE);
         dialog.show(manager, DIALOG_DATE);
     }
@@ -165,7 +191,7 @@ public class EventEditorFragment extends EventDialog {
     @OnClick(R.id.start_time)
     public void startTimeClick(View view) {
         FragmentManager manager = getFragmentManager();
-        TimePickerFragment dialog = TimePickerFragment.newInstance(mStartTime);
+        TimePickerFragment dialog = TimePickerFragment.newInstance(mEvent.getStartDate());
         dialog.setTargetFragment(EventEditorFragment.this, REQUEST_START_TIME);
         dialog.show(manager, DIALOG_DATE);
     }
@@ -173,29 +199,29 @@ public class EventEditorFragment extends EventDialog {
     @OnClick(R.id.end_time)
     public void endTimeClick(View view) {
         FragmentManager manager = getFragmentManager();
-        TimePickerFragment dialog = TimePickerFragment.newInstance(mEndTime);
+        TimePickerFragment dialog = TimePickerFragment.newInstance(mEvent.getEndDate());
         dialog.setTargetFragment(EventEditorFragment.this, REQUEST_END_TIME);
         dialog.show(manager, DIALOG_DATE);
     }
 
     @OnTextChanged(R.id.event_title)
     void onTitleChanged(CharSequence text) {
-        mTitle = text.toString();
+        mEvent.setTitle(text.toString());
     }
 
     @OnTextChanged(R.id.location)
     void onLocationChanged(CharSequence text) {
-        mLocation = text.toString();
+        mEvent.setLocation( text.toString());
     }
 
     @OnTextChanged(R.id.description)
     void onDescriptionChanged(CharSequence text) {
-        mDetails = text.toString();
+        mEvent.setDescription(text.toString());
     }
 
     @OnCheckedChanged(R.id.all_day_switch)
     public void onAllDay(Switch s, boolean isChecked) {
-        mIsAllDay = isChecked;
+        mEvent.setIsAllDay(isChecked);
         if (isChecked) {
             mStartTimeButton.setVisibility(View.GONE);
             mEndTimeButton.setVisibility(View.GONE);

@@ -14,31 +14,14 @@ import java.util.Date;
  * Created by markamendoza on 7/13/15.
  */
 public abstract class EventDialog extends DialogFragment {
-    public static final String TITLE = "TITLE";
-    public static final String LOCATION = "LOCATION";
-    public static final String DETAILS = "DETAILS";
-    public static final String START_TIME = "START_TIME";
-    public static final String END_TIME = "END_TIME";
-    public static final String ALL_DAY = "ALL_DAY";
-    public static final String ID = "ID";
 
-    protected String mTitle;
-    protected String mLocation;
-    protected String mDetails;
-    protected Date mStartTime;
-    protected Date mEndTime;
-    protected boolean mIsAllDay;
-    protected String mID;
+    public static final String PROXY = "PROXY";
+    protected Event mEvent;
 
     protected static Bundle getBundleFromEvent(Event event) {
         Bundle bundle = new Bundle();
-        bundle.putString(ID, event.getObjectId());
-        bundle.putString(TITLE, event.getTitle());
-        bundle.putString(LOCATION, event.getLocation());
-        bundle.putString(DETAILS, event.getDescription());
-        bundle.putSerializable(START_TIME, event.getStartDate());
-        bundle.putSerializable(END_TIME, event.getEndDate());
-        bundle.putBoolean(ALL_DAY, event.isAllDay());
+        Event.Proxy proxy = event.toProxy();
+        bundle.putSerializable(PROXY,proxy);
         return bundle;
     }
 
@@ -51,13 +34,8 @@ public abstract class EventDialog extends DialogFragment {
         } else {
             bundle = getArguments();
         }
-        mID = bundle.getString(ID);
-        mTitle = bundle.getString(TITLE);
-        mLocation = bundle.getString(LOCATION);
-        mDetails = bundle.getString(DETAILS);
-        mStartTime = (Date) bundle.getSerializable(START_TIME);
-        mEndTime = (Date) bundle.getSerializable(END_TIME);
-        mIsAllDay = bundle.getBoolean(ALL_DAY);
+        Event.Proxy proxy = (Event.Proxy) bundle.getSerializable(PROXY);
+        mEvent = proxy.toPO();
     }
 
     @NonNull
@@ -71,12 +49,6 @@ public abstract class EventDialog extends DialogFragment {
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putString(ID, mID);
-        outState.putString(TITLE, mTitle);
-        outState.putString(LOCATION, mLocation);
-        outState.putString(DETAILS, mDetails);
-        outState.putSerializable(START_TIME, mStartTime);
-        outState.putSerializable(END_TIME, mEndTime);
-        outState.putBoolean(ALL_DAY, mIsAllDay);
+        outState.putSerializable(PROXY, mEvent.toProxy());
     }
 }

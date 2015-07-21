@@ -10,6 +10,7 @@ import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
+import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -106,10 +107,11 @@ public class Event extends ParseObject {
         ParseQuery<Attendance> query =  ParseQuery.getQuery(Attendance.class);
         query.whereEqualTo(Attendance.EVENT, this);
         query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+        query.include(Attendance.EVENT);
         query.findInBackground(new FindCallback<Attendance>() {
             @Override
             public void done(List<Attendance> list, ParseException e) {
-                if(list.size()==0){
+                if(list==null||list.size()==0){
                     final Attendance att = new Attendance();
                     att.setEvent(Event.this);
                     att.setUser(ParseUser.getCurrentUser());
@@ -137,6 +139,43 @@ public class Event extends ParseObject {
 
     public interface CheckInCallback{
         void checkedIn(Attendance attendance);
+    }
+
+    public Proxy toProxy(){
+        Proxy proxy = new Proxy();
+        proxy.mID = getObjectId();
+        proxy.mTitle = getTitle();
+        proxy.mLocation = getLocation();
+        proxy.mDescription = getDescription();
+        proxy.mIsAllDay = isAllDay();
+        proxy.mStartDate = getStartDate();
+        proxy.mEndDate = getEndDate();
+        return proxy;
+    }
+    public static class Proxy implements Serializable {
+        private String mID;
+        private String mTitle;
+        private String mLocation;
+        private String mDescription;
+        private boolean mIsAllDay;
+        private Date mStartDate;
+        private Date mEndDate;
+
+        public Event toPO(){
+            Event event;
+            if (mID==null) {
+                event = new Event();
+            } else {
+                event = ParseObject.createWithoutData(Event.class, mID);
+            }
+            event.setTitle(mTitle);
+            event.setLocation(mLocation);
+            event.setDescription(mDescription);
+            event.setIsAllDay(mIsAllDay);
+            event.setStartDate(mStartDate);
+            event.setEndDate(mEndDate);
+            return event;
+        }
     }
 
 }

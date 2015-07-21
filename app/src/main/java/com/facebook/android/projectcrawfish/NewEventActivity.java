@@ -16,7 +16,7 @@ import com.parse.SaveCallback;
 import java.util.Calendar;
 import java.util.Date;
 
-public class NewEventActivity extends AppCompatActivity {
+public class NewEventActivity extends AppCompatActivity implements EventEditorFragment.OnFragmentInteractionListener {
 
     public static final String KEY_ID = "ID";
     EventEditorFragment mFragment;
@@ -52,15 +52,15 @@ public class NewEventActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.menu_item_save) {
-            try {
                 mFragment.saveToParse();
-                setResult(Activity.RESULT_OK);
-                finish();
-            } catch (ParseException e) {
-                e.printStackTrace();
-            }
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void done() {
+        setResult(Activity.RESULT_OK);
+        finish();
     }
 }

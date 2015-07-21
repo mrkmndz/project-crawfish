@@ -20,6 +20,8 @@ import com.joanzapata.android.iconify.Iconify;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 
+import java.util.ArrayList;
+
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
@@ -28,10 +30,12 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener,
         UpcomingEventDetailsFragment.OnFragmentInteractionListener,
-        ContactListFragment.OnFragmentInteractionListener {
+        ContactListFragment.OnFragmentInteractionListener,
+        PastEventDetailsFragment.OnFragmentInteractionListener {
 
     public static final int NEW_EVENT = 1;
     public static final int PAST_EVENTS = 3;
+    public static final int SWIPES = 5;
     public static final String DIALOG_CHECK_IN = "CheckInDialog";
     public static final String PAST_EVENT_DETAILS = "PastEventDetails";
     public static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
@@ -71,8 +75,12 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (requestCode == NEW_EVENT && resultCode == Activity.RESULT_OK) {
+        if (resultCode == Activity.RESULT_OK && requestCode == NEW_EVENT){
             getUpcomingEventsTab().refreshList();
+        } else  if (requestCode == SWIPES) {
+            FragmentManager manager = getSupportFragmentManager();
+            PastEventDetailsFragment fragment = (PastEventDetailsFragment) manager.findFragmentByTag(PAST_EVENT_DETAILS);
+            fragment.refresh();
         }
     }
 
@@ -95,6 +103,12 @@ public class MainActivity extends AppCompatActivity implements
         FragmentManager manager = getSupportFragmentManager();
         ContactDetailsFragment contactDetailsFragment = ContactDetailsFragment.newInstance(user);
         contactDetailsFragment.show(manager, DIALOG_CONTACT_DETAILS);
+    }
+
+    @Override
+    public void openSwipes(ArrayList<CardSwipeActivity.ProfileDisplayInstance> PDIs) {
+        Intent intent = CardSwipeActivity.newIntent(this, PDIs);
+        startActivityForResult(intent, SWIPES);
     }
 
     private UpcomingEventsFragment getUpcomingEventsTab() {
@@ -177,20 +191,18 @@ public class MainActivity extends AppCompatActivity implements
                 } else {
                     finish();
                 }
+                return false;
             case R.id.action_my_profile:
                 FragmentManager manager = getSupportFragmentManager();
                 MeFragment meFragment = MeFragment.newInstance();
                 meFragment.show(manager, DIALOG_CONTACT_DETAILS);
-
-
+                return false;
             case R.id.action_search:
                 return true;
 
             case R.id.action_add:
                 createNewEvent();
                 return true;
-
-
             default:
                 return super.onOptionsItemSelected(item);
         }

@@ -29,12 +29,10 @@ public class UpcomingEventDetailsFragment extends EventDialog {
     @Bind(R.id.upcoming_event_description)
     TextView mEventDescription;
 
-    private Event mCachedEvent;
 
     public static UpcomingEventDetailsFragment newInstance(Event event) {
         UpcomingEventDetailsFragment fragment = new UpcomingEventDetailsFragment();
         fragment.setArguments(getBundleFromEvent(event));
-        fragment.mCachedEvent = event;
         return fragment;
     }
 
@@ -49,18 +47,16 @@ public class UpcomingEventDetailsFragment extends EventDialog {
     }
 
     private void updateUI() {
-        mEventName.setText(mTitle);
-        mEventLocation.setText(mLocation);
-        mEventDuration.setText(Event.DISPLAY_DATE_FORMAT.format(mStartTime) +
-                " - " +
-                Event.DISPLAY_DATE_FORMAT.format(mEndTime));
-        mEventDescription.setText(mDetails);
+        mEventName.setText(mEvent.getTitle());
+        mEventLocation.setText(mEvent.getLocation());
+        mEventDuration.setText(mEvent.getFormattedStartAndEnd());
+        mEventDescription.setText(mEvent.getDescription());
         mEventDescription.setMovementMethod(new ScrollingMovementMethod());
     }
 
     @OnClick(R.id.check_in_button)
     public void onClickCheckIn() {
-        mListener.checkInToEvent(mID);
+        mListener.checkInToEvent(mEvent.getObjectId());
         this.dismiss();
     }
 

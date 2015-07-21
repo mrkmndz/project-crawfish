@@ -16,9 +16,11 @@ import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.ParseException;
+import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -32,8 +34,10 @@ public class CardSwipeActivity extends AppCompatActivity {
 
     public static final int BASE_SIZE = 40;
     public static final int SIZE_SLOPE = 50;
+    public static final String PDIS = "PDIS";
     private CardAdapter mCardAdapter;
-    private int mCurrentCardIndex;
+    private int mOutstandingPins;
+    private boolean mIsEmpty;
     private ArrayList<ProfileDisplayInstance> mPDIs;
 
     @Bind(R.id.xButton)
@@ -44,11 +48,10 @@ public class CardSwipeActivity extends AppCompatActivity {
     @Bind(R.id.frame)
     SwipeFlingAdapterView flingContainer;
 
-    private Event e;
 
-    public static Intent newIntent(Context context, String eventID) {
+    public static Intent newIntent(Context context, ArrayList<CardSwipeActivity.ProfileDisplayInstance> PDIs) {
         Intent intent = new Intent(context, CardSwipeActivity.class);
-        intent.putExtra("eventID", eventID);
+        intent.putExtra(PDIS, PDIs);
         return intent;
     }
 
@@ -61,34 +64,12 @@ public class CardSwipeActivity extends AppCompatActivity {
         mCheckButton.setTextSize(BASE_SIZE);
         mXButton.setTextSize(BASE_SIZE);
 
-        mPDIs = new ArrayList<>();
-        ParseQuery<Event> q = ParseQuery.getQuery(Event.class);
-        try {
-            e = q.get(getIntent().getStringExtra("eventID"));
-
-            ParseQuery<Swipe> innerQueryA = ParseQuery.getQuery(Swipe.class);
-            innerQueryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//All right swipes
-
-            ParseQuery<Swipe> innerQueryB = ParseQuery.getQuery(Swipe.class);
-            innerQueryB.whereEqualTo(Swipe.EVENT, e);//All swipes at this event
-
-            ParseQuery<Attendance> query = ParseQuery.getQuery(Attendance.class);
-            query.whereEqualTo(Attendance.EVENT, e);
-            query.whereNotEqualTo(Attendance.USER, ParseUser.getCurrentUser());
-            query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQueryA);//
-            query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQueryB);
-            query.include(Attendance.USER);
-
-            List<Attendance> attendances = query.find();
-            for (Attendance att : attendances) {
-                ProfileDisplayInstance pdi = new ProfileDisplayInstance(att.getUser());
-                mPDIs.add(pdi);
-            }
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
+        mPDIs = (ArrayList<ProfileDisplayInstance>) getIntent().getSerializableExtra(PDIS);
 
         mCardAdapter = new CardAdapter(this, mPDIs);
+
+        mIsEmpty = false;
+        mOutstandingPins=0;
 
         flingContainer.setAdapter(mCardAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
@@ -106,14 +87,10 @@ public class CardSwipeActivity extends AppCompatActivity {
                 mCheckButton.setTextSize(BASE_SIZE);
                 mXButton.setTextSize(BASE_SIZE);
                 ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                try {
-                    ParseUser user = query.get(pdi.getUserID());
-                    Swipe leftSwipe = Swipe.leftSwipe(user,e);
-                    leftSwipe.save();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                    ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getUserID());
+                    Event event = ParseObject.createWithoutData(Event.class, pdi.getEventID());
+                mOutstandingPins++;
+                    Swipe.sendSwipe(true, user, event);
             }
 
             @Override
@@ -121,19 +98,17 @@ public class CardSwipeActivity extends AppCompatActivity {
                 mCheckButton.setTextSize(BASE_SIZE);
                 mXButton.setTextSize(BASE_SIZE);
                 ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
-                ParseQuery<ParseUser> query = ParseUser.getQuery();
-                try {
-                    ParseUser user = query.get(pdi.getUserID());
-                    Swipe leftSwipe = Swipe.rightSwipe(user, e);
-                    leftSwipe.save();
-                } catch (ParseException e) {
-                    e.printStackTrace();
-                }
+                    ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getUserID());
+                    Event event = ParseObject.createWithoutData(Event.class, pdi.getEventID());
+                mOutstandingPins++;
+                    Swipe.sendSwipe(false, user, event);
             }
 
             @Override
             public void onAdapterAboutToEmpty(int itemsInAdapter) {
-                if (itemsInAdapter == 0) finish();
+                if (itemsInAdapter == 0) {
+                    finish();
+                }
             }
 
             @Override
@@ -158,18 +133,20 @@ public class CardSwipeActivity extends AppCompatActivity {
         flingContainer.getTopCardListener().selectLeft();
     }
 
-    private class ProfileDisplayInstance {
+    public static class ProfileDisplayInstance implements Serializable {
 
         private final float RANGE = 50;
 
-        private final Profile mProfile;
         private float mWiggleY;
         private float mWiggleX;
+        private String mEventID;
         private String mUserID;
+        private Profile mProfile;
 
-        public ProfileDisplayInstance(ParseUser user) {
-            mUserID  =user.getObjectId();
-            mProfile = Profile.fromUser(user);
+        public ProfileDisplayInstance(Attendance attendance) {
+            mEventID = attendance.getEvent().getObjectId();
+            mUserID = attendance.getUser().getObjectId();
+            mProfile = Profile.fromUser(attendance.getUser());
             Random random = new Random();
             mWiggleX = RANGE * (random.nextFloat() * 2 - 1);
             mWiggleY = RANGE * (random.nextFloat() * 2 - 1);
@@ -188,6 +165,8 @@ public class CardSwipeActivity extends AppCompatActivity {
         }
 
         public String getUserID(){return mUserID;}
+
+        public String getEventID(){return mEventID;}
     }
 
     private class CardAdapter extends ArrayAdapter<ProfileDisplayInstance> {

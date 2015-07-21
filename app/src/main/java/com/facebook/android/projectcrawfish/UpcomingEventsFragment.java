@@ -106,7 +106,7 @@ public class UpcomingEventsFragment extends Fragment{
         query.findInBackground(new FindCallback<Attendance>() {
             @Override
             public void done(List<Attendance> list, ParseException e) {
-                if (list.size()==0){
+                if (list==null ||list.size()==0){
                     mIsCheckedIn = false;
                     showList();
                 } else {
