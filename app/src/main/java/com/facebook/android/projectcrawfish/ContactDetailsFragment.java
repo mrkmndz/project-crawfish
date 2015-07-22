@@ -5,7 +5,6 @@ package com.facebook.android.projectcrawfish;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
@@ -17,13 +16,14 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-public class ContactDetailsFragment extends ProfileDialog {
+public class ContactDetailsFragment extends CustomViewDialog {
+
+    public static final String PROFILE = "PROFILE";
 
     @Bind(R.id.contact_name)
     TextView mNameField;
@@ -43,12 +43,35 @@ public class ContactDetailsFragment extends ProfileDialog {
     @Bind(R.id.switcher)
     ProgressSwitcher mSwitcher;
 
+    protected Profile mProfile;
+
     public static ContactDetailsFragment newInstance(ParseUser user) {
         ContactDetailsFragment frag = new ContactDetailsFragment();
         Bundle args = getBundleFromUser(user);
         frag.setArguments(args);
         frag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         return frag;
+    }
+
+    protected static Bundle getBundleFromUser(ParseUser user) {
+        Bundle bundle = new Bundle();
+        Profile profile = Profile.fromUser(user);
+        bundle.putSerializable(PROFILE, profile);
+        return bundle;
+    }
+
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        Bundle bundle;
+
+        if (savedInstanceState != null) {
+            bundle = savedInstanceState;
+        } else {
+            bundle = getArguments();
+        }
+
+        mProfile = (Profile) bundle.getSerializable(PROFILE);
     }
 
     @Override
@@ -59,6 +82,12 @@ public class ContactDetailsFragment extends ProfileDialog {
         updateUI();
 
         return v;
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        super.onSaveInstanceState(outState);
+        outState.putSerializable(PROFILE, mProfile);
     }
 
     private void updateUI() {
@@ -116,18 +145,20 @@ public class ContactDetailsFragment extends ProfileDialog {
 
     public void openFacebookIntent(Context context) {
         String facebookUrl = "https://www.facebook.com/" + mProfile.getFbId();
+        String fbId = mProfile.getFbId();
+
         try {
             int versionCode = context.getPackageManager()
                     .getPackageInfo("com.facebook.katana", 0).versionCode;
+
             if (versionCode >= 3002850) {
-                Uri uri = Uri.parse("fb://facewebmodal/f?href=" + facebookUrl);
-                startActivity(new Intent(Intent.ACTION_VIEW, uri));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://facewebmodal/f?href=" + facebookUrl)));
             } else {
                 // open the Facebook app using the old method
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/" + facebookUrl)));
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("fb://profile/" + fbId)));
             }
         } catch (PackageManager.NameNotFoundException e) {
-            // Facebook is not installed. Open the browser
+            // Facebook is not installed. Open the browsers
             startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(facebookUrl)));
         }
     }

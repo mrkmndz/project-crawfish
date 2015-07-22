@@ -11,9 +11,7 @@
     android:layout_marginRight="24dp"
     android:layout_marginTop="16dp"
     cardview:cardCornerRadius="8dp"
-    cardview:cardElevation="6dp"
-
-    >
+    cardview:cardElevation="6dp">
 
     <RelativeLayout
         android:layout_width="490dp"
@@ -50,8 +48,7 @@
                 android:layout_height="wrap_content"
                 android:layout_below="@id/switcher"
                 android:layout_centerHorizontal="true"
-                android:gravity="fill_vertical|center"
-                >
+                android:gravity="fill_vertical|center">
 
                 <android.widget.IconButton
                     android:id="@+id/contact_fb"
@@ -62,8 +59,7 @@
                     android:gravity="center"
                     android:text="{fa_facebook_square}"
                     android:textColor="@color/fb"
-                    android:textSize="48sp"
-                    />
+                    android:textSize="48sp"/>
 
                 <android.widget.IconButton
                     android:id="@+id/contact_linkedin"
@@ -158,7 +154,8 @@
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textSize="18sp"
-                    tools:text="@string/email_hint"/>
+                    tools:text="@string/email_hint"
+                    android:textColor="@color/toolbar_2"/>
 
             </RelativeLayout>
 
@@ -193,7 +190,8 @@
                     android:gravity="center_vertical"
                     android:singleLine="true"
                     android:textSize="18sp"
-                    tools:text="@string/phone_number_hint"/>
+                    tools:text="@string/phone_number_hint"
+                    android:textColor="@color/toolbar_2"/>
 
 
             </RelativeLayout>

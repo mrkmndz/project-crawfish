@@ -3,6 +3,7 @@
 package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
+import android.os.Parcelable;
 import android.util.AttributeSet;
 import android.view.Gravity;
 import android.widget.ProgressBar;
@@ -13,7 +14,6 @@ import android.widget.ViewSwitcher;
  */
 public class ProgressSwitcher extends ViewSwitcher {
 
-    public static final int BAR = 0;
 
     ProgressBar mBar;
 
@@ -24,23 +24,27 @@ public class ProgressSwitcher extends ViewSwitcher {
     public ProgressSwitcher(Context context, AttributeSet attrs) {
         super(context, attrs);
         mBar = new ProgressBar(context);
-        mBar.setId(BAR);
         ViewSwitcher.LayoutParams params = new ViewSwitcher.LayoutParams(ViewSwitcher.LayoutParams.WRAP_CONTENT,ViewSwitcher.LayoutParams.WRAP_CONTENT);
         params.gravity = Gravity.CENTER;
         addView(mBar,params);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Parcelable state) {
+        super.onRestoreInstanceState(state);
     }
 
     public void showContent(){
         if (getChildCount() < 2) {
             throw new IllegalStateException("Needs a second view");
         }
-        if (getNextView().getId()!=BAR){
+        if (getNextView()!= mBar){
             showNext();
         }
     }
 
     public void showBar(){
-        if (getNextView().getId()==BAR){
+        if (getNextView()==mBar){
             showNext();
         }
     }

@@ -13,29 +13,18 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SaveCallback;
-
 public class LinkedInFragment extends DialogFragment {
 
     public static final String PROFILE = "PROFILE";
 
     protected Profile mProfile;
 
-    public static LinkedInFragment newInstance(ParseUser user) {
+    public static LinkedInFragment newInstance(Profile profile) {
         LinkedInFragment frag = new LinkedInFragment();
-        Bundle args = getBundleFromUser(user);
+        Bundle args = new Bundle();
+        args.putSerializable(PROFILE, profile);
         frag.setArguments(args);
-//        frag.setStyle(DialogFragment.STYLE_NO_TITLE, 0);
         return frag;
-    }
-
-    protected static Bundle getBundleFromUser(ParseUser user) {
-        Bundle bundle = new Bundle();
-        Profile profile = Profile.fromUser(user);
-        bundle.putSerializable(PROFILE, profile);
-        return bundle;
     }
 
     @Override
@@ -56,7 +45,6 @@ public class LinkedInFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
 
         LayoutInflater layoutInflater = LayoutInflater.from(getActivity());
-        //TODO change this layout to TextEditSwitcher after pushing
         View promptView = layoutInflater.inflate(R.layout.input_dialog, null);
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(getActivity());
         alertDialogBuilder.setView(promptView);
@@ -104,12 +92,6 @@ public class LinkedInFragment extends DialogFragment {
 
                         String linkedIn = editText.getText().toString();
                         mProfile.setLinkedIn(linkedIn);
-
-                        mProfile.save(new SaveCallback() {
-                            @Override
-                            public void done(ParseException e) {
-                            }
-                        });
 
                         Toast
                                 .makeText(getActivity(),

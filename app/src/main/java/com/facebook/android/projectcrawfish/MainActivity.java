@@ -235,16 +235,16 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onFbSelected(ParseUser user) {
+    public void onFbSelected(Profile profile) {
         FragmentManager manager = getSupportFragmentManager();
-        LinkFacebookFragment linkFacebookFragment = LinkFacebookFragment.newInstance(user);
+        LinkFacebookFragment linkFacebookFragment = LinkFacebookFragment.newInstance(profile);
         linkFacebookFragment.show(manager, FB_DIALOG);
     }
 
     @Override
-    public void onLinkedInSelected(ParseUser user) {
+    public void onLinkedInSelected(Profile profile) {
         FragmentManager manager = getSupportFragmentManager();
-        LinkedInFragment linkedInFragment = LinkedInFragment.newInstance(user);
+        LinkedInFragment linkedInFragment = LinkedInFragment.newInstance(profile);
         linkedInFragment.show(manager, LINKED_IN_DIALOG);
     }
 

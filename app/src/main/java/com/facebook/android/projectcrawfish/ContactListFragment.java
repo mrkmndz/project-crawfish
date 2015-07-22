@@ -8,11 +8,6 @@ import android.view.View;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
-import java.util.List;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-
 public class ContactListFragment extends ListFragment<ParseUser> {
 
     @Override

@@ -19,25 +19,18 @@ import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import org.json.JSONObject;
 
-
 public class LinkFacebookFragment extends DialogFragment {
 
     public static final String PROFILE = "PROFILE";
 
     protected Profile mProfile;
 
-    public static LinkFacebookFragment newInstance(ParseUser user) {
+    public static LinkFacebookFragment newInstance(Profile profile) {
         LinkFacebookFragment frag = new LinkFacebookFragment();
-        Bundle args = getBundleFromUser(user);
+        Bundle args = new Bundle();
+        args.putSerializable(PROFILE, profile);
         frag.setArguments(args);
         return frag;
-    }
-
-    protected static Bundle getBundleFromUser(ParseUser user) {
-        Bundle bundle = new Bundle();
-        Profile profile = Profile.fromUser(user);
-        bundle.putSerializable(PROFILE, profile);
-        return bundle;
     }
 
     @Override
@@ -57,7 +50,6 @@ public class LinkFacebookFragment extends DialogFragment {
     @NonNull
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState) {
-
 
         if (!ParseFacebookUtils.isLinked(ParseUser.getCurrentUser())) {
             return new AlertDialog.Builder(getActivity())
@@ -97,13 +89,6 @@ public class LinkFacebookFragment extends DialogFragment {
 
                             mProfile.setIsFbPublic(true);
 
-                            mProfile.save(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-
-                                }
-                            });
-
                             Toast
                                     .makeText(getActivity(),
                                             "Your Facebook profile is now visible. To make it private, press the button again.",
@@ -115,13 +100,6 @@ public class LinkFacebookFragment extends DialogFragment {
                         public void onClick(DialogInterface dialog, int which) {
 
                             mProfile.setIsFbPublic(false);
-
-                            mProfile.save(new SaveCallback() {
-                                @Override
-                                public void done(ParseException e) {
-
-                                }
-                            });
 
                             Toast
                                     .makeText(getActivity(),
@@ -156,16 +134,9 @@ public class LinkFacebookFragment extends DialogFragment {
                                 String fbId = object.getString("id");
                                 mProfile.setFbId(fbId);
 
-                                mProfile.save(new SaveCallback() {
-                                    @Override
-                                    public void done(ParseException e) {
-                                    }
-                                });
-
                                 ParseUser currentUser = ParseUser.getCurrentUser();
                                 currentUser.put("fb_profile", userProfile);
                                 currentUser.save();
-
 
                             } catch (Exception e) {
                                 e.printStackTrace();

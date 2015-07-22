@@ -8,9 +8,13 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.Fragment;
 import android.telephony.PhoneNumberFormattingTextWatcher;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.util.Log;
 import android.util.Patterns;
 import android.view.Gravity;
@@ -18,25 +22,19 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.inputmethod.InputMethodManager;
-import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.IconButton;
 import android.widget.ImageView;
-import android.widget.TextView;
-import android.widget.ViewSwitcher;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
-import com.squareup.picasso.Callback;
-import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import butterknife.OnTextChanged;
 
 public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
 
@@ -55,7 +53,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         return "My Profile";
     }
 
-    public static class MeFragment extends ProfileDialog implements View.OnClickListener {
+    public static class MeFragment extends Fragment implements View.OnClickListener {
 
         @Bind(R.id.contact_fb)
         IconButton mContactFb;
@@ -68,32 +66,14 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         @Bind(R.id.camera_button)
         IconButton mCamera;
 
-        @Bind(R.id.name_switcher)
-        ViewSwitcher nameSwitcher;
-        @Bind(R.id.position_switcher)
-        ViewSwitcher positionSwitcher;
-        @Bind(R.id.email_switcher)
-        ViewSwitcher emailSwitcher;
-        @Bind(R.id.number_switcher)
-        ViewSwitcher numberSwitcher;
-
-        @Bind(R.id.contact_name)
-        TextView mContactName;
-        @Bind(R.id.contact_position)
-        TextView mContactPosition;
-        @Bind(R.id.contact_email)
-        TextView mContactEmail;
-        @Bind(R.id.contact_number)
-        TextView mContactNumber;
-
-        @Bind(R.id.contact_name_edit)
-        EditText mEditName;
-        @Bind(R.id.contact_position_edit)
-        EditText mEditPosition;
-        @Bind(R.id.contact_number_edit)
-        EditText mEditNumber;
-        @Bind(R.id.contact_email_edit)
-        EditText mEditEmail;
+        @Bind(R.id.name_text_edit)
+        TextEditSwitcher nameTextEditSwitcher;
+        @Bind(R.id.position_text_edit)
+        TextEditSwitcher positionTextEditSwitcher;
+        @Bind(R.id.email_text_edit)
+        TextEditSwitcher emailTextEditSwitcher;
+        @Bind(R.id.number_text_edit)
+        TextEditSwitcher numberTextEditSwitcher;
 
         @Bind(R.id.profile_picture)
         ImageView mProfilePictureView;
@@ -101,8 +81,14 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         @Bind(R.id.switcher)
         ProgressSwitcher mSwitcher;
 
+        protected Profile mProfile;
+
+        public static boolean editMode;
+
         OnFragmentInteractionListener mListener;
 
+        public static final String PROFILE = "PROFILE";
+        public static final String SAVE_EDIT = "SAVE_EDIT";
         public static final String IMAGE_TYPE = "image/*";
         public static final int SELECT_SINGLE_PICTURE = 101;
 
@@ -113,13 +99,55 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
             return frag;
         }
 
+        protected static Bundle getBundleFromUser(ParseUser user) {
+            Bundle bundle = new Bundle();
+            Profile profile = Profile.fromUser(user);
+            bundle.putSerializable(PROFILE, profile);
+            return bundle;
+        }
+
         @Override
-        public View onCreateCustomView(LayoutInflater inflater, ViewGroup container) {
+        public void onCreate(Bundle savedInstanceState) {
+            super.onCreate(savedInstanceState);
+            Bundle bundle;
+
+            if (savedInstanceState != null) {
+                bundle = savedInstanceState;
+                editMode = bundle.getBoolean(SAVE_EDIT);
+            } else {
+                bundle = getArguments();
+            }
+
+            mProfile = (Profile) bundle.getSerializable(PROFILE);
+        }
+
+        @Override
+        public void onSaveInstanceState(Bundle outState) {
+            super.onSaveInstanceState(outState);
+            outState.putSerializable(PROFILE, mProfile);
+            outState.putBoolean(SAVE_EDIT, editMode);
+        }
+
+        @Nullable
+        @Override
+        public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+            super.onCreateView(inflater, container, savedInstanceState);
             View v = inflater.inflate(R.layout.fragment_me, container, false);
             ButterKnife.bind(this, v);
-            updateUI();
+
+            nameTextEditSwitcher.showText();
+            positionTextEditSwitcher.showText();
+            emailTextEditSwitcher.showText();
+            numberTextEditSwitcher.showText();
+
+            nameTextEditSwitcher.setNameDisplay();
+            positionTextEditSwitcher.setDisplay();
+            emailTextEditSwitcher.setDisplay();
+            numberTextEditSwitcher.setDisplay();
+
             mContactFb.setClickable(false);
             mContactLinkedIn.setClickable(false);
+            updateUI();
             return v;
         }
 
@@ -135,61 +163,192 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
             }
         }
 
+        @Override
+        public void onResume() {
+            super.onResume();
+
+            if (editMode) {
+                editText();
+            } else {
+                saveText();
+            }
+        }
+
         @OnClick(R.id.edit_button)
         public void onClick(View v) {
-            nameSwitcher.showPrevious();
-            positionSwitcher.showPrevious();
-            emailSwitcher.showPrevious();
-            numberSwitcher.showPrevious();
+            editText();
+        }
+
+        @OnClick(R.id.save_button)
+        public void saveCard() {
+            saveText();
+        }
+
+        public void editText() {
+            editMode = true;
+
+            nameTextEditSwitcher.showEdit();
+            positionTextEditSwitcher.showEdit();
+            emailTextEditSwitcher.showEdit();
+            numberTextEditSwitcher.showEdit();
 
             mContactFb.setClickable(true);
             mContactLinkedIn.setClickable(true);
 
-            mEditNumber.addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+            mCamera.setEnabled(true);
+            mCamera.setVisibility(View.VISIBLE);
+
+            numberTextEditSwitcher.getEditText().addTextChangedListener(new PhoneNumberFormattingTextWatcher());
+
+            nameTextEditSwitcher.getEditText().addTextChangedListener(new TextWatcher() {
+
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String[] name = s.toString().split(" ");
+
+                    if (name.length < 2) {
+                        Snackbar snack = Snackbar.make(nameTextEditSwitcher, "Please enter your full name.", Snackbar.LENGTH_LONG);
+                        View view = snack.getView();
+                        FrameLayout.LayoutParams params =(FrameLayout.LayoutParams)view.getLayoutParams();
+                        params.gravity = Gravity.TOP;
+                        params.topMargin = 250;
+                        view.setLayoutParams(params);
+                        snack.show();
+                        mSave.setEnabled(false);
+                    } else {
+                        mSave.setEnabled(true);
+                        mProfile.setFullName(s.toString());
+                    }
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            positionTextEditSwitcher.getEditText().addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mProfile.setPosition(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            emailTextEditSwitcher.getEditText().addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    String formattedEmail = s.toString().replaceAll("\\s", "");
+                    mProfile.setEmail(formattedEmail);
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
+
+            numberTextEditSwitcher.getEditText().addTextChangedListener(new TextWatcher() {
+                @Override
+                public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+
+                }
+
+                @Override
+                public void onTextChanged(CharSequence s, int start, int before, int count) {
+                    mProfile.setPhoneNumber(s.toString());
+                }
+
+                @Override
+                public void afterTextChanged(Editable s) {
+
+                }
+            });
 
             mEdit.setEnabled(false);
             mEdit.setVisibility(View.GONE);
             mSave.setEnabled(true);
             mSave.setVisibility(View.VISIBLE);
-            mCamera.setEnabled(true);
-            mCamera.setVisibility(View.VISIBLE);
             updateUI();
         }
 
-        @OnClick(R.id.save_button)
-        public void saveCard() {
-            nameSwitcher.showNext();
-            positionSwitcher.showNext();
-            emailSwitcher.showNext();
-            numberSwitcher.showNext();
-            mContactFb.setClickable(false);
-            mContactLinkedIn.setClickable(false);
+        public void saveText() {
+            editMode = false;
 
-            mProfile.save(new SaveCallback() {
-                @Override
-                public void done(ParseException e) {
-                    mEdit.setEnabled(true);
-                    mEdit.setVisibility(View.VISIBLE);
-                }
-            });
+            hideKeyboard();
 
-            mSave.setEnabled(false);
-            mSave.setVisibility(View.GONE);
-            mCamera.setEnabled(false);
-            mCamera.setVisibility(View.GONE);
+            if (isValidEmail(mProfile.getEmail()) && isValidNumber(mProfile.getPhoneNumber())) {
 
-            updateUI();
+                nameTextEditSwitcher.showText();
+                positionTextEditSwitcher.showText();
+                emailTextEditSwitcher.showText();
+                numberTextEditSwitcher.showText();
+
+                mContactFb.setClickable(false);
+                mContactLinkedIn.setClickable(false);
+
+                mCamera.setEnabled(false);
+                mCamera.setVisibility(View.GONE);
+
+                mProfile.save(new SaveCallback() {
+                    @Override
+                    public void done(ParseException e) {
+                        mEdit.setEnabled(true);
+                        mEdit.setVisibility(View.VISIBLE);
+                    }
+                });
+                mSave.setEnabled(false);
+                mSave.setVisibility(View.GONE);
+
+                updateUI();
+            } else {
+                validateInput();
+            }
         }
 
         private void updateUI() {
-            mContactName.setText(mProfile.getFullName());
-            mContactPosition.setText(mProfile.getPosition());
-            mContactNumber.setText(mProfile.getPhoneNumber());
-            mContactEmail.setText(mProfile.getEmail());
-            mEditName.setText(mProfile.getFullName());
-            mEditPosition.setText(mProfile.getPosition());
-            mEditEmail.setText(mProfile.getEmail());
-            mEditNumber.setText(mProfile.getPhoneNumber());
+
+            nameTextEditSwitcher.setDisplayedText(mProfile.getFullName());
+            positionTextEditSwitcher.setDisplayedText(mProfile.getPosition());
+            emailTextEditSwitcher.setDisplayedText(mProfile.getEmail());
+            numberTextEditSwitcher.setDisplayedText(mProfile.getPhoneNumber());
+
+            String linkedIn = mProfile.getLinkedIn();
+
+            if (linkedIn == null || linkedIn.equals("") ||
+                    linkedIn.equals("https://www.linkedin.com/in/")) {
+                mContactLinkedIn.setTextColor(getResources().getColor(R.color.greyed_out));
+            } else {
+                mContactLinkedIn.setTextColor(getResources().getColor(R.color.linkedIn));
+            }
+
+            String fbId = mProfile.getFbId();
+
+            if (fbId == null || mProfile.getIsFbPublic() == null || !mProfile.getIsFbPublic()) {
+                mContactFb.setTextColor(getResources().getColor(R.color.greyed_out));
+            } else {
+                mContactFb.setTextColor(getResources().getColor(R.color.com_facebook_blue));
+            }
+
             mProfile.loadProfilePictureIntoImageView(mProfilePictureView, mSwitcher);
 
             hideKeyboard();
@@ -228,82 +387,41 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         }
 
         public void validateInput() {
-            if (isValidEmail(mProfile.getEmail())) {
-                mContactEmail.setError(null);
-            } else {
-                mContactEmail.setError("Please enter a valid email.");
-                Snackbar.make(mContactEmail, "Please enter a valid email.", Snackbar.LENGTH_LONG)
+            if (!isValidEmail(mProfile.getEmail())) {
+                Snackbar.make(emailTextEditSwitcher.getTextView(), "Please enter a valid email.", Snackbar.LENGTH_LONG)
                         .show();
             }
 
-            if (isValidNumber(mProfile.getPhoneNumber())) {
-                mContactNumber.setError(null);
-            } else {
-                mContactNumber.setError("Please enter a valid phone number.");
-                Snackbar.make(mContactEmail, "Please enter a valid phone number.", Snackbar.LENGTH_LONG)
+            if (!isValidNumber(mProfile.getPhoneNumber())) {
+                Snackbar.make(emailTextEditSwitcher.getTextView(), "Please enter a valid phone number.", Snackbar.LENGTH_LONG)
                         .show();
             }
 
             if (!isValidEmail(mProfile.getEmail()) && !isValidNumber(mProfile.getPhoneNumber())) {
-                Snackbar.make(mContactEmail, "Please enter a valid email & phone number.", Snackbar.LENGTH_LONG)
+                Snackbar.make(emailTextEditSwitcher.getTextView(), "Please enter a valid email & phone number.", Snackbar.LENGTH_LONG)
                         .show();
             }
         }
 
         private void hideKeyboard() {
             InputMethodManager imm = (InputMethodManager) getActivity().getSystemService(Context.INPUT_METHOD_SERVICE);
-            imm.hideSoftInputFromWindow(mEditNumber.getWindowToken(), 0);
+            imm.hideSoftInputFromWindow(numberTextEditSwitcher.getEditText().getWindowToken(), 0);
         }
-
 
         @OnClick(R.id.contact_fb)
         public void linkFb() {
-            mListener.onFbSelected(ParseUser.getCurrentUser());
+            mListener.onFbSelected(mProfile);
         }
 
         @OnClick(R.id.contact_linkedin)
         public void linkLinkedIn() {
-            mListener.onLinkedInSelected(ParseUser.getCurrentUser());
-        }
-
-        @OnTextChanged(R.id.contact_name_edit)
-        void onNameChanged(CharSequence text) {
-            String[] name = text.toString().split(" ");
-
-            if (name.length < 2) {
-                mSave.setEnabled(false);
-                Snackbar snack = Snackbar.make(mContactEmail, "Please enter your full name.", Snackbar.LENGTH_LONG);
-                View view = snack.getView();
-                FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
-                params.gravity = Gravity.TOP;
-                view.setLayoutParams(params);
-                snack.show();
-            } else {
-                mSave.setEnabled(true);
-                mProfile.setFullName(text.toString());
-            }
-        }
-
-        @OnTextChanged(R.id.contact_position_edit)
-        void onPositionChanged(CharSequence text) {
-            mProfile.setPosition(text.toString());
-        }
-
-        @OnTextChanged(R.id.contact_number_edit)
-        void onNumberChanged(CharSequence text) {
-            mProfile.setPhoneNumber(text.toString());
-        }
-
-        @OnTextChanged(R.id.contact_email_edit)
-        void onEmailChanged(CharSequence text) {
-            String formattedEmail = text.toString().replaceAll("\\s", "");
-            mProfile.setEmail(formattedEmail);
+            mListener.onLinkedInSelected(mProfile);
         }
 
         interface OnFragmentInteractionListener {
             void openGallery();
-            void onFbSelected(ParseUser currentUser);
-            void onLinkedInSelected(ParseUser currentUser);
+            void onFbSelected(Profile profile);
+            void onLinkedInSelected(Profile profile);
         }
 
 

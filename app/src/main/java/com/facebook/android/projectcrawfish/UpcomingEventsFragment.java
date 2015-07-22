@@ -31,12 +31,13 @@ import butterknife.OnClick;
 /**
  * Created by markamendoza on 7/9/15.
  */
-public class UpcomingEventsFragment extends Fragment{
+public class UpcomingEventsFragment extends Fragment {
 
     public static final int CHECK_IN = 2;
     public static final String IS_CHECKED_IN = "IS_CHECKED_IN";
     public static final String ATTENDANCE_ID = "ATTENDANCE_ID";
     public static final String CACHED_EVENT_NAME = "CACHED_EVENT_NAME";
+
 
     private UpcomingEventListFragment mListFragment;
     private Boolean mIsCheckedIn;
@@ -67,15 +68,16 @@ public class UpcomingEventsFragment extends Fragment{
     }
 
     public void startCheckIn() {
-        mIsCheckedIn=true;
+        mIsCheckedIn = true;
         showCheckedIn();
         mProgressSwitcher.showBar();
     }
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        if (savedInstanceState == null){
+        if (savedInstanceState == null) {
             ParseQuery<Attendance> query = ParseQuery.getQuery(Attendance.class);
             query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
             query.whereEqualTo(Attendance.HAS_LEFT, false);
@@ -84,7 +86,7 @@ public class UpcomingEventsFragment extends Fragment{
             query.findInBackground(new FindCallback<Attendance>() {
                 @Override
                 public void done(List<Attendance> list, ParseException e) {
-                    if (list==null ||list.size()==0){
+                    if (list == null || list.size() == 0) {
                         mIsCheckedIn = false;
                     } else {
                         mIsCheckedIn = true;
@@ -98,7 +100,7 @@ public class UpcomingEventsFragment extends Fragment{
 
         } else {
             mIsCheckedIn = savedInstanceState.getBoolean(IS_CHECKED_IN);
-            if (mIsCheckedIn){
+            if (mIsCheckedIn) {
                 mCheckedInAttendanceID = savedInstanceState.getString(ATTENDANCE_ID);
                 mCachedEventName = savedInstanceState.getString(CACHED_EVENT_NAME);
             }
@@ -119,11 +121,15 @@ public class UpcomingEventsFragment extends Fragment{
                     .commit();
         }
 
-        if (mIsCheckedIn == null){
+        if (mIsCheckedIn == null) {
             showCheckedIn();
             mProgressSwitcher.showBar();
+
+
         } else {
             onLoaded();
+
+
         }
 
         mToolbar.setTitle("Check In");
@@ -138,18 +144,20 @@ public class UpcomingEventsFragment extends Fragment{
         return view;
     }
 
-    private void onLoaded(){
-        if (mIsCheckedIn){
+    private void onLoaded() {
+        if (mIsCheckedIn) {
             showCheckedIn();
             mCheckedInTitle.setText(mCachedEventName);
         } else {
             showList();
+
+
         }
         mProgressSwitcher.showContent();
     }
 
     @OnClick(R.id.check_out_button)
-    public void onClickCheckOut(){
+    public void onClickCheckOut() {
         mProgressSwitcher.showBar();
         Attendance attendance = ParseObject.createWithoutData(Attendance.class, mCheckedInAttendanceID);
         attendance.setHasLeft(true);
@@ -164,15 +172,16 @@ public class UpcomingEventsFragment extends Fragment{
         });
     }
 
-    void showList(){
+    void showList() {
         if (mSwitcher == null) return;
-        if (mSwitcher.getNextView().getId()==R.id.list_fragment_container){
+        if (mSwitcher.getNextView().getId() == R.id.list_fragment_container) {
             mSwitcher.showNext();
         }
     }
-    void showCheckedIn(){
+
+    void showCheckedIn() {
         if (mSwitcher == null) return;
-        if (mSwitcher.getNextView().getId()==R.id.checked_in_view){
+        if (mSwitcher.getNextView().getId() == R.id.checked_in_view) {
             mSwitcher.showNext();
         }
     }
@@ -182,9 +191,10 @@ public class UpcomingEventsFragment extends Fragment{
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
         outState.putBoolean(IS_CHECKED_IN, mIsCheckedIn);
-        if(mIsCheckedIn) {
+
+        if (mIsCheckedIn) {
             outState.putString(ATTENDANCE_ID, mCheckedInAttendanceID);
-            outState.putString(CACHED_EVENT_NAME,mCachedEventName);
+            outState.putString(CACHED_EVENT_NAME, mCachedEventName);
         }
     }
 
@@ -212,3 +222,4 @@ public class UpcomingEventsFragment extends Fragment{
     }
 
 }
+

@@ -34,6 +34,10 @@
     <string name="contact_details_label">Position</string>
     <string name="edit">editButton</string>
 
+    <string name="font_name_lato">Lato-Light</string>
+    <string name="style_bold">bold</string>
+    <string name="style_italic">italic</string>
+
     <string name="name_hint">Name</string>
     <string name="position_hint">Position</string>
     <string name="email_hint">Email</string>

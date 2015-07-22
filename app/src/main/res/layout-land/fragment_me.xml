@@ -1,5 +1,6 @@
 <android.support.v7.widget.CardView
     android:id="@+id/actual_card"
+
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
     android:layout_width="wrap_content"
@@ -21,7 +22,7 @@
             android:gravity="fill_vertical|center_horizontal">
 
             <com.facebook.android.projectcrawfish.ProgressSwitcher
-                android:id="@id/switcher"
+                android:id="@+id/switcher"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true">
@@ -34,6 +35,7 @@
                         android:id="@+id/profile_picture"
                         android:layout_width="110dp"
                         android:layout_height="110dp"
+                        android:layout_centerHorizontal="true"
                         android:layout_marginBottom="8dp"
                         android:background="@android:color/darker_gray"
                         android:contentDescription="@string/contact_photo"
@@ -51,19 +53,17 @@
                         android:text="{fa-camera}"
                         android:textColor="@color/editButton"
                         android:textSize="24sp"
-                        android:visibility="gone"
-                        />
+                        android:visibility="gone"/>
+
                 </RelativeLayout>
             </com.facebook.android.projectcrawfish.ProgressSwitcher>
-
 
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@id/switcher"
                 android:layout_centerHorizontal="true"
-                android:gravity="fill_vertical|center"
-                >
+                android:gravity="fill_vertical|center">
 
                 <android.widget.IconButton
                     android:id="@+id/contact_fb"
@@ -74,8 +74,7 @@
                     android:gravity="center"
                     android:text="{fa_facebook_square}"
                     android:textColor="@color/fb"
-                    android:textSize="48sp"
-                    />
+                    android:textSize="48sp"/>
 
                 <android.widget.IconButton
                     android:id="@+id/contact_linkedin"
@@ -90,259 +89,133 @@
                     android:textSize="48sp"/>
 
             </RelativeLayout>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:id="@+id/save_edit_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_toRightOf="@id/left_view">
+
+            <android.widget.IconButton
+                android:id="@+id/edit_button"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:gravity="center_horizontal|top"
+                android:text="{fa_pencil_square_o}"
+                android:textColor="@color/editButton"
+                android:textSize="28sp"/>
+
+            <android.widget.IconButton
+                android:id="@+id/save_button"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="60dp"
+                android:layout_height="wrap_content"
+                android:layout_alignParentEnd="true"
+                android:layout_alignParentTop="true"
+                android:enabled="false"
+                android:gravity="center_horizontal|top"
+                android:text="{fa_floppy_o}"
+                android:textColor="@color/editButton"
+                android:textSize="28sp"
+                android:visibility="gone"/>
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_below="@+id/save_edit_buttons"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_toRightOf="@id/left_view">
+
+            <com.facebook.android.projectcrawfish.TextEditSwitcher
+                android:id="@+id/name_text_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+
+            <android.widget.IconTextView
+                android:id="@+id/position_icon"
+                android:layout_width="56dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/name_text_edit"
+                android:gravity="center"
+                android:text="{fa_suitcase}"
+                android:textColor="@color/editButton"
+                android:textSize="24sp"/>
+
+            <com.facebook.android.projectcrawfish.TextEditSwitcher
+                android:id="@+id/position_text_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/name_text_edit"
+                android:layout_toEndOf="@id/position_icon"/>
+
+            <View
+                android:id="@+id/line_position"
+                android:layout_width="fill_parent"
+                android:layout_height="1.25dp"
+                android:layout_below="@+id/position_text_edit"
+                android:layout_marginLeft="56dp"
+                android:layout_marginRight="24dp"
+                android:background="@android:color/darker_gray"/>
+
+
+            <android.widget.IconTextView
+                android:id="@+id/email_icon"
+                android:layout_width="56dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/line_position"
+                android:gravity="center"
+                android:text="{fa_envelope_o}"
+                android:textColor="@color/editButton"
+                android:textSize="24sp"/>
+
+            <com.facebook.android.projectcrawfish.TextEditSwitcher
+                android:id="@+id/email_text_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@+id/line_position"
+                android:layout_toEndOf="@+id/email_icon"/>
+
+            <View
+                android:id="@+id/line_email"
+                android:layout_width="fill_parent"
+                android:layout_height="1.25dp"
+                android:layout_below="@+id/email_text_edit"
+                android:layout_marginLeft="56dp"
+                android:layout_marginRight="24dp"
+                android:background="@android:color/darker_gray"/>
+
+
+            <android.widget.IconTextView
+                android:id="@+id/number_icon"
+                android:layout_width="56dp"
+                android:layout_height="40dp"
+                android:layout_below="@+id/line_email"
+                android:gravity="center"
+                android:text="{fa_phone}"
+                android:textColor="@color/editButton"
+                android:textSize="24sp"/>
+
+            <com.facebook.android.projectcrawfish.TextEditSwitcher
+                android:id="@+id/number_text_edit"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_below="@id/line_email"
+                android:layout_toEndOf="@+id/number_icon"/>
+
+            <View
+                android:layout_width="fill_parent"
+                android:layout_height="1.25dp"
+                android:layout_below="@id/number_text_edit"
+                android:layout_marginLeft="56dp"
+                android:layout_marginRight="24dp"
+                android:background="@android:color/darker_gray"/>
+
 
         </RelativeLayout>
 
-        <LinearLayout
-            android:layout_width="405dp"
-            android:layout_height="wrap_content"
-            android:layout_toRightOf="@id/left_view"
-            android:orientation="vertical">
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="50dp">
-
-                <android.widget.IconButton
-                    android:id="@+id/edit_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:gravity="center_horizontal|top"
-                    android:text="{fa_pencil_square_o}"
-                    android:textColor="@color/editButton"
-                    android:textSize="28sp"
-                    />
-
-                <android.widget.IconButton
-                    android:id="@+id/save_button"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="60dp"
-                    android:layout_height="wrap_content"
-                    android:layout_alignParentEnd="true"
-                    android:layout_alignParentTop="true"
-                    android:enabled="false"
-                    android:gravity="center_horizontal|top"
-                    android:text="{fa_floppy_o}"
-                    android:textColor="@color/editButton"
-                    android:textSize="28sp"
-                    android:visibility="gone"/>
-            </RelativeLayout>
-
-            <ViewSwitcher
-                android:id="@+id/name_switcher"
-                android:layout_width="320dp"
-                android:layout_height="wrap_content">
-
-                <com.facebook.android.projectcrawfish.CustomFontTextView
-                    android:id="@+id/contact_name"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:gravity="center_vertical"
-                    android:singleLine="true"
-                    android:text="@string/name_hint"
-                    android:textSize="36sp"
-                    />
-
-                <com.facebook.android.projectcrawfish.CustomFontEditText
-                    android:id="@+id/contact_name_edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="52dp"
-                    android:layout_gravity="bottom"
-                    android:ellipsize="end"
-                    android:gravity="bottom"
-                    android:hint="@string/name_hint"
-                    android:singleLine="true"
-                    android:textSize="36sp"
-                    />
-
-            </ViewSwitcher>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp">
-
-                <android.widget.IconTextView
-                    android:id="@+id/position_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:gravity="center"
-                    android:text="{fa_suitcase}"
-                    android:textColor="@color/editButton"
-                    android:textSize="24sp"/>
-
-                <ViewSwitcher
-                    android:id="@+id/position_switcher"
-                    android:layout_width="320dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/position_icon">
-
-                    <LinearLayout
-                        android:id="@+id/position_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <com.facebook.android.projectcrawfish.CustomFontTextView
-                            android:id="@+id/contact_position"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:singleLine="true"
-                            android:text="@string/position_hint"
-                            android:textSize="16.2sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/position_edit_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <com.facebook.android.projectcrawfish.CustomFontEditText
-                            android:id="@+id/contact_position_edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:hint="@string/position_hint"
-                            android:singleLine="true"
-                            />
-                    </LinearLayout>
-                </ViewSwitcher>
-            </RelativeLayout>
-
-            <View
-                android:layout_width="234dp"
-                android:layout_height="1.25dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="24dp"
-                android:background="@android:color/darker_gray"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp">
-
-                <android.widget.IconTextView
-                    android:id="@+id/email_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:gravity="center"
-                    android:text="{fa_envelope_o}"
-                    android:textColor="@color/editButton"
-                    android:textSize="24sp"/>
-
-                <ViewSwitcher
-                    android:id="@+id/email_switcher"
-                    android:layout_width="320dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/email_icon">
-
-                    <LinearLayout
-                        android:id="@+id/email_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <com.facebook.android.projectcrawfish.CustomFontTextView
-                            android:id="@+id/contact_email"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:singleLine="true"
-                            android:text="@string/email_hint"
-                            android:textSize="16.2sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/email_edit_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:id="@+id/contact_email_edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:ellipsize="end"
-                            android:hint="@string/email_hint"
-                            android:inputType="textEmailAddress"
-                            android:singleLine="true"
-                            />
-                    </LinearLayout>
-                </ViewSwitcher>
-            </RelativeLayout>
-
-            <View
-                android:layout_width="234dp"
-                android:layout_height="1.25dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="24dp"
-                android:background="@android:color/darker_gray"/>
-
-            <RelativeLayout
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="16dp">
-
-                <android.widget.IconTextView
-                    android:id="@+id/number_icon"
-                    android:layout_width="40dp"
-                    android:layout_height="40dp"
-                    android:gravity="center"
-                    android:text="{fa_phone}"
-                    android:textColor="@color/editButton"
-                    android:textSize="24sp"/>
-
-                <ViewSwitcher
-                    android:id="@+id/number_switcher"
-                    android:layout_width="320dp"
-                    android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_toRightOf="@+id/number_icon">
-
-                    <LinearLayout
-                        android:id="@+id/number_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <com.facebook.android.projectcrawfish.CustomFontTextView
-                            android:id="@+id/contact_number"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent"
-                            android:gravity="center_vertical"
-                            android:singleLine="true"
-                            android:text="@string/phone_number_hint"
-                            android:textSize="16.2sp"/>
-                    </LinearLayout>
-
-                    <LinearLayout
-                        android:id="@+id/number_edit_view"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent">
-
-                        <EditText
-                            android:id="@+id/contact_number_edit"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:gravity="top"
-                            android:hint="@string/phone_number_hint"
-                            android:inputType="number|phone"
-                            android:singleLine="true"/>
-                    </LinearLayout>
-                </ViewSwitcher>
-            </RelativeLayout>
-
-            <View
-                android:layout_width="234dp"
-                android:layout_height="1.25dp"
-                android:layout_marginLeft="40dp"
-                android:layout_marginRight="24dp"
-                android:background="@android:color/darker_gray"/>
-
-        </LinearLayout>
     </RelativeLayout>
-
-
 </android.support.v7.widget.CardView>

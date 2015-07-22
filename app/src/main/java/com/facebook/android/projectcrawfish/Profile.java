@@ -3,17 +3,12 @@
 
 package com.facebook.android.projectcrawfish;
 
-import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.widget.ImageView;
 
-import com.parse.GetCallback;
-import com.parse.GetDataCallback;
 import com.parse.ParseException;
 import com.parse.ParseFile;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
 import com.squareup.picasso.Callback;
@@ -56,7 +51,7 @@ public class Profile implements Serializable {
         profile.setPhoneNumber("");
         profile.mProfilePictureUrl = null;
         profile.setFbId("");
-        profile.setLinkedIn("");
+        profile.setLinkedIn("https://www.linkedin.com/in/");
         return profile;
     }
 
