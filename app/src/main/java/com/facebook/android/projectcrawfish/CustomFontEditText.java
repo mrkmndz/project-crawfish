@@ -1,3 +1,5 @@
+// Copyright 2004-present Facebook. All Rights Reserved.
+
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.content.Context;
@@ -6,7 +8,7 @@ import android.util.AttributeSet;
 import android.widget.EditText;
 
 public class CustomFontEditText extends EditText {
-    public static final String ANDROID_SCHEMA = "http://schemas.android.com/apk/res/android";
+    private static final String ANDROID_SCHEMA = "http://schemas.android.com/apk/res/android";
 
     public CustomFontEditText(Context context) {
         super(context);

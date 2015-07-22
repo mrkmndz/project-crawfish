@@ -28,7 +28,7 @@ public class CrawfishToolbar extends Toolbar {
         this.setLogo(R.mipmap.ic_launcher);
         this.setBackgroundColor(getResources().getColor(R.color.toolbar_2));
         LayoutInflater  mInflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        TextView textView = (TextView) mInflater.inflate(R.layout.standard_toolbar, null, false);
+        TextView textView = (TextView) mInflater.inflate(R.layout.standard_toolbar, this, false);
         this.addView(textView);
         try{
             AppCompatActivity activity = (AppCompatActivity) context;

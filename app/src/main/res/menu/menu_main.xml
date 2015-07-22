@@ -6,12 +6,12 @@
     <item
         android:id="@+id/action_my_profile"
         android:orderInCategory="100"
-        android:title="My Profile"
+        android:title="@string/my_profile_button"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_logout"
         android:orderInCategory="100"
-        android:title="Logout"
+        android:title="@string/logout_button_text"
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_search"

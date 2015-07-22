@@ -5,24 +5,14 @@ package com.facebook.android.projectcrawfish;
 import android.app.Activity;
 import android.app.Dialog;
 import android.app.TimePickerDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
-import android.support.v7.app.AlertDialog;
-import android.text.format.DateFormat;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.widget.DatePicker;
 import android.widget.TimePicker;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
 
 /**
  * Created by markamendoza on 7/6/15.
@@ -44,8 +34,7 @@ public class TimePickerFragment extends DialogFragment
         int hour = mCalendar.get(Calendar.HOUR_OF_DAY);
         int minute = mCalendar.get(Calendar.MINUTE);
 
-        TimePickerDialog tpd = new TimePickerDialog(getActivity(), this, hour, minute, false);
-        return tpd;
+        return new TimePickerDialog(getActivity(), this, hour, minute, false);
     }
 
     public static TimePickerFragment newInstance(Date date) {
@@ -57,22 +46,19 @@ public class TimePickerFragment extends DialogFragment
         return add;
     }
 
-    private void sendResult(int resultCode, Date date) {
+    @Override
+    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
+        mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
+        mCalendar.set(Calendar.MINUTE, minute);
+
         if (getTargetFragment() == null) {
             return;
         }
 
         Intent intent = new Intent();
-        intent.putExtra(EXTRA_DATE, date);
+        intent.putExtra(EXTRA_DATE, mCalendar.getTime());
 
         getTargetFragment()
-                .onActivityResult(getTargetRequestCode(), resultCode, intent);
-    }
-
-    @Override
-    public void onTimeSet(TimePicker view, int hourOfDay, int minute) {
-        mCalendar.set(Calendar.HOUR_OF_DAY, hourOfDay);
-        mCalendar.set(Calendar.MINUTE, minute);
-        sendResult(Activity.RESULT_OK, mCalendar.getTime());
+                .onActivityResult(getTargetRequestCode(), Activity.RESULT_OK, intent);
     }
 }

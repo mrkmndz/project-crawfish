@@ -22,77 +22,43 @@ import butterknife.ButterKnife;
 /**
  * Created by markamendoza on 7/9/15.
  */
-public class UpcomingEventListFragment extends Fragment implements CustomViewPQA.ClickEventListener<Event>{
+public class UpcomingEventListFragment extends ListFragment<Event>{
+
+    @Override
+    protected ParseQuery<Event> getQuery() {
+        ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
+        query.orderByAscending(Event.START_DATE);
+        Date now = new Date();
+        query.whereLessThan(Event.START_DATE, now);
+        query.whereGreaterThan(Event.END_DATE, now);//Not over
+        return query;
+    }
+
+    @Override
+    protected CustomViewPQA.CustomViewHolderFactory<Event> getHolderFactory() {
+        return new CustomViewPQA.CustomViewHolderFactory<Event>() {
+            @Override
+            public CustomViewPQA.CustomViewHolder<Event> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Event> listener) {
+                return new EventViewHolder(v, listener);
+            }
+        };
+    }
+
+    @Override
+    protected int getListItemResID() {
+        return R.layout.event_list_item;
+    }
 
     private OnFragmentInteractionListener mListener;
-
-    CustomViewPQA<Event> mAdapter;
-
-    @Bind(R.id.list_view)
-    ListView mListView;
-    @Bind(R.id.progress_switcher)
-    ProgressSwitcher mSwitcher;
-
-    public void refreshList() {
-        mAdapter.loadObjects();
-    }
 
     @Override
     public void OnClick(Event obj) {
         mListener.openUpcomingEventDetails(obj);
     }
 
+
     interface OnFragmentInteractionListener{
         void openUpcomingEventDetails(Event event);
-    }
-
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ParseQueryAdapter.QueryFactory<Event> factory =
-                new ParseQueryAdapter.QueryFactory<Event>() {
-                    public ParseQuery<Event> create() {
-                        ParseQuery<Event> query = new ParseQuery<>(Event.CLASS_NAME);
-                        query.orderByAscending(Event.START_DATE);
-                        query.whereGreaterThan(Event.END_DATE, new Date());//Not over
-                        return query;
-                    }
-                };
-
-        mAdapter = new CustomViewPQA<>(getActivity(), factory, this,
-                new CustomViewPQA.CustomViewHolderFactory<Event>() {
-                    @Override
-                    public CustomViewPQA.CustomViewHolder<Event> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Event> listener) {
-                        return new EventViewHolder(v, listener);
-                    }
-                }
-                ,R.layout.event_list_item
-        );
-
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.fragment_list_view, container, false);
-        ButterKnife.bind(this, v);
-
-        mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Event>() {
-            @Override
-            public void onLoading() {
-                mSwitcher.showBar();
-            }
-
-            @Override
-            public void onLoaded(List<Event> list, Exception e) {
-                mSwitcher.showContent();
-            }
-        });
-
-        mListView.setAdapter(mAdapter);
-
-        return v;
     }
 
     @Override

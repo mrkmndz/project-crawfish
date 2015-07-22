@@ -40,7 +40,7 @@ public class UpcomingEventDetailsFragment extends EventDialog {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         super.onCreateView(inflater, container, savedInstanceState);
-        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_upcoming_event_details, null);
+        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_upcoming_event_details, container);
         ButterKnife.bind(this, v);
         updateUI();
         return v;

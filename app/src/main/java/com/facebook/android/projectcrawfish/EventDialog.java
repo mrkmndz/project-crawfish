@@ -8,11 +8,6 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
 
-import java.util.Date;
-
-/**
- * Created by markamendoza on 7/13/15.
- */
 public abstract class EventDialog extends DialogFragment {
 
     public static final String PROXY = "PROXY";
@@ -35,6 +30,7 @@ public abstract class EventDialog extends DialogFragment {
             bundle = getArguments();
         }
         Event.Proxy proxy = (Event.Proxy) bundle.getSerializable(PROXY);
+        assert proxy != null;
         mEvent = proxy.toPO();
     }
 

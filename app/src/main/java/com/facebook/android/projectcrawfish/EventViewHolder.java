@@ -8,16 +8,19 @@ import android.widget.TextView;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class EventViewHolder extends CustomViewPQA.CustomViewHolder<Event>{
+public class EventViewHolder extends CustomViewPQA.CustomViewHolder<Event> {
 
 
     private final View mView;
-    @Bind(R.id.list_item_event_name) TextView mTitleView;
-    @Bind(R.id.list_item_event_date) TextView mTimeView;
-    @Bind(R.id.list_item_event_location)TextView mLocationView;
+    @Bind(R.id.list_item_event_name)
+    TextView mTitleView;
+    @Bind(R.id.list_item_event_date)
+    TextView mTimeView;
+    @Bind(R.id.list_item_event_location)
+    TextView mLocationView;
 
     public EventViewHolder(View v, ClickEventListener<Event> listener) {
-        super(v, listener);
+        super(listener);
         mView = v;
     }
 

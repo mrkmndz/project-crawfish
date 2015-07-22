@@ -2,7 +2,6 @@
 
 package com.facebook.android.projectcrawfish;
 
-import com.parse.DeleteCallback;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -25,25 +24,6 @@ public class Swipe extends ParseObject implements SaveCallback {
         return (ParseUser) get(SWIPER);
     }
 
-    interface OnPinListener {
-        void onPin();
-    }
-
-    public void doubleSave(final OnPinListener listener) {
-        this.pinInBackground(new SaveCallback() {
-            @Override
-            public void done(ParseException e) {
-                listener.onPin();
-                Swipe.this.saveInBackground(new SaveCallback() {
-                    @Override
-                    public void done(ParseException e) {
-                        Swipe.this.unpinInBackground((DeleteCallback)null);
-                    }
-                });
-            }
-        });
-    }
-
     @Override
     public void done(ParseException e) {
         try {
@@ -59,11 +39,11 @@ public class Swipe extends ParseObject implements SaveCallback {
         swipe.put(SWIPER, ParseUser.getCurrentUser());
         swipe.put(SWIPEE, user);
         swipe.put(EVENT, event);
-        Turnstile.get().checkout(event);
+        Turnstile.get().checkout();
         swipe.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                Turnstile.get().checkin(event);
+                Turnstile.get().checkin();
             }
         });
     }

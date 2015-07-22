@@ -3,10 +3,8 @@
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -28,8 +26,7 @@ import butterknife.OnClick;
 
 public class PastEventDetailsFragment extends EventDialog implements FindCallback<Attendance> {
 
-    public static final String PDIS = "PDIS";
-    public static final String EVENT_ID = "EVENT_ID";
+    private static final String PDIS = "PDIS";
     @Bind(R.id.past_event_name)
     TextView mTitleView;
     @Bind(R.id.past_event_location)
@@ -44,10 +41,6 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
     @Bind(R.id.button_switcher)
     ProgressSwitcher mSwitcher;
 
-    public static final int REQUEST_DECK = 0;
-    public static final int REQUEST_CONNECTIONS = 1;
-
-    boolean hasInflated = false;
     private ArrayList<CardSwipeActivity.ProfileDisplayInstance> mPDIs;
 
     public static PastEventDetailsFragment newInstance(Event event) {
@@ -64,9 +57,10 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
         Event.Proxy proxy = (Event.Proxy) arguments.getSerializable(PROXY);
+        assert proxy != null;
         mEvent = proxy.toPO();
+        //noinspection unchecked
         mPDIs = (ArrayList<CardSwipeActivity.ProfileDisplayInstance>) arguments.getSerializable(PDIS);
-
     }
 
     @Override
@@ -90,8 +84,6 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        if (hasInflated) return null;
         View v = inflater.inflate(R.layout.fragment_past_event_details, container, false);
         ButterKnife.bind(this, v);
         if (mPDIs == null) {
@@ -110,7 +102,7 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
             public void onNonZero() {
                 mSwitcher.showBar();
             }
-        }, mEvent);
+        });
         updateText();
         return v;
     }
@@ -148,16 +140,9 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
     }
 
     private void updateButton(){
-        mDeckButton.setEnabled(mPDIs.size() != 0);
-        mDeckButton.setText(""+mPDIs.size());
-    }
-
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-
-        super.onActivityResult(requestCode, resultCode, data);
-
-        //Update notificiations?
+        int numberOfCards = mPDIs.size();
+        mDeckButton.setEnabled(numberOfCards!= 0);
+        mDeckButton.setText("You have " + numberOfCards + " cards remaining");
     }
 
     @OnClick(R.id.fragment_past_event_deck_button)
@@ -169,7 +154,7 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
 
     public void refresh() {
         mSwitcher.showBar();
-        if (Turnstile.get().isClear(mEvent)) queryForPDIs();
+        if (Turnstile.get().isClear()) queryForPDIs();
     }
 
     interface OnFragmentInteractionListener {

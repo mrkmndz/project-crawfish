@@ -27,25 +27,21 @@ import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
-        UpcomingEventsFragment.OnFragmentInteractionListener,
         PastEventList.OnFragmentInteractionListener,
         UpcomingEventDetailsFragment.OnFragmentInteractionListener,
         ContactListFragment.OnFragmentInteractionListener,
         PastEventDetailsFragment.OnFragmentInteractionListener {
 
-    public static final int NEW_EVENT = 1;
-    public static final int PAST_EVENTS = 3;
-    public static final int SWIPES = 5;
-    public static final String DIALOG_CHECK_IN = "CheckInDialog";
-    public static final String PAST_EVENT_DETAILS = "PastEventDetails";
-    public static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
+    private static final int NEW_EVENT = 1;
+    private static final int SWIPES = 5;
+    private static final String DIALOG_CHECK_IN = "CheckInDialog";
+    private static final String PAST_EVENT_DETAILS = "PastEventDetails";
+    private static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
 
     @Bind(R.id.main_pager)
     ViewPager mViewPager;
     @Bind(R.id.tab_layout)
     TabLayout mTabLayout;
-
-    SectionsPagerAdapter mSectionsPagerAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,9 +49,7 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        mSectionsPagerAdapter = new SectionsPagerAdapter(getSupportFragmentManager());
-
-        mViewPager.setAdapter(mSectionsPagerAdapter);
+        mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
         mTabLayout.setupWithViewPager(mViewPager);
 
@@ -64,12 +58,6 @@ public class MainActivity extends AppCompatActivity implements
         mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize().colorRes(R.color.offWhite));
 
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
-    }
-
-    @Override
-    public void createNewEvent() {
-        Intent intent = new Intent(this, NewEventActivity.class);
-        startActivityForResult(intent, NEW_EVENT);
     }
 
     @Override
@@ -113,18 +101,18 @@ public class MainActivity extends AppCompatActivity implements
 
     private UpcomingEventsFragment getUpcomingEventsTab() {
         FragmentManager manager = this.getSupportFragmentManager();
-        String tag = makeFragmentName(R.id.main_pager, 0);
+        String tag = makeFragmentName(0);
         return (UpcomingEventsFragment) manager.findFragmentByTag(tag);
     }
 
     private PastEventList getPastEventsTab() {
         FragmentManager manager = this.getSupportFragmentManager();
-        String tag = makeFragmentName(R.id.main_pager, 1);
+        String tag = makeFragmentName(1);
         return (PastEventList) manager.findFragmentByTag(tag);
     }
 
-    private static String makeFragmentName(int viewPagerId, int index) {
-        return "android:switcher:" + viewPagerId + ":" + index;
+    private static String makeFragmentName(int index) {
+        return "android:switcher:" + R.id.main_pager + ":" + index;
     }
 
     @Override
@@ -201,7 +189,8 @@ public class MainActivity extends AppCompatActivity implements
                 return true;
 
             case R.id.action_add:
-                createNewEvent();
+                Intent intent = new Intent(this, NewEventActivity.class);
+                startActivityForResult(intent, NEW_EVENT);
                 return true;
             default:
                 return super.onOptionsItemSelected(item);

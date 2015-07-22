@@ -1,29 +1,20 @@
-<FrameLayout
+<ViewSwitcher
+    android:id="@+id/switcher"
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical"
-    >
+    android:layout_height="match_parent">
 
-    <ViewSwitcher
-        android:id="@+id/switcher"
+    <FrameLayout
+        android:id="@+id/list_fragment_container"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        tools:context=".MainActivity"/>
 
-        <FrameLayout
-            android:id="@+id/list_fragment_container"
-            xmlns:tools="http://schemas.android.com/tools"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            tools:context=".MainActivity"/>
+    <include
+        android:id="@+id/checked_in_view"
+        layout="@layout/checked_in_layout"
+        />
+</ViewSwitcher>
 
-        <include
-            android:id="@+id/checked_in_view"
-            layout="@layout/checked_in_layout"
-            />
-    </ViewSwitcher>
-
-
-</FrameLayout>

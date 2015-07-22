@@ -9,7 +9,11 @@ import android.view.ViewGroup;
 import com.parse.ParseObject;
 import com.parse.ParseQueryAdapter;
 
-public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
+import java.util.List;
+
+
+public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T>  {
+
 
     public static abstract class CustomViewHolder<Q> {
         interface ClickEventListener<X> {
@@ -20,7 +24,7 @@ public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
 
         private final ClickEventListener<Q> mListener;
 
-        public CustomViewHolder(View v, ClickEventListener<Q> listener) {
+        public CustomViewHolder(ClickEventListener<Q> listener) {
             mListener = listener;
         }
 
@@ -39,7 +43,7 @@ public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
 
     private final int mViewResource;
     private final ClickEventListener<T> mListener;
-    private CustomViewHolderFactory<T> mHolderFactory;
+    private final CustomViewHolderFactory<T> mHolderFactory;
 
     public CustomViewPQA(Context context, QueryFactory<T> queryFactory, ClickEventListener<T> listener, CustomViewHolderFactory<T> holderFactory, int viewResource
     ) {
@@ -47,6 +51,8 @@ public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T> {
         mHolderFactory = holderFactory;
         mListener = listener;
         mViewResource = viewResource;
+        this.setAutoload(false);
+
     }
 
 

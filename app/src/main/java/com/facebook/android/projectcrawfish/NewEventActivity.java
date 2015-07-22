@@ -4,22 +4,14 @@ package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 
-import com.parse.ParseException;
-import com.parse.SaveCallback;
-
-import java.util.Calendar;
-import java.util.Date;
-
 public class NewEventActivity extends AppCompatActivity implements EventEditorFragment.OnFragmentInteractionListener {
 
-    public static final String KEY_ID = "ID";
-    EventEditorFragment mFragment;
+    private EventEditorFragment mFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

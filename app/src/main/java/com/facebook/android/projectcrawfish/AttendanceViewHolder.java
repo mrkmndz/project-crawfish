@@ -15,11 +15,13 @@ public class AttendanceViewHolder extends CustomViewPQA.CustomViewHolder<Attenda
     private final View mView;
     @Bind(R.id.list_item_event_name)
     TextView mTitleView;
-    @Bind(R.id.list_item_event_date) TextView mTimeView;
-    @Bind(R.id.list_item_event_location)TextView mLocationView;
+    @Bind(R.id.list_item_event_date)
+    TextView mTimeView;
+    @Bind(R.id.list_item_event_location)
+    TextView mLocationView;
 
     public AttendanceViewHolder(View v, ClickEventListener<Attendance> listener) {
-        super(v, listener);
+        super(listener);
         mView = v;
     }
 

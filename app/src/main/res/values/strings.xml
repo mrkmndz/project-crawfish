@@ -46,5 +46,8 @@
     <string name="new_connections_notification">You have new connections!</string>
     <string name="action_new_event">New Event</string>
     <string name="action_search">Search</string>
+    <string name="new_event_save_button_text">save</string>
+    <string name="my_profile_button">My Profile</string>
+    <string name="logout_button_text">Logout</string>
 
 </resources>

@@ -1,3 +1,5 @@
+// Copyright 2004-present Facebook. All Rights Reserved.
+
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.content.Context;
@@ -7,7 +9,7 @@ import android.widget.TextView;
 
 public class CustomFontTextView extends TextView {
 
-    public static final String ANDROID_SCHEMA = "http://schemas.android.com/apk/res/android";
+    private static final String ANDROID_SCHEMA = "http://schemas.android.com/apk/res/android";
 
     public CustomFontTextView(Context context) {
         super(context);

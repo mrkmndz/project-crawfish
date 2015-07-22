@@ -19,13 +19,8 @@
             android:layout_height="260dp"
             android:layout_gravity="center">
 
-            <LinearLayout
-                android:id="@+id/left_view"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-
                 <RelativeLayout
+                    android:id="@+id/left_view"
                     android:layout_width="153dp"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="21.5dp"
@@ -76,7 +71,6 @@
                     </RelativeLayout>
 
                 </RelativeLayout>
-            </LinearLayout>
 
             <LinearLayout
                 android:layout_width="405dp"
@@ -116,21 +110,10 @@
                         android:visibility="gone"/>
                 </RelativeLayout>
 
-                <RelativeLayout
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp">
-
                     <ViewSwitcher
                         android:id="@+id/name_switcher"
                         android:layout_width="320dp"
                         android:layout_height="wrap_content">
-
-                        <LinearLayout
-                            android:id="@+id/name_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="wrap_content"
-                            android:layout_gravity="bottom">
 
                             <com.facebook.android.projectcrawfish.CustomFontTextView
                                 android:id="@+id/contact_name"
@@ -141,12 +124,6 @@
                                 android:text="@string/name_hint"
                                 android:textSize="36sp"
                                 />
-                        </LinearLayout>
-
-                        <LinearLayout
-                            android:id="@+id/name_edit_view"
-                            android:layout_width="match_parent"
-                            android:layout_height="match_parent">
 
                             <com.facebook.android.projectcrawfish.CustomFontEditText
                                 android:id="@+id/contact_name_edit"
@@ -159,10 +136,8 @@
                                 android:gravity="bottom"
                                 android:layout_gravity="bottom"
                                 />
-                        </LinearLayout>
 
                     </ViewSwitcher>
-                </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="match_parent"

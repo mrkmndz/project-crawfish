@@ -32,26 +32,41 @@ import butterknife.OnTextChanged;
 
 public class MeFragment extends ProfileDialog implements View.OnClickListener {
 
-    @Bind(R.id.contact_fb) IconButton mContactFb;
-    @Bind(R.id.contact_linkedin) IconButton mContactLinkedIn;
-    @Bind(R.id.save_button) IconButton mSave;
-    @Bind(R.id.edit_button) IconButton mEdit;
+    @Bind(R.id.contact_fb)
+    IconButton mContactFb;
+    @Bind(R.id.contact_linkedin)
+    IconButton mContactLinkedIn;
+    @Bind(R.id.save_button)
+    IconButton mSave;
+    @Bind(R.id.edit_button)
+    IconButton mEdit;
 
-    @Bind(R.id.name_switcher) ViewSwitcher nameSwitcher;
-    @Bind(R.id.position_switcher) ViewSwitcher positionSwitcher;
-    @Bind(R.id.email_switcher) ViewSwitcher emailSwitcher;
-    @Bind(R.id.number_switcher) ViewSwitcher numberSwitcher;
+    @Bind(R.id.name_switcher)
+    ViewSwitcher nameSwitcher;
+    @Bind(R.id.position_switcher)
+    ViewSwitcher positionSwitcher;
+    @Bind(R.id.email_switcher)
+    ViewSwitcher emailSwitcher;
+    @Bind(R.id.number_switcher)
+    ViewSwitcher numberSwitcher;
 
-    @Bind(R.id.contact_name) TextView mContactName;
-    @Bind(R.id.contact_position) TextView mContactPosition;
-    @Bind(R.id.contact_email) TextView mContactEmail;
-    @Bind(R.id.contact_number) TextView mContactNumber;
+    @Bind(R.id.contact_name)
+    TextView mContactName;
+    @Bind(R.id.contact_position)
+    TextView mContactPosition;
+    @Bind(R.id.contact_email)
+    TextView mContactEmail;
+    @Bind(R.id.contact_number)
+    TextView mContactNumber;
 
-    @Bind(R.id.contact_name_edit) EditText mEditName;
-    @Bind(R.id.contact_position_edit) EditText mEditPosition;
-    @Bind(R.id.contact_number_edit) EditText mEditNumber;
-    @Bind(R.id.contact_email_edit) EditText mEditEmail;
-
+    @Bind(R.id.contact_name_edit)
+    EditText mEditName;
+    @Bind(R.id.contact_position_edit)
+    EditText mEditPosition;
+    @Bind(R.id.contact_number_edit)
+    EditText mEditNumber;
+    @Bind(R.id.contact_email_edit)
+    EditText mEditEmail;
 
 
     public static MeFragment newInstance() {
@@ -184,7 +199,7 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
             mSave.setEnabled(false);
             Snackbar snack = Snackbar.make(mContactEmail, "Please enter your full name.", Snackbar.LENGTH_LONG);
             View view = snack.getView();
-            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams)view.getLayoutParams();
+            FrameLayout.LayoutParams params = (FrameLayout.LayoutParams) view.getLayoutParams();
             params.gravity = Gravity.TOP;
             view.setLayoutParams(params);
             snack.show();

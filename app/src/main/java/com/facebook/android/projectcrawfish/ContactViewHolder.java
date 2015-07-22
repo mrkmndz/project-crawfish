@@ -10,14 +10,16 @@ import com.parse.ParseUser;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<Swipe>{
+public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<Swipe> {
     private final View mView;
 
-    @Bind(R.id.list_item_contact_name) TextView mNameView;
-    @Bind(R.id.list_item_contact_position)TextView mPositionView;
+    @Bind(R.id.list_item_contact_name)
+    TextView mNameView;
+    @Bind(R.id.list_item_contact_position)
+    TextView mPositionView;
 
     public ContactViewHolder(View v, ClickEventListener<Swipe> listener) {
-        super(v, listener);
+        super(listener);
         mView = v;
     }
 

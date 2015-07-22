@@ -1,3 +1,5 @@
+// Copyright 2004-present Facebook. All Rights Reserved.
+
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.content.Context;
@@ -7,7 +9,7 @@ import java.util.Hashtable;
 
 public class FontCache {
 
-    private static Hashtable<String, Typeface> fontCache = new Hashtable<>();
+    private static final Hashtable<String, Typeface> fontCache = new Hashtable<>();
 
     public static Typeface getTypeface(String fontname, Context context) {
         Typeface typeface = fontCache.get(fontname);

@@ -167,12 +167,6 @@
             android:layout_height="wrap_content"
             android:gravity="fill_vertical"
             >
-
-            <RelativeLayout
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
-
                 <android.widget.IconButton
                     android:id="@+id/contact_fb"
                     style="?android:attr/borderlessButtonStyle"
@@ -196,7 +190,6 @@
                     android:textColor="@color/linkedIn"
                     android:textSize="48sp"/>
             </RelativeLayout>
-        </RelativeLayout>
 
     </LinearLayout>
 

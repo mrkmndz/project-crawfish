@@ -3,76 +3,67 @@
 package com.facebook.android.projectcrawfish;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by markamendoza on 7/21/15.
  */
 public class Turnstile {
     private static Turnstile sTurnstile;
-    private Map<Event,Integer> mOutstandingSavers;
-    private Map<Event, List<OnZeroListener> > mListeners;
-    private Turnstile(){
-        this.mOutstandingSavers = new HashMap<>();
-        this.mListeners = new HashMap<>();
+    private int mOutstandingSavers;
+    private final List<OnZeroListener> mListeners;
+
+    private Turnstile() {
+        this.mOutstandingSavers = 0;
+        this.mListeners = new ArrayList<>();
     }
 
-    public static Turnstile get(){
-        if (sTurnstile == null){
+    public static Turnstile get() {
+        if (sTurnstile == null) {
             sTurnstile = new Turnstile();
         }
         return sTurnstile;
     }
 
-    public void checkout(Event event){
-        Integer old = mOutstandingSavers.get(event);
-        if (old==null){
-            old = 0;
-            List<OnZeroListener> listeners = mListeners.get(event);
-            if (listeners!=null){
-                for (OnZeroListener listener : listeners){
-                    listener.onNonZero();
-                }
+    public void checkout() {
+        if (mOutstandingSavers == 0) {
+            for (OnZeroListener listener : mListeners) {
+                listener.onNonZero();
             }
         }
-        mOutstandingSavers.put(event, old+ 1);
+        mOutstandingSavers++;
     }
 
-    public void checkin(Event event){
-        Integer old = mOutstandingSavers.get(event);
-        if (old==null) throw new IllegalStateException("Checking in past 0");
-        mOutstandingSavers.put(event, old-1);
-        if (old.equals(1)){
-            List<OnZeroListener> listeners = mListeners.get(event);
-            if (listeners!=null){
-                for (OnZeroListener listener : listeners){
-                    listener.onZero();
-                }
+    public void checkin() {
+        if (mOutstandingSavers == 0) throw new IllegalStateException("Checking in past 0");
+        if (mOutstandingSavers == 1) {
+            for (OnZeroListener listener : mListeners) {
+                listener.onZero();
             }
         }
+        mOutstandingSavers--;
     }
 
-    public boolean isClear(Event event){
-        Integer old = mOutstandingSavers.get(event);
-        return (old==null||old.equals(0));
+    public boolean isClear() {
+        return (mOutstandingSavers==0);
     }
 
-    public void registerListener(OnZeroListener listener, Event event){
-        List<OnZeroListener> listeners = mListeners.get(event);
-        if (listeners == null) listeners = new ArrayList<>();
-        listeners.add(listener);
-        mListeners.put(event,listeners);
-        if (isClear(event)){
+    public void registerListener(OnZeroListener listener) {
+        mListeners.add(listener);
+        if (isClear()) {
             listener.onZero();
-        }else {
+        } else {
             listener.onNonZero();
         }
     }
 
-    interface OnZeroListener{
+    public void deregisterListener(OnZeroListener listener){
+        mListeners.remove(listener);
+    }
+
+    interface OnZeroListener {
         void onZero();
+
         void onNonZero();
     }
 }

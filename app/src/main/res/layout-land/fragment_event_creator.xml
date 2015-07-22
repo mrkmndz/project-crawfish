@@ -31,10 +31,10 @@
             android:layout_height="wrap_content">
 
             <LinearLayout
+                android:id="@+id/left_layout"
                 android:layout_width="310dp"
                 android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:id="@+id/left_layout">
+                android:orientation="vertical">
 
                 <RelativeLayout
                     android:layout_width="match_parent"
@@ -138,7 +138,6 @@
                 </RelativeLayout>
 
 
-
                 <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
@@ -164,36 +163,29 @@
                 </RelativeLayout>
             </LinearLayout>
 
-            <LinearLayout
-                android:id="@+id/right_layout"
-                android:layout_width="280dp"
-                android:layout_height="match_parent"
-                android:orientation="vertical"
-                android:layout_toRightOf="@id/left_layout">
+            <RelativeLayout
+                android:layout_toRightOf="@id/left_layout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="16dp">
 
-                <RelativeLayout
-                    android:layout_width="match_parent"
+                <ImageView
+                    android:id="@+id/text_icon"
+                    android:layout_width="56dp"
                     android:layout_height="wrap_content"
-                    android:layout_marginRight="16dp">
+                    android:layout_gravity="center"
+                    android:src="@drawable/ic_text"/>
 
-                    <ImageView
-                        android:id="@+id/text_icon"
-                        android:layout_width="56dp"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:src="@drawable/ic_text"/>
-
-                    <EditText
-                        android:id="@+id/description"
-                        android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:layout_centerVertical="true"
-                        android:layout_toRightOf="@id/text_icon"
-                        android:gravity="top"
-                        android:hint="@string/description_hint"
-                        />
-                </RelativeLayout>
-            </LinearLayout>
+                <EditText
+                    android:id="@+id/description"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_centerVertical="true"
+                    android:layout_toRightOf="@id/text_icon"
+                    android:gravity="top"
+                    android:hint="@string/description_hint"
+                    />
+            </RelativeLayout>
         </RelativeLayout>
     </LinearLayout>
     </com.facebook.android.projectcrawfish.ProgressSwitcher>

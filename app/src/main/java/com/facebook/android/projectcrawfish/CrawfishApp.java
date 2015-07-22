@@ -6,9 +6,10 @@ import android.app.Application;
 
 import com.facebook.FacebookSdk;
 import com.parse.Parse;
-//import com.parse.ParseCrashReporting;
 import com.parse.ParseFacebookUtils;
 import com.parse.ParseObject;
+
+//import com.parse.ParseCrashReporting;
 
 /**
  * Created by markamendoza on 7/6/15.

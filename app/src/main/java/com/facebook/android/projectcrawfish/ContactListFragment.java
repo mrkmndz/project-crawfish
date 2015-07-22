@@ -19,77 +19,44 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactListFragment extends Fragment implements CustomViewPQA.ClickEventListener<Swipe> {
+public class ContactListFragment extends ListFragment<Swipe> {
+
+
+    @Override
+    protected ParseQuery<Swipe> getQuery() {
+        ParseQuery<Swipe> queryB = ParseQuery.getQuery(Swipe.class);
+        queryB.whereEqualTo(Swipe.SWIPEE, ParseUser.getCurrentUser());
+        queryB.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);
+
+        ParseQuery<Swipe> queryA = ParseQuery.getQuery(Swipe.class);
+        queryA.whereEqualTo(Swipe.SWIPER, ParseUser.getCurrentUser());
+        queryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//People you swiped right
+        queryA.whereMatchesKeyInQuery(Swipe.SWIPEE, Swipe.SWIPER, queryB);//People who swiped right on you
+        queryA.include(Swipe.SWIPEE);
+        return queryA;
+    }
+
+    @Override
+    protected CustomViewPQA.CustomViewHolderFactory<Swipe> getHolderFactory() {
+        return new CustomViewPQA.CustomViewHolderFactory<Swipe>() {
+            @Override
+            public CustomViewPQA.CustomViewHolder<Swipe> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Swipe> listener) {
+                return new ContactViewHolder(v, listener);
+            }
+        };
+    }
+
+    @Override
+    protected int getListItemResID() {
+        return R.layout.list_item_contact;
+    }
+
 
     public interface OnFragmentInteractionListener {
         void openContactDetails(ParseUser user);
     }
 
-    public void refreshList() {
-        mAdapter.loadObjects();
-    }
-
-    private CustomViewPQA<Swipe> mAdapter;
     private OnFragmentInteractionListener mListener;
-
-    @Bind(R.id.list_view)
-    protected ListView mListView;
-
-    @Bind(R.id.progress_switcher)
-    ProgressSwitcher mSwitcher;
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-
-        ParseQueryAdapter.QueryFactory<Swipe> factory =
-                new ParseQueryAdapter.QueryFactory<Swipe>() {
-                    public ParseQuery<Swipe> create() {
-
-                        ParseQuery<Swipe> queryB = ParseQuery.getQuery(Swipe.class);
-                        queryB.whereEqualTo(Swipe.SWIPEE, ParseUser.getCurrentUser());
-                        queryB.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);
-
-                        ParseQuery<Swipe> queryA = ParseQuery.getQuery(Swipe.class);
-                        queryA.whereEqualTo(Swipe.SWIPER, ParseUser.getCurrentUser());
-                        queryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//People you swiped right
-                        queryA.whereMatchesKeyInQuery(Swipe.SWIPEE, Swipe.SWIPER, queryB);//People who swiped right on you
-                        queryA.include(Swipe.SWIPEE);
-                        return queryA;
-                    }
-                };
-
-        mAdapter = new CustomViewPQA<>(getActivity(), factory, this,
-                new CustomViewPQA.CustomViewHolderFactory<Swipe>() {
-                    @Override
-                    public CustomViewPQA.CustomViewHolder<Swipe> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Swipe> listener) {
-                        return new ContactViewHolder(v, listener);
-                    }
-                }
-                , R.layout.list_item_contact);
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        View view = inflater.inflate(R.layout.fragment_list_view, container, false);
-        ButterKnife.bind(this, view);
-
-        mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Swipe>() {
-            @Override
-            public void onLoading() {
-                mSwitcher.showBar();
-            }
-
-            @Override
-            public void onLoaded(List<Swipe> list, Exception e) {
-                mSwitcher.showContent();
-            }
-        });
-
-        mListView.setAdapter(mAdapter);
-
-        return view;
-    }
 
     @Override
     public void OnClick(Swipe swipe) {

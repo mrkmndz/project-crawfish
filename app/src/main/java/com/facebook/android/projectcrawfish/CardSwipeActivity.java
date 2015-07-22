@@ -11,13 +11,10 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
-import android.widget.Switch;
 import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
-import com.parse.ParseException;
 import com.parse.ParseObject;
-import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.io.Serializable;
@@ -32,12 +29,10 @@ import butterknife.OnClick;
 
 public class CardSwipeActivity extends AppCompatActivity {
 
-    public static final int BASE_SIZE = 40;
-    public static final int SIZE_SLOPE = 50;
-    public static final String PDIS = "PDIS";
+    private static final int BASE_SIZE = 40;
+    private static final int SIZE_SLOPE = 50;
+    private static final String PDIS = "PDIS";
     private CardAdapter mCardAdapter;
-    private int mOutstandingPins;
-    private boolean mIsEmpty;
     private ArrayList<ProfileDisplayInstance> mPDIs;
 
     @Bind(R.id.xButton)
@@ -46,7 +41,7 @@ public class CardSwipeActivity extends AppCompatActivity {
     Button mCheckButton;
 
     @Bind(R.id.frame)
-    SwipeFlingAdapterView flingContainer;
+    protected SwipeFlingAdapterView flingContainer;
 
 
     public static Intent newIntent(Context context, ArrayList<CardSwipeActivity.ProfileDisplayInstance> PDIs) {
@@ -64,12 +59,11 @@ public class CardSwipeActivity extends AppCompatActivity {
         mCheckButton.setTextSize(BASE_SIZE);
         mXButton.setTextSize(BASE_SIZE);
 
+        //noinspection unchecked
         mPDIs = (ArrayList<ProfileDisplayInstance>) getIntent().getSerializableExtra(PDIS);
 
         mCardAdapter = new CardAdapter(this, mPDIs);
 
-        mIsEmpty = false;
-        mOutstandingPins=0;
 
         flingContainer.setAdapter(mCardAdapter);
         flingContainer.setFlingListener(new SwipeFlingAdapterView.onFlingListener() {
@@ -89,7 +83,6 @@ public class CardSwipeActivity extends AppCompatActivity {
                 ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
                     ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getUserID());
                     Event event = ParseObject.createWithoutData(Event.class, pdi.getEventID());
-                mOutstandingPins++;
                     Swipe.sendSwipe(true, user, event);
             }
 
@@ -100,7 +93,6 @@ public class CardSwipeActivity extends AppCompatActivity {
                 ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
                     ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getUserID());
                     Event event = ParseObject.createWithoutData(Event.class, pdi.getEventID());
-                mOutstandingPins++;
                     Swipe.sendSwipe(false, user, event);
             }
 
@@ -137,11 +129,11 @@ public class CardSwipeActivity extends AppCompatActivity {
 
         private final float RANGE = 50;
 
-        private float mWiggleY;
-        private float mWiggleX;
-        private String mEventID;
-        private String mUserID;
-        private Profile mProfile;
+        private final float mWiggleY;
+        private final float mWiggleX;
+        private final String mEventID;
+        private final String mUserID;
+        private final Profile mProfile;
 
         public ProfileDisplayInstance(Attendance attendance) {
             mEventID = attendance.getEvent().getObjectId();

@@ -19,21 +19,37 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class PastEventList extends Fragment implements CustomViewPQA.ClickEventListener<Attendance> {
+public class PastEventList extends ListFragment<Attendance>  {
+
+
+
+    @Override
+    protected ParseQuery<Attendance> getQuery() {
+        ParseQuery<Attendance> query = new ParseQuery<>(Attendance.CLASS_NAME);
+        query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+        query.include(Attendance.EVENT);
+        return query;
+    }
+
+    @Override
+    protected CustomViewPQA.CustomViewHolderFactory<Attendance> getHolderFactory() {
+        return new CustomViewPQA.CustomViewHolderFactory<Attendance>() {
+            @Override
+            public CustomViewPQA.CustomViewHolder<Attendance> create(
+                    View v,
+                    CustomViewPQA.CustomViewHolder.ClickEventListener<Attendance> listener
+            ) {
+                return new AttendanceViewHolder(v, listener);
+            }
+        };
+    }
+
+    @Override
+    protected int getListItemResID() {
+        return R.layout.event_list_item;
+    }
 
     private OnFragmentInteractionListener mListener;
-
-    CustomViewPQA<Attendance> mAdapter;
-
-    @Bind(R.id.list_view)
-    ListView mListView;
-
-    @Bind(R.id.progress_switcher)
-    ProgressSwitcher mSwitcher;
-
-    public void refreshList() {
-        mAdapter.loadObjects();
-    }
 
     @Override
     public void OnClick(Attendance attendance) {
@@ -42,54 +58,6 @@ public class PastEventList extends Fragment implements CustomViewPQA.ClickEventL
 
     interface OnFragmentInteractionListener {
         void openPastEventDetails(Attendance attendance);
-    }
-
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        ParseQueryAdapter.QueryFactory<Attendance> factory =
-                new ParseQueryAdapter.QueryFactory<Attendance>() {
-                    public ParseQuery<Attendance> create() {
-                        ParseQuery<Attendance> query = new ParseQuery<Attendance>(Attendance.CLASS_NAME);
-                        query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
-                        query.include(Attendance.EVENT);
-                        return query;
-                    }
-                };
-
-        mAdapter = new CustomViewPQA<>(getActivity(), factory, this,
-                new CustomViewPQA.CustomViewHolderFactory<Attendance>() {
-                    @Override
-                    public CustomViewPQA.CustomViewHolder<Attendance> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Attendance> listener) {
-                        return new AttendanceViewHolder(v, listener);
-                    }
-                }
-                ,R.layout.event_list_item
-        );
-    }
-
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        View v= inflater.inflate(R.layout.fragment_list_view, container, false);
-        ButterKnife.bind(this, v);
-
-
-        mAdapter.addOnQueryLoadListener(new ParseQueryAdapter.OnQueryLoadListener<Attendance>() {
-            @Override
-            public void onLoading() {
-                mSwitcher.showBar();
-            }
-
-            @Override
-            public void onLoaded(List<Attendance> list, Exception e) {
-                mSwitcher.showContent();
-            }
-        });
-
-        mListView.setAdapter(mAdapter);
-
-        return v;
     }
 
     @Override
