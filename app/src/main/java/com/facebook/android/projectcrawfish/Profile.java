@@ -4,7 +4,8 @@
         import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.annotations.SerializedName;
-import com.parse.ParseUser;
+        import com.parse.ParseObject;
+        import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.io.Serializable;
@@ -15,6 +16,7 @@ import java.io.Serializable;
 public class Profile implements Serializable{
 
     public static final String KEY = "Profile";
+    private String mUserID;
     @SerializedName("first_name")
     private String mFirstName;
     @SerializedName("last_name")
@@ -41,13 +43,24 @@ public class Profile implements Serializable{
     }
     public static Profile fromUser(ParseUser user){
         String json = (String) user.get(KEY);
-        if (json ==null )return Profile.defaultProfile(user);
-        return getGson().fromJson(json,Profile.class);
+        Profile profile;
+        if (json ==null ){
+            profile = Profile.defaultProfile(user);
+        } else {
+            profile = getGson().fromJson(json, Profile.class);
+        }
+        profile.mUserID = user.getObjectId();
+        return profile;
     }
 
-    public void saveToParse(SaveCallback callback){
-        ParseUser.getCurrentUser().put(KEY, this.toJSON());
-        ParseUser.getCurrentUser().saveInBackground(callback);
+    public void save(SaveCallback callback) {
+        ParseUser user = ParseObject.createWithoutData(ParseUser.class,mUserID);
+        user.put(KEY, this.toJSON());
+        user.saveInBackground(callback);
+    }
+
+    public String getUserID() {
+        return mUserID;
     }
 
     public String getFirstName() {

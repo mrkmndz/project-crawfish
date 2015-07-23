@@ -112,7 +112,7 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
         mContactFb.setClickable(false);
         mContactLinkedIn.setClickable(false);
 
-        mProfile.saveToParse(new SaveCallback() {
+        mProfile.save(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 mEdit.setEnabled(true);

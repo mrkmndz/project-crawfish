@@ -116,6 +116,7 @@ public class Event extends ParseObject {
                     att.setEvent(Event.this);
                     att.setUser(ParseUser.getCurrentUser());
                     att.setHasLeft(false);
+                    att.setMAC();
                     att.saveInBackground(new SaveCallback() {
                         @Override
                         public void done(ParseException e) {

@@ -49,5 +49,6 @@
     <string name="new_event_save_button_text">save</string>
     <string name="my_profile_button">My Profile</string>
     <string name="logout_button_text">Logout</string>
+    <string name="title_activity_bluetooth_test">BluetoothTestActivity</string>
 
 </resources>

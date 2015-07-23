@@ -3,19 +3,19 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Activity;
+import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.TabLayout;
-import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.WindowManager;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
@@ -32,13 +32,18 @@ public class MainActivity extends AppCompatActivity implements
         PastEventList.OnFragmentInteractionListener,
         UpcomingEventDetailsFragment.OnFragmentInteractionListener,
         ContactListFragment.OnFragmentInteractionListener,
-        PastEventDetailsFragment.OnFragmentInteractionListener {
+        PastEventDetailsFragment.OnFragmentInteractionListener,
+        UpcomingEventsFragment.OnFragmentInteractionListener{
 
     private static final int NEW_EVENT = 1;
+    public static final int DISCOVERABLE = 3;
     private static final int SWIPES = 5;
     private static final String DIALOG_CHECK_IN = "CheckInDialog";
     private static final String PAST_EVENT_DETAILS = "PastEventDetails";
     private static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
+    public static final int UPCOMING_EVENT_TAB_INDEX = 0;
+    public static final int PAST_EVENT_TAB_INDEX = 1;
+    public static final int CONTACT_LIST_TAB = 2;
 
     @Bind(R.id.main_pager)
     ViewPager mViewPager;
@@ -71,6 +76,13 @@ public class MainActivity extends AppCompatActivity implements
             FragmentManager manager = getSupportFragmentManager();
             PastEventDetailsFragment fragment = (PastEventDetailsFragment) manager.findFragmentByTag(PAST_EVENT_DETAILS);
             fragment.refresh();
+        } else if (requestCode == DISCOVERABLE){
+            if (resultCode != Activity.RESULT_CANCELED){
+                Intent intent = new Intent(this, BluetoothPingService.class);
+                startService(intent);
+            } else {
+                Log.e("BluetoothTest", "Chose No Discoverability");
+            }
         }
     }
 
@@ -103,13 +115,13 @@ public class MainActivity extends AppCompatActivity implements
 
     private UpcomingEventsFragment getUpcomingEventsTab() {
         FragmentManager manager = this.getSupportFragmentManager();
-        String tag = makeFragmentName(0);
+        String tag = makeFragmentName(UPCOMING_EVENT_TAB_INDEX);
         return (UpcomingEventsFragment) manager.findFragmentByTag(tag);
     }
 
     private PastEventList getPastEventsTab() {
         FragmentManager manager = this.getSupportFragmentManager();
-        String tag = makeFragmentName(1);
+        String tag = makeFragmentName(PAST_EVENT_TAB_INDEX);
         return (PastEventList) manager.findFragmentByTag(tag);
     }
 
@@ -124,12 +136,39 @@ public class MainActivity extends AppCompatActivity implements
         event.checkIn(new Event.CheckInCallback() {
             @Override
             public void checkedIn(Attendance attendance) {
+                startPinging(attendance);
                 getPastEventsTab().refreshList();
                 getUpcomingEventsTab().confirmCheckIn(attendance);
             }
         });
     }
 
+    @Override
+    public void onCheckOut() {
+        Intent intent = new Intent(this, BluetoothPingService.class);
+        stopService(intent);
+    }
+
+    private void startPinging(Attendance attendance) {
+        BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+        if (bluetoothAdapter != null) {
+            if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE){
+                presentDiscoverableDialog();
+            } else {
+                Intent intent = BluetoothPingService.newIntent(this,attendance);
+                startService(intent);
+            }
+        } else {
+            Log.e("BluetoothTest", "No Bluetooth Capability");
+        }
+    }
+
+    private void presentDiscoverableDialog() {
+        Intent discoverableIntent = new
+                Intent(BluetoothAdapter.ACTION_REQUEST_DISCOVERABLE);
+        discoverableIntent.putExtra(BluetoothAdapter.EXTRA_DISCOVERABLE_DURATION, 0);
+        startActivityForResult(discoverableIntent, DISCOVERABLE);
+    }
 
     public class SectionsPagerAdapter extends FragmentPagerAdapter {
 
@@ -140,11 +179,11 @@ public class MainActivity extends AppCompatActivity implements
         @Override
         public Fragment getItem(int position) {
             switch (position) {
-                case 0:
+                case UPCOMING_EVENT_TAB_INDEX:
                     return new UpcomingEventsFragment();
-                case 1:
+                case PAST_EVENT_TAB_INDEX:
                     return new PastEventList();
-                case 2:
+                case CONTACT_LIST_TAB:
                     return new ContactListFragment();
                 default:
                     return null;

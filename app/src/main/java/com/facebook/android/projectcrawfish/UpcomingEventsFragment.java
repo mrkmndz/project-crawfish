@@ -2,6 +2,7 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
@@ -140,9 +141,10 @@ public class UpcomingEventsFragment extends Fragment{
         attendance.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
-                mIsCheckedIn = true;
+                mIsCheckedIn = false;
                 showList();
                 mProgressSwitcher.showContent();
+                mListener.onCheckOut();
             }
         });
     }
@@ -164,11 +166,34 @@ public class UpcomingEventsFragment extends Fragment{
     @Override
     public void onSaveInstanceState(Bundle outState) {
         super.onSaveInstanceState(outState);
-        outState.putBoolean(IS_CHECKED_IN,mIsCheckedIn);
+        outState.putBoolean(IS_CHECKED_IN, mIsCheckedIn);
         if(mIsCheckedIn) {
             outState.putString(ATTENDANCE_ID, mCheckedInAttendanceID);
             outState.putString(CACHED_EVENT_NAME,mCachedEventName);
         }
+    }
+
+    private OnFragmentInteractionListener mListener;
+
+    interface OnFragmentInteractionListener {
+        void onCheckOut();
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+        try {
+            mListener = (OnFragmentInteractionListener) activity;
+        } catch (ClassCastException e) {
+            throw new ClassCastException(activity.toString()
+                    + " must implement OnFragmentInteractionListener");
+        }
+    }
+
+    @Override
+    public void onDetach() {
+        super.onDetach();
+        mListener = null;
     }
 
 }
