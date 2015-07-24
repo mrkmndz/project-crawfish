@@ -9,6 +9,7 @@ import android.text.method.ScrollingMovementMethod;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.TextView;
 
 import butterknife.Bind;
@@ -38,9 +39,8 @@ public class UpcomingEventDetailsFragment extends EventDialog {
 
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
-        View v = getActivity().getLayoutInflater().inflate(R.layout.fragment_upcoming_event_details, container);
+    public View onCreateCustomView(LayoutInflater inflater, ViewGroup container) {
+        View v = inflater.inflate(R.layout.fragment_upcoming_event_details, container, false);
         ButterKnife.bind(this, v);
         updateUI();
         return v;

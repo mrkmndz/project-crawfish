@@ -82,13 +82,12 @@ public class EventEditorFragment extends EventDialog {
         cal.setTime(now);
         cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
         newEvent.setEndDate(cal.getTime());
-        bundle.putSerializable(PROXY,newEvent.toProxy());
+        bundle.putSerializable(PROXY, newEvent.toProxy());
         return bundle;
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateCustomView(LayoutInflater inflater, ViewGroup container) {
         View v = inflater.inflate(R.layout.fragment_event_creator, container, false);
         ButterKnife.bind(this, v);
         mSwitcher.showContent();

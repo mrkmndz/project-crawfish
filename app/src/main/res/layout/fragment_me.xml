@@ -1,8 +1,7 @@
-
 <android.support.v7.widget.CardView
+    android:id="@+id/actual_card"
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:cardview="http://schemas.android.com/apk/res-auto"
-    android:id="@+id/actual_card"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
@@ -289,34 +288,35 @@
             android:layout_marginLeft="56dp"
             android:layout_marginRight="24dp"
             android:background="@android:color/darker_gray"/>
-            <RelativeLayout
+
+        <RelativeLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal">
+
+            <android.widget.IconButton
+                android:id="@+id/contact_fb"
+                style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_gravity="center_horizontal">
+                android:clickable="false"
+                android:gravity="center"
+                android:text="{fa_facebook_square}"
+                android:textColor="@color/fb"
+                android:textSize="48sp"/>
 
-                <android.widget.IconButton
-                    android:id="@+id/contact_fb"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:clickable="false"
-                    android:gravity="center"
-                    android:text="{fa_facebook_square}"
-                    android:textColor="@color/fb"
-                    android:textSize="48sp"/>
-
-                <android.widget.IconButton
-                    android:id="@+id/contact_linkedin"
-                    style="?android:attr/borderlessButtonStyle"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_toRightOf="@id/contact_fb"
-                    android:clickable="false"
-                    android:gravity="center"
-                    android:text="{fa_linkedin_square}"
-                    android:textColor="@color/linkedIn"
-                    android:textSize="48sp"/>
-            </RelativeLayout>
+            <android.widget.IconButton
+                android:id="@+id/contact_linkedin"
+                style="?android:attr/borderlessButtonStyle"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/contact_fb"
+                android:clickable="false"
+                android:gravity="center"
+                android:text="{fa_linkedin_square}"
+                android:textColor="@color/linkedIn"
+                android:textSize="48sp"/>
+        </RelativeLayout>
     </LinearLayout>
 
 

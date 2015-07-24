@@ -82,8 +82,7 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateCustomView(LayoutInflater inflater, ViewGroup container) {
         View v = inflater.inflate(R.layout.fragment_past_event_details, container, false);
         ButterKnife.bind(this, v);
         if (mPDIs == null) {

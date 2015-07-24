@@ -3,17 +3,20 @@
 package com.facebook.android.projectcrawfish;
 
 import android.app.Dialog;
+import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.v4.app.DialogFragment;
+import android.view.ViewGroup;
+import android.view.Window;
 
 import com.parse.ParseUser;
 
 /**
  * Created by markamendoza on 7/14/15.
  */
-abstract class ProfileDialog extends DialogFragment{
+abstract class ProfileDialog extends CustomViewDialog{
     public static final String PROFILE = "PROFILE";
     protected Profile mProfile;
 
@@ -36,14 +39,6 @@ abstract class ProfileDialog extends DialogFragment{
         }
 
         mProfile = (Profile) bundle.getSerializable(PROFILE);
-    }
-
-    @NonNull
-    @Override
-    public Dialog onCreateDialog(Bundle savedInstanceState) {
-        Dialog dialog = super.onCreateDialog(savedInstanceState);
-        dialog.getWindow().setBackgroundDrawable(new ColorDrawable(0));
-        return dialog;
     }
 
     @Override

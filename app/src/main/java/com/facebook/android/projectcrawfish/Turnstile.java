@@ -2,6 +2,8 @@
 
 package com.facebook.android.projectcrawfish;
 
+import com.parse.ParseUser;
+
 import java.util.ArrayList;
 import java.util.List;
 

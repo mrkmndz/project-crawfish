@@ -77,9 +77,7 @@ public class MeFragment extends ProfileDialog implements View.OnClickListener {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        super.onCreateView(inflater, container, savedInstanceState);
+    public View onCreateCustomView(LayoutInflater inflater, ViewGroup container) {
         View v = inflater.inflate(R.layout.fragment_me, container, false);
         ButterKnife.bind(this, v);
         updateUI();

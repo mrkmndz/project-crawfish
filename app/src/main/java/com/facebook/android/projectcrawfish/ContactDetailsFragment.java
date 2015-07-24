@@ -35,8 +35,7 @@ public class ContactDetailsFragment extends ProfileDialog {
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
+    public View onCreateCustomView(LayoutInflater inflater, ViewGroup container) {
         View v = inflater.inflate(R.layout.fragment_contact, container, false);
         ButterKnife.bind(this, v);
 
