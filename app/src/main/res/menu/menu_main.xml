@@ -15,12 +15,12 @@
         app:showAsAction="never"/>
     <item
         android:id="@+id/action_search"
-        android:icon="@drawable/ic_action_search"
+        android:icon="@drawable/ic_search"
         android:title="@string/action_search"
         app:showAsAction="ifRoom"/>
     <item
         android:id="@+id/action_add"
-        android:icon="@drawable/ic_action_new"
+        android:icon="@drawable/ic_add"
         android:title="@string/action_new_event"
         app:showAsAction="ifRoom"/>
 

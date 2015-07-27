@@ -9,8 +9,6 @@ import android.view.ViewGroup;
 import com.parse.ParseObject;
 import com.parse.ParseQueryAdapter;
 
-import java.util.List;
-
 
 public class CustomViewPQA<T extends ParseObject> extends ParseQueryAdapter<T>  {
 
