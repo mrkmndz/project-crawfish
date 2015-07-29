@@ -28,7 +28,22 @@
                         android:layout_marginBottom="8dp"
                         android:background="@android:color/darker_gray"
                         android:contentDescription="@string/contact_photo"
-                        android:cropToPadding="true"/>
+                        android:cropToPadding="true"
+                        android:scaleType="centerCrop"/>
+
+                    <android.widget.IconButton
+                        android:id="@+id/camera_button"
+                        style="?android:attr/borderlessButtonStyle"
+                        android:layout_width="52dp"
+                        android:layout_height="wrap_content"
+                        android:gravity="center|bottom"
+                        android:text="{fa-camera}"
+                        android:textColor="@color/editButton"
+                        android:textSize="24sp"
+                        android:layout_alignRight="@id/profile_picture"
+                        android:layout_alignBottom="@id/profile_picture"
+                        android:visibility="gone"
+                        />
 
                     <RelativeLayout
                         android:layout_width="match_parent"

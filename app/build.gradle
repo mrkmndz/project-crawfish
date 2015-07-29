@@ -19,6 +19,8 @@ android {
         targetSdkVersion 22
         versionCode 1
         versionName "1.0"
+
+        multiDexEnabled true
     }
     buildTypes {
         release {
@@ -45,4 +47,7 @@ dependencies {
     compile 'com.joanzapata.android:android-iconify:1.0.9'
     compile 'com.google.code.gson:gson:2.3'
     compile 'com.android.support:design:22.2.0'
+    compile 'com.cloudinary:cloudinary-android:1.2.1'
+    compile 'com.squareup.picasso:picasso:2.5.2'
+    compile 'com.nostra13.universalimageloader:universal-image-loader:1.9.3'
 }

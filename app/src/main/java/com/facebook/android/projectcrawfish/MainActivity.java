@@ -18,13 +18,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
 
-import com.joanzapata.android.iconify.IconDrawable;
-import com.joanzapata.android.iconify.Iconify;
 import com.parse.GetCallback;
-import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
-
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -33,8 +29,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -47,7 +41,8 @@ public class MainActivity extends AppCompatActivity implements
         PastEventDetailsFragment.OnFragmentInteractionListener,
         UpcomingEventsFragment.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
-        EventEditorFragment.OnFragmentInteractionListener{
+        EventEditorFragment.OnFragmentInteractionListener,
+        MyProfileTab.MeFragment.OnFragmentInteractionListener{
 
     private static final int NEW_EVENT = 1;
     public static final int DISCOVERABLE = 3;
@@ -107,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements
             }
         }
 
+
         if (getDisplayedFragment() == null) {
             mNavigationView.getMenu().getItem(0).setChecked(true);
             mSelectedFrag = FRAG_HOME;
@@ -124,6 +120,11 @@ public class MainActivity extends AppCompatActivity implements
         } else if (requestCode == DISCOVERABLE){
             if (resultCode == Activity.RESULT_CANCELED){
                 Log.e("BluetoothTest", "Chose No Discoverability");
+            }
+        } else if (requestCode == MyProfileTab.MeFragment.SELECT_SINGLE_PICTURE && resultCode == Activity.RESULT_OK){
+            if (mSelectedFrag == FRAG_MY_PROFILE){
+                MyProfileTab fragment = (MyProfileTab) getDisplayedFragment();
+                fragment.onChangedPicture(data.getData());
             }
         }
     }
@@ -239,14 +240,8 @@ public class MainActivity extends AppCompatActivity implements
                         .commit();
                 break;
             case FRAG_MY_PROFILE:
-                FrameFragment<MeFragment> fragment = new FrameFragment<MeFragment>() {
-                    @Override
-                    protected MeFragment getNewFragmentInstance() {
-                        return MeFragment.newInstance();
-                    }
-                };
                 fm.beginTransaction()
-                        .replace(mFrameLayout.getId(), fragment)
+                        .replace(mFrameLayout.getId(), new MyProfileTab())
                         .commit();
                 break;
         }
@@ -338,5 +333,14 @@ public class MainActivity extends AppCompatActivity implements
             default:
                 return super.onOptionsItemSelected(item);
         }
+    }
+
+    @Override
+    public void openGallery() {
+        Intent intent = new Intent();
+        intent.setType(MyProfileTab.MeFragment.IMAGE_TYPE);
+        intent.setAction(Intent.ACTION_GET_CONTENT);
+        startActivityForResult(Intent.createChooser(intent,
+                getString(R.string.select_picture)), MyProfileTab.MeFragment.SELECT_SINGLE_PICTURE);
     }
 }

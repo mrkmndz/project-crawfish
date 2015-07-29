@@ -31,7 +31,8 @@
                 android:layout_marginBottom="8dp"
                 android:background="@android:color/darker_gray"
                 android:contentDescription="@string/contact_photo"
-                android:cropToPadding="true"/>
+                android:cropToPadding="true"
+                android:scaleType="centerCrop"/>
 
         </RelativeLayout>
 

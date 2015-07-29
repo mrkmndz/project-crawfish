@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.facebook.android.projectcrawfish" >
 
+
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.BLUETOOTH" />
@@ -16,12 +17,21 @@
                 android:name="com.facebook.android.projectcrawfish.permission.C2D_MESSAGE" />
     <uses-permission android:name="com.facebook.android.projectcrawfish.permission.C2D_MESSAGE" />
 
+    <uses-permission android:name="android.permission.INTERNET"/>
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+
     <application
         android:name=".CrawfishApp"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme" >
+
+        android:theme="@style/AppTheme">
+
+        <meta-data android:name="CLOUDINARY_URL" android:value="cloudinary://149935293473158:tUmLeHyWQJtskvXcNIBRM1wARks@dnolgdgya"/>
+
+
         <meta-data
             android:name="com.parse.APPLICATION_ID"
             android:value="@string/parse_app_id" />

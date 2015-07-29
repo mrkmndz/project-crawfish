@@ -2,11 +2,13 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v4.app.DialogFragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
@@ -25,6 +27,8 @@ public class ContactDetailsFragment extends ProfileDialog {
     TextView mNumberField;
     @Bind(R.id.contact_email)
     TextView mEmailField;
+    @Bind(R.id.profile_picture)
+    ImageView mPictureField;
 
     public static ContactDetailsFragment newInstance(ParseUser user) {
         ContactDetailsFragment frag = new ContactDetailsFragment();
@@ -49,6 +53,13 @@ public class ContactDetailsFragment extends ProfileDialog {
         mPositionField.setText(mProfile.getPosition());
         mNumberField.setText(mProfile.getPhoneNumber());
         mEmailField.setText(mProfile.getEmail());
+        mProfile.getProfilePicture(new Profile.ProfilePictureGetListener() {
+            @Override
+            public void onGet(Bitmap bitmap) {
+                mPictureField.setImageBitmap(bitmap);
+            }
+        });
+
     }
 
 

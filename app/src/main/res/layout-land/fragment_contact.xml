@@ -37,7 +37,8 @@
                 android:layout_marginTop="6dp"
                 android:background="@android:color/darker_gray"
                 android:contentDescription="@string/contact_photo"
-                android:cropToPadding="true"/>
+                android:cropToPadding="true"
+                android:scaleType="centerCrop"/>
 
             <RelativeLayout
                 android:layout_width="match_parent"
