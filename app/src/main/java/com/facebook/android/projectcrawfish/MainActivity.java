@@ -96,7 +96,7 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     public void openPastEventDetails(Attendance attendance) {
         FragmentManager manager = getSupportFragmentManager();
-        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(attendance.getEvent());
+        PastEventDetailsFragment detailsFragment = PastEventDetailsFragment.newInstance(attendance);
         detailsFragment.show(manager, PAST_EVENT_DETAILS);
     }
 

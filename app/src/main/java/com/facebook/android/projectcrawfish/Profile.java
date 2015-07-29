@@ -9,23 +9,23 @@ import com.google.gson.annotations.SerializedName;
 import com.parse.SaveCallback;
 
 import java.io.Serializable;
+        import java.util.Map;
 
 // Copyright 2004-present Facebook. All Rights Reserved.
 
 
 public class Profile implements Serializable{
 
-    public static final String KEY = "Profile";
-    private String mUserID;
-    @SerializedName("first_name")
+    public static final String FIRST_NAME = "pr_first_name";
+    public static final String LAST_NAME = "pr_last_name";
+    public static final String POSITION = "pr_position";
+    public static final String PHONE_NUMBER = "pr_phone_number";
+    public static final String EMAIL = "pr_email";
+    protected String mUserID;
     private String mFirstName;
-    @SerializedName("last_name")
     private String mLastName;
-    @SerializedName("position")
     private String mPosition;
-    @SerializedName("phone_number")
     private String mPhoneNumber;
-    @SerializedName("email")
     private String mEmail;
 
     private static Profile defaultProfile(ParseUser user){
@@ -37,17 +37,17 @@ public class Profile implements Serializable{
         return profile;
     }
 
-    private static Gson getGson(){
-        GsonBuilder builder = new GsonBuilder();
-        return builder.create();
-    }
     public static Profile fromUser(ParseUser user){
-        String json = (String) user.get(KEY);
         Profile profile;
-        if (json ==null ){
+        if (user.get(FIRST_NAME) == null ){
             profile = Profile.defaultProfile(user);
         } else {
-            profile = getGson().fromJson(json, Profile.class);
+            profile = new Profile();
+            profile.mFirstName = (String) user.get(FIRST_NAME);
+            profile.mLastName = (String) user.get(LAST_NAME);
+            profile.mPosition = (String) user.get(POSITION);
+            profile.mPhoneNumber = (String) user.get(PHONE_NUMBER);
+            profile.mEmail = (String) user.get(EMAIL);
         }
         profile.mUserID = user.getObjectId();
         return profile;
@@ -55,7 +55,11 @@ public class Profile implements Serializable{
 
     public void save(SaveCallback callback) {
         ParseUser user = ParseObject.createWithoutData(ParseUser.class,mUserID);
-        user.put(KEY, this.toJSON());
+        user.put(FIRST_NAME,mFirstName);
+        user.put(LAST_NAME, mLastName);
+        user.put(POSITION,mPosition);
+        user.put(PHONE_NUMBER,mPhoneNumber);
+        user.put(EMAIL,mEmail);
         user.saveInBackground(callback);
     }
 
@@ -117,9 +121,5 @@ public class Profile implements Serializable{
             this.setFirstName(name[0]);
             this.setLastName(name[name.length - 1]);
         }
-    }
-
-    private String toJSON(){
-        return getGson().toJson(this);
     }
 }

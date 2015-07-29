@@ -81,7 +81,7 @@ public class CardSwipeActivity extends AppCompatActivity {
                 mCheckButton.setTextSize(BASE_SIZE);
                 mXButton.setTextSize(BASE_SIZE);
                 ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
-                    ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getUserID());
+                    ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getProfile().getUserID());
                     Event event = ParseObject.createWithoutData(Event.class, pdi.getEventID());
                     Swipe.sendSwipe(true, user, event);
             }
@@ -91,7 +91,7 @@ public class CardSwipeActivity extends AppCompatActivity {
                 mCheckButton.setTextSize(BASE_SIZE);
                 mXButton.setTextSize(BASE_SIZE);
                 ProfileDisplayInstance pdi = (ProfileDisplayInstance) dataObject;
-                    ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getUserID());
+                    ParseUser user = ParseObject.createWithoutData(ParseUser.class, pdi.getProfile().getUserID());
                     Event event = ParseObject.createWithoutData(Event.class, pdi.getEventID());
                     Swipe.sendSwipe(false, user, event);
             }
@@ -132,19 +132,17 @@ public class CardSwipeActivity extends AppCompatActivity {
         private final float mWiggleY;
         private final float mWiggleX;
         private final String mEventID;
-        private final String mUserID;
-        private final Profile mProfile;
+        private final PublicProfile mProfile;
 
-        public ProfileDisplayInstance(Attendance attendance) {
-            mEventID = attendance.getEvent().getObjectId();
-            mUserID = attendance.getUser().getObjectId();
-            mProfile = Profile.fromUser(attendance.getUser());
+        public ProfileDisplayInstance(Event event, PublicProfile profile) {
+            mEventID = event.getObjectId();
+            mProfile = profile;
             Random random = new Random();
             mWiggleX = RANGE * (random.nextFloat() * 2 - 1);
             mWiggleY = RANGE * (random.nextFloat() * 2 - 1);
         }
 
-        public Profile getProfile() {
+        public PublicProfile getProfile() {
             return mProfile;
         }
 
@@ -155,8 +153,6 @@ public class CardSwipeActivity extends AppCompatActivity {
         public float getWiggleX() {
             return mWiggleX;
         }
-
-        public String getUserID(){return mUserID;}
 
         public String getEventID(){return mEventID;}
     }

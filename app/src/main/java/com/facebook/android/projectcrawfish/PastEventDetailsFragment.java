@@ -5,6 +5,7 @@ package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook.
 import android.app.Activity;
 import android.os.Bundle;
 import android.text.method.ScrollingMovementMethod;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -12,12 +13,16 @@ import android.widget.Button;
 import android.widget.TextView;
 
 import com.parse.FindCallback;
+import com.parse.FunctionCallback;
+import com.parse.ParseCloud;
 import com.parse.ParseException;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -27,6 +32,7 @@ import butterknife.OnClick;
 public class PastEventDetailsFragment extends EventDialog implements FindCallback<Attendance> {
 
     private static final String PDIS = "PDIS";
+    public static final String ATTENDANCE_ID = "ATTENDANCE_ID";
     @Bind(R.id.past_event_name)
     TextView mTitleView;
     @Bind(R.id.past_event_location)
@@ -42,12 +48,14 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
     ProgressSwitcher mSwitcher;
 
     private ArrayList<CardSwipeActivity.ProfileDisplayInstance> mPDIs;
+    private String mAttendanceID;
 
-    public static PastEventDetailsFragment newInstance(Event event) {
+    public static PastEventDetailsFragment newInstance(Attendance attendance) {
 
         PastEventDetailsFragment fragment = new PastEventDetailsFragment();
         Bundle args = new Bundle();
-        args.putSerializable(PROXY, event.toProxy());
+        args.putSerializable(PROXY, attendance.getEvent().toProxy());
+        args.putString(ATTENDANCE_ID, attendance.getObjectId());
         fragment.setArguments(args);
         return fragment;
     }
@@ -56,6 +64,7 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Bundle arguments = getArguments();
+        mAttendanceID = arguments.getString(ATTENDANCE_ID, null);
         Event.Proxy proxy = (Event.Proxy) arguments.getSerializable(PROXY);
         assert proxy != null;
         mEvent = proxy.toPO();
@@ -65,13 +74,7 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
 
     @Override
     public void done(List<Attendance> list, ParseException e) {
-        mPDIs = new ArrayList<>();
-        for (Attendance att : list) {
-            CardSwipeActivity.ProfileDisplayInstance pdi = new CardSwipeActivity.ProfileDisplayInstance(att);
-            mPDIs.add(pdi);
-        }
-        mSwitcher.showContent();
-        updateButton();
+
     }
 
     @Override
@@ -91,43 +94,28 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
             mSwitcher.showContent();
             updateButton();
         }
-        Turnstile.get().registerListener(new Turnstile.OnZeroListener() {
-            @Override
-            public void onZero() {
-                queryForPDIs();
-            }
-
-            @Override
-            public void onNonZero() {
-                mSwitcher.showBar();
-            }
-        });
         updateText();
         return v;
     }
 
     private void queryForPDIs(){
         mSwitcher.showBar();
-        ParseQuery<Swipe> innerQueryA = ParseQuery.getQuery(Swipe.class);
-        innerQueryA.whereEqualTo(Swipe.SWIPER, ParseUser.getCurrentUser());
-        innerQueryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//Everyone you have right swiped
+        HashMap<String, Object> params = new HashMap<>();
 
-        ParseQuery<Swipe> innerQueryB = ParseQuery.getQuery(Swipe.class);
-        innerQueryB.whereEqualTo(Swipe.SWIPER, ParseUser.getCurrentUser());
-        innerQueryB.whereEqualTo(Swipe.EVENT, mEvent);//Everyone you have swiped at this event
-
-        List<ParseQuery<Swipe>> innerQueries = new ArrayList<>();
-        innerQueries.add(innerQueryA);
-        innerQueries.add(innerQueryB);
-        ParseQuery<Swipe> innerQuery = ParseQuery.or(innerQueries);
-
-        final ParseQuery<Attendance> query = ParseQuery.getQuery(Attendance.class);
-        query.whereEqualTo(Attendance.EVENT, mEvent);
-        query.whereNotEqualTo(Attendance.USER, ParseUser.getCurrentUser());
-        query.whereDoesNotMatchKeyInQuery(Attendance.USER, Swipe.SWIPEE, innerQuery);
-        query.include(Attendance.USER);
-
-        query.findInBackground(PastEventDetailsFragment.this);
+        params.put("attendanceID", mAttendanceID);
+        ParseCloud.callFunctionInBackground("getSortedProfiles", params, new FunctionCallback<List<Map<String,String>>>() {
+            @Override
+            public void done(List<Map<String, String>> maps, ParseException e) {
+                mPDIs = new ArrayList<>();
+                for (Map<String,String> map : maps) {
+                    PublicProfile profile = new PublicProfile(map);
+                    CardSwipeActivity.ProfileDisplayInstance pdi = new CardSwipeActivity.ProfileDisplayInstance(mEvent, profile);
+                    mPDIs.add(pdi);
+                }
+                mSwitcher.showContent();
+                updateButton();
+            }
+        });
     }
 
     private void updateText() {
@@ -153,7 +141,22 @@ public class PastEventDetailsFragment extends EventDialog implements FindCallbac
 
     public void refresh() {
         mSwitcher.showBar();
-        if (Turnstile.get().isClear()) queryForPDIs();
+        if (Turnstile.get().isClear()){
+            queryForPDIs();
+        } else {
+            Turnstile.get().registerListener(new Turnstile.OnZeroListener() {
+                @Override
+                public void onZero() {
+                    queryForPDIs();
+                    Turnstile.get().deregisterListener(this);
+                }
+
+                @Override
+                public void onNonZero() {
+                    //
+                }
+            });
+        }
     }
 
     interface OnFragmentInteractionListener {
