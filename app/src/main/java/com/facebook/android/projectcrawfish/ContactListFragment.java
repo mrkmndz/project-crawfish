@@ -3,15 +3,9 @@
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
 import android.app.Activity;
-import android.os.Bundle;
-import android.support.v4.app.Fragment;
-import android.view.LayoutInflater;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ListView;
 
 import com.parse.ParseQuery;
-import com.parse.ParseQueryAdapter;
 import com.parse.ParseUser;
 
 import java.util.List;
@@ -20,7 +14,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ContactListFragment extends ListFragment<ParseUser> {
-
 
     @Override
     protected ParseQuery<ParseUser> getQuery() {

@@ -233,7 +233,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
             imm.hideSoftInputFromWindow(mEditNumber.getWindowToken(), 0);
         }
 
-    /*
+
 
    @OnClick(R.id.contact_fb)
     public void linkFb(){
@@ -241,6 +241,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         linkFbDialog.show(getChildFragmentManager(), "Link Facebook");
     }
 
+    /*
     @OnClick(R.id.contact_linkedin)
     public void linkLinkedIn(){
 

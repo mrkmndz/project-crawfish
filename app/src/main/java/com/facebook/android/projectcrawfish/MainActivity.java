@@ -20,6 +20,7 @@ import android.widget.FrameLayout;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
+import com.parse.ParseFacebookUtils;
 import com.parse.ParseInstallation;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -42,21 +43,23 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventsFragment.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
         EventEditorFragment.OnFragmentInteractionListener,
-        MyProfileTab.MeFragment.OnFragmentInteractionListener{
+        MyProfileTab.MeFragment.OnFragmentInteractionListener,
+        MeFragment.OnLinkingSelectedListener,
+        MeFragment.OnLinkedInListener {
 
-    private static final int NEW_EVENT = 1;
     public static final int DISCOVERABLE = 3;
     private static final int SWIPES = 5;
     private static final String DIALOG_CHECK_IN = "CheckInDialog";
     private static final String PAST_EVENT_DETAILS = "PastEventDetails";
     private static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
-
+    private static final String FB_DIALOG = "FacebookDialog";
     private int mSelectedFrag;
     private static final int FRAG_HOME = 0;
     private static final int FRAG_CHECK_IN = 1;
     private static final int FRAG_MY_EVENTS = 2;
     private static final int FRAG_MY_PROFILE = 3;
     private static final int TAB_CONTACTS = -1;
+    private static final String LINKED_IN_DIALOG = "LinkedInDialog";
 
     @Bind(R.id.content)
     FrameLayout mFrameLayout;
@@ -113,12 +116,14 @@ public class MainActivity extends AppCompatActivity implements
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
+
+        ParseFacebookUtils.onActivityResult(requestCode, resultCode, data);
         if (requestCode == SWIPES) {
             FragmentManager manager = getSupportFragmentManager();
             PastEventDetailsFragment fragment = (PastEventDetailsFragment) manager.findFragmentByTag(PAST_EVENT_DETAILS);
             fragment.refresh();
-        } else if (requestCode == DISCOVERABLE){
-            if (resultCode == Activity.RESULT_CANCELED){
+        } else if (requestCode == DISCOVERABLE) {
+            if (resultCode == Activity.RESULT_CANCELED) {
                 Log.e("BluetoothTest", "Chose No Discoverability");
             }
         } else if (requestCode == MyProfileTab.MeFragment.SELECT_SINGLE_PICTURE && resultCode == Activity.RESULT_OK){
@@ -130,7 +135,7 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
-    public void onSaveNewEvent(){
+    public void onSaveNewEvent() {
         FragmentManager manager = getSupportFragmentManager();
         MyEventsFragment fragment = (MyEventsFragment) manager.findFragmentById(mFrameLayout.getId());
         fragment.refreshList();
@@ -177,8 +182,8 @@ public class MainActivity extends AppCompatActivity implements
                     newEventFragment.confirmCheckIn(attendance);
                 }
             });
-        } catch (ClassCastException e){
-            Log.e("MA","not a HomeFragment");
+        } catch (ClassCastException e) {
+            Log.e("MA", "not a HomeFragment");
         }
     }
 
@@ -191,9 +196,9 @@ public class MainActivity extends AppCompatActivity implements
     private void startPinging(Attendance attendance) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
-            Intent intent = BluetoothPingService.newIntent(this,attendance.getObjectId());
+            Intent intent = BluetoothPingService.newIntent(this, attendance.getObjectId());
             startService(intent);
-            if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE){
+            if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE) {
                 presentDiscoverableDialog();
             }
         } else {
@@ -208,14 +213,21 @@ public class MainActivity extends AppCompatActivity implements
         startActivityForResult(discoverableIntent, DISCOVERABLE);
     }
 
-    public Fragment getDisplayedFragment(){
+    public Fragment getDisplayedFragment() {
         return getSupportFragmentManager().findFragmentById(mFrameLayout.getId());
     }
 
-    public void refreshView(){
+    @Override
+    public void onFbSelected(ParseUser user) {
+        FragmentManager manager = getSupportFragmentManager();
+        LinkFacebookFragment linkFacebookFragment = LinkFacebookFragment.newInstance(user);
+        linkFacebookFragment.show(manager, FB_DIALOG);
+    }
+
+    public void refreshView() {
         invalidateOptionsMenu();
         FragmentManager fm = getSupportFragmentManager();
-        switch (mSelectedFrag){
+        switch (mSelectedFrag) {
             case FRAG_HOME:
                 fm.beginTransaction()
                         .replace(mFrameLayout.getId(),
@@ -246,7 +258,15 @@ public class MainActivity extends AppCompatActivity implements
                 break;
         }
     }
-    public void logOut(){
+
+    @Override
+    public void onLinkedInSelected(ParseUser user) {
+        FragmentManager manager = getSupportFragmentManager();
+        LinkedInFragment linkedInFragment = LinkedInFragment.newInstance(user);
+        linkedInFragment.show(manager, LINKED_IN_DIALOG);
+    }
+
+    public void logOut() {
         ParseUser.logOut();
         // FLAG_ACTIVITY_CLEAR_TASK only works on API 11, so if the user
         // logs out on older devices, we'll just exit.
@@ -263,7 +283,7 @@ public class MainActivity extends AppCompatActivity implements
 
     @Override
     public boolean onNavigationItemSelected(MenuItem menuItem) {
-        switch (menuItem.getItemId()){
+        switch (menuItem.getItemId()) {
             case R.id.nav_home:
                 mSelectedFrag = FRAG_HOME;
                 break;
@@ -289,7 +309,6 @@ public class MainActivity extends AppCompatActivity implements
     }
 
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
@@ -301,7 +320,7 @@ public class MainActivity extends AppCompatActivity implements
     public boolean onPrepareOptionsMenu(Menu menu) {
         menu.clear();
         super.onPrepareOptionsMenu(menu);
-        switch (mSelectedFrag){
+        switch (mSelectedFrag) {
             case FRAG_HOME:
                 getMenuInflater().inflate(R.menu.menu_main, menu);
                 return true;
@@ -326,9 +345,9 @@ public class MainActivity extends AppCompatActivity implements
                 mDrawerLayout.openDrawer(GravityCompat.START);
                 return true;
             case R.id.menu_item_add:
-                if (mSelectedFrag == FRAG_MY_EVENTS){
+                if (mSelectedFrag == FRAG_MY_EVENTS) {
                     EventEditorFragment fragment = EventEditorFragment.newInstance(null);
-                    fragment.show(getSupportFragmentManager(),"NEW_EVENT");
+                    fragment.show(getSupportFragmentManager(), "NEW_EVENT");
                 }
             default:
                 return super.onOptionsItemSelected(item);

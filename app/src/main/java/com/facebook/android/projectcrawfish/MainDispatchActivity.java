@@ -10,7 +10,6 @@ import android.util.Log;
 import com.parse.Parse;
 import com.parse.ParseUser;
 import com.parse.ui.ParseLoginBuilder;
-import com.parse.ui.ParseLoginDispatchActivity;
 
 /**
  * Created by markamendoza on 7/15/15.

@@ -1,4 +1,6 @@
 // Copyright 2004-present Facebook. All Rights Reserved.
+
+
 package com.facebook.android.projectcrawfish;
 
 import android.graphics.Bitmap;
@@ -27,6 +29,10 @@ public class Profile implements Serializable {
     public static final String PHONE_NUMBER = "pr_phone_number";
     public static final String EMAIL = "pr_email";
     public static final String PROFILE_PICTURE = "pr_profile_picture";
+    public static final String FBID = "pr_fb_id";
+    public static final String LINKEDIN = "pr_linked_in";
+    public static final String IS_PUBLIC = "isFbPublic";
+
     protected String mUserID;
     private String mFirstName;
     private String mLastName;
@@ -34,6 +40,9 @@ public class Profile implements Serializable {
     private String mPhoneNumber;
     private String mEmail;
     private byte[] mProfilePicture;
+    private String mFbId;
+    private String mLinkedIn;
+    private Boolean mIsFbPublic;
 
     private static Profile defaultProfile(ParseUser user) {
         Profile profile = new Profile();
@@ -42,12 +51,16 @@ public class Profile implements Serializable {
         profile.setPosition("");
         profile.setPhoneNumber("");
         profile.mProfilePicture = null;
+        profile.setFbId("");
+        profile.setLinkedIn("");
         return profile;
     }
 
     public static Profile fromUser(ParseUser user) {
         Profile profile;
-        if (user.get(FIRST_NAME) == null) {
+
+
+        if (user.get(FIRST_NAME) == null ){
             profile = Profile.defaultProfile(user);
         } else {
             profile = new Profile();
@@ -57,6 +70,9 @@ public class Profile implements Serializable {
             profile.mPhoneNumber = (String) user.get(PHONE_NUMBER);
             profile.mEmail = (String) user.get(EMAIL);
             profile.mProfilePicture = null;//TODO convert to bitmap in usages
+            profile.mFbId = (String) user.get(FBID);
+            profile.mLinkedIn = (String) user.get(LINKEDIN);
+            profile.mIsFbPublic = (Boolean) user.get(IS_PUBLIC);
         }
         profile.mUserID = user.getObjectId();
         return profile;
@@ -66,9 +82,22 @@ public class Profile implements Serializable {
         ParseUser user = ParseObject.createWithoutData(ParseUser.class, mUserID);
         user.put(FIRST_NAME, mFirstName);
         user.put(LAST_NAME, mLastName);
-        user.put(POSITION, mPosition);
-        user.put(PHONE_NUMBER, mPhoneNumber);
-        user.put(EMAIL, mEmail);
+        user.put(POSITION,mPosition);
+        user.put(PHONE_NUMBER,mPhoneNumber);
+        user.put(EMAIL,mEmail);
+
+        if (mFbId != null) {
+            user.put(FBID, mFbId);
+        }
+
+        if (mLinkedIn != null) {
+            user.put(LINKEDIN, mLinkedIn);
+        }
+
+        if (mIsFbPublic != null) {
+            user.put(IS_PUBLIC, mIsFbPublic);
+        }
+
         user.saveInBackground(callback);
     }
 
@@ -136,6 +165,14 @@ public class Profile implements Serializable {
         void onGet(Bitmap bitmap);
     }
 
+    public String getFbId() {
+        return mFbId;
+    }
+
+    public void setFbId(String fbId) {
+        mFbId = fbId;
+    }
+
     public void getProfilePicture(final ProfilePictureGetListener listener) {
         if (mProfilePicture != null) {
             listener.onGet(BitmapFactory.decodeByteArray(mProfilePicture, 0, mProfilePicture.length));
@@ -181,4 +218,19 @@ public class Profile implements Serializable {
         });
     }
 
+    public String getLinkedIn() {
+        return mLinkedIn;
+    }
+
+    public void setLinkedIn(String linkedIn) {
+        mLinkedIn = linkedIn;
+    }
+
+    public void setIsFbPublic(Boolean isFbPublic) {
+        mIsFbPublic = isFbPublic;
+    }
+
+    public Boolean getIsFbPublic() {
+        return mIsFbPublic;
+    }
 }

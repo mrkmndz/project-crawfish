@@ -82,6 +82,12 @@
             android:name=".CardSwipeActivity"
             android:label="@string/title_activity_card_swipe" >
         </activity>
+        <activity android:name="com.facebook.FacebookActivity"
+                  android:configChanges=
+                      "keyboard|keyboardHidden|screenLayout|screenSize|orientation"
+                  android:theme="@android:style/Theme.Translucent.NoTitleBar"
+                  android:label="@string/app_name">
+        </activity>
         <service android:name=".BluetoothPingService" />
         <service android:name="com.parse.PushService" />
         <receiver android:name="com.parse.ParseBroadcastReceiver">
