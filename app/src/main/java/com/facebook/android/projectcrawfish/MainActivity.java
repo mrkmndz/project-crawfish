@@ -19,10 +19,20 @@ import android.view.MenuItem;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
+import com.parse.GetCallback;
+import com.parse.Parse;
+import com.parse.ParseException;
+import com.parse.ParseInstallation;
 import com.parse.ParseObject;
+import com.parse.ParseQuery;
 import com.parse.ParseUser;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -56,6 +66,10 @@ public class MainActivity extends AppCompatActivity implements
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        ParseInstallation installation = ParseInstallation.getCurrentInstallation();
+        installation.put("user", ParseUser.getCurrentUser());
+        installation.saveInBackground();
+
         mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
 
         mTabLayout.setupWithViewPager(mViewPager);
@@ -65,6 +79,25 @@ public class MainActivity extends AppCompatActivity implements
         mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize().colorRes(R.color.offWhite));
 
         mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+
+        String jsonData = getIntent().getStringExtra("com.parse.Data");
+        if (jsonData != null){
+            try {
+                getIntent().putExtra("com.parse.Data", (String) null);
+                JSONObject jObject = new JSONObject(jsonData);
+                String userID = jObject.getString("userID");
+                ParseQuery<ParseUser> query = ParseUser.getQuery();
+                query.getInBackground(userID, new GetCallback<ParseUser>() {
+                    @Override
+                    public void done(ParseUser user, ParseException e) {
+                        mViewPager.setCurrentItem(CONTACT_LIST_TAB);
+                        openContactDetails(user);
+                    }
+                });
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     @Override

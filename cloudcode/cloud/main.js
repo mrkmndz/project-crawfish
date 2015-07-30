@@ -32,6 +32,40 @@ var Attendance  = Parse.Object.extend("Attendance",{
   PING_COUNTS : "PING_COUNTS",
   HAS_LEFT : "HAS_LEFT"
 });
+
+var Swipe  = Parse.Object.extend("Swipe",{
+  isLeftSwipe: function () {
+    return this.get(Swipe.IS_LEFT_SWIPE);
+  },
+  getSwiper: function () {
+    return this.get(Swipe.SWIPER);
+  },
+  getSwipee: function () {
+    return this.get(Swipe.SWIPEE);
+  },
+  getEvent: function() {
+    return this.get(Swipe.EVENT);
+  }
+},
+{
+  EVENT : "EVENT",
+  SWIPER : "SWIPER",
+  SWIPEE : "SWIPEE",
+  IS_LEFT_SWIPE : "IS_LEFT_SWIPE"
+});
+
+var User = {
+  USER_ID : "user_id",
+  FIRST_NAME : "pr_first_name",
+  LAST_NAME : "pr_last_name",
+  REG_NAME : "name"
+}
+
+var Installation = {
+  USER : "user"
+}
+
+//args: String attendanceID
 Parse.Cloud.define("recordPings", function(request, response) {
   if (request.params.MACs.length === 0) response.success("No pings to save");
   var localAttendanceID = request.params.attendanceID;
@@ -62,17 +96,8 @@ Parse.Cloud.define("recordPings", function(request, response) {
     response.error(error.message);
   });
 });
-var Swipe  = Parse.Object.extend("Swipe",{
-  //Class properties/methods
-},
-{
-  EVENT : "EVENT",
-  SWIPER : "SWIPER",
-  SWIPEE : "SWIPEE",
-  IS_LEFT_SWIPE : "IS_LEFT_SWIPE"
-});
 
-//needs: attendanceID
+//args: String attendanceID
 Parse.Cloud.define("getSortedProfiles", function(request, response){
   var q = new Parse.Query(Attendance);
   var attendance;
@@ -119,17 +144,14 @@ Parse.Cloud.define("getSortedProfiles", function(request, response){
       results.forEach(function(entry){
         var obj = {};
         var user = entry.getUser();
-        var USER_ID = "user_id";
-        var FIRST_NAME = "pr_first_name";
-        var LAST_NAME = "pr_last_name";
-        obj[USER_ID] = user.id;
-        var first_name = user.get(FIRST_NAME);
+        obj[User.USER_ID] = user.id;
+        var first_name = user.get(User.FIRST_NAME);
         if (first_name === undefined){
-          obj[FIRST_NAME] = user.get("name");
-          obj[LAST_NAME] = "";
+          obj[User.FIRST_NAME] = user.get(User.REG_NAME);
+          obj[User.LAST_NAME] = "";
         } else {
-          obj[FIRST_NAME] = first_name;
-          obj[LAST_NAME] = user.get(LAST_NAME);
+          obj[User.FIRST_NAME] = first_name;
+          obj[User.LAST_NAME] = user.get(User.LAST_NAME);
         }
         array.push(obj);
       });
@@ -138,4 +160,57 @@ Parse.Cloud.define("getSortedProfiles", function(request, response){
   }, function(error){
     response.error(error.message);
   });
+});
+
+function getPush(toUser, fromUser){
+  var fullName;
+  var firstName = fromUser.get(User.FIRST_NAME);
+  if (firstName === undefined) {
+    fullName = fromUser.get(User.REG_NAME);
+  } else {
+    fullName = firstName + " " + fromUser.get(User.LAST_NAME);
+  }
+
+  var pushQuery = new Parse.Query(Parse.Installation);
+  pushQuery.equalTo(Installation.USER, toUser);
+  return Parse.Push.send({
+      where : pushQuery,
+      data : {
+        alert : "You connected with " + fullName ,
+        userID : fromUser.id
+      }
+  });
+}
+
+//Finding pairs on save swipe and sending push notifications
+Parse.Cloud.afterSave(Swipe, function(request) {
+  var swipe = request.object;
+  if (!swipe.isLeftSwipe()){
+    var query = new Parse.Query(Swipe);
+    query.equalTo(Swipe.SWIPEE, swipe.getSwiper());
+    query.equalTo(Swipe.SWIPER, swipe.getSwipee());
+    query.equalTo(Swipe.IS_LEFT_SWIPE, false);
+    query.include(Swipe.SWIPER);
+    query.find().then( function (results) {
+      if (results.length ===0){
+        console.log("No matches");
+      } else if (results.length === 1){
+        var connector = swipe.getSwiper();
+        var connectee = results[0].getSwiper();
+        connector.fetch().then(function(result){
+            return getPush(connectee,connector);
+        }).then (function (results){
+            return getPush(connector,connectee);
+        }).then (
+          function (results){
+            console.log("Pushed to two people");
+          }, function(error) {
+            console.error(error.message);
+          }
+        );
+      } else {
+        console.error("INCONSISTENT STATE");
+      }
+    });
+  }
 });
