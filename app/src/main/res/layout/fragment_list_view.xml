@@ -1,14 +1,15 @@
-<android.support.v4.widget.SwipeRefreshLayout
-    android:id="@+id/swipe_refresh"
+<com.facebook.android.projectcrawfish.ProgressSwitcher
+    android:id="@+id/progress_switcher"
     xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <com.facebook.android.projectcrawfish.ProgressSwitcher
-        android:id="@+id/progress_switcher"
+    <android.support.v4.widget.SwipeRefreshLayout
+        android:id="@+id/swipe_refresh"
         xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
         android:layout_height="match_parent">
+
 
         <ListView
             android:id="@+id/list_view"
@@ -18,6 +19,7 @@
             android:drawSelectorOnTop="false"
             android:orientation="vertical"
             android:scrollbarStyle="outsideOverlay"/>
-    </com.facebook.android.projectcrawfish.ProgressSwitcher>
-</android.support.v4.widget.SwipeRefreshLayout>
 
+    </android.support.v4.widget.SwipeRefreshLayout>
+
+</com.facebook.android.projectcrawfish.ProgressSwitcher>

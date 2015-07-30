@@ -27,7 +27,7 @@ import butterknife.ButterKnife;
 abstract public class ListFragment<T extends ParseObject> extends Fragment
         implements CustomViewPQA.ClickEventListener<T>, ParseQueryAdapter.OnQueryLoadListener<T> {
 
-    private boolean mIsLoading;
+    private boolean mHasLoaded;
 
     private CustomViewPQA<T> mAdapter;
 
@@ -73,8 +73,11 @@ abstract public class ListFragment<T extends ParseObject> extends Fragment
         View v= inflater.inflate(R.layout.fragment_list_view, container, false);
         ButterKnife.bind(this, v);
 
-        mSwitcher.showContent();
-
+        if (mHasLoaded) {
+            mSwitcher.showContent();
+        } else {
+            mSwitcher.showBar();
+        }
         mAdapter.addOnQueryLoadListener(this);
 
         mListView.setAdapter(mAdapter);
@@ -90,25 +93,17 @@ abstract public class ListFragment<T extends ParseObject> extends Fragment
         return v;
     }
 
-    private void updateSwitcher(){
-        if (mSwitcher == null) return;
-        if (mIsLoading){
+    @Override
+    public void onLoading() {
+        if (!mHasLoaded && mSwitcher!=null){
             mSwitcher.showBar();
-        } else {
-            mSwitcher.showContent();
         }
     }
 
     @Override
-    public void onLoading() {
-        mIsLoading = true;
-        updateSwitcher();
-    }
-
-    @Override
     public void onLoaded(List<T> list, Exception e) {
-        mIsLoading = false;
-        updateSwitcher();
+        mHasLoaded = true;
+        if (mSwitcher != null) mSwitcher.showContent();
         if (mSwipeRefreshLayout != null) mSwipeRefreshLayout.setRefreshing(false);
     }
 }
