@@ -6,6 +6,9 @@ import android.app.Activity;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -47,6 +50,9 @@ public class UpcomingEventsFragment extends Fragment{
 
     @Bind(R.id.checked_into_title)
     TextView mCheckedInTitle;
+
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
     private String mCachedEventName;
 
     public void refreshList() {
@@ -119,6 +125,15 @@ public class UpcomingEventsFragment extends Fragment{
         } else {
             onLoaded();
         }
+
+        mToolbar.setTitle("Project Crawfish");
+        mToolbar.setLogo(R.mipmap.ic_launcher);
+        AppCompatActivity activity = (AppCompatActivity) getActivity();
+        activity.setSupportActionBar(mToolbar);
+
+        ActionBar ab = activity.getSupportActionBar();
+        ab.setHomeAsUpIndicator(R.drawable.ic_menu);
+        ab.setDisplayHomeAsUpEnabled(true);
 
         return view;
     }

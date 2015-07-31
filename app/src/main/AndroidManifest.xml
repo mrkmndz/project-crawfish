@@ -60,7 +60,7 @@
             <!-- TODO CHANGE THIS EVENTUALLY -->
         </activity>
         <activity
-            android:name=".NewEventActivity"
+            android:name=".NewEventFragment"
             android:label="@string/title_activity_new_event" >
         </activity>
         <activity

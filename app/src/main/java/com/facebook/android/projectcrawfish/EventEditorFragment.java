@@ -14,6 +14,7 @@ import android.widget.EditText;
 import android.widget.Switch;
 
 import com.parse.ParseException;
+import com.parse.ParseUser;
 import com.parse.SaveCallback;
 
 import java.util.Calendar;
@@ -82,6 +83,7 @@ public class EventEditorFragment extends EventDialog {
         cal.setTime(now);
         cal.add(Calendar.HOUR, Event.STANDARD_DURATION_HOURS);
         newEvent.setEndDate(cal.getTime());
+        newEvent.setCreator(ParseUser.getCurrentUser());
         bundle.putSerializable(PROXY, newEvent.toProxy());
         return bundle;
     }
@@ -109,13 +111,15 @@ public class EventEditorFragment extends EventDialog {
         mAllDay.setChecked(mEvent.isAllDay());
     }
 
+    @OnClick(R.id.save_button)
     public void saveToParse(){
         mSwitcher.showBar();
         mEvent.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
+                getDialog().dismiss();
                 mSwitcher.showContent();
-                mListener.done();
+                mListener.onSaveNewEvent();
             }
         });
     }
@@ -123,7 +127,7 @@ public class EventEditorFragment extends EventDialog {
     private OnFragmentInteractionListener mListener;
 
     interface OnFragmentInteractionListener {
-        void done();
+        void onSaveNewEvent();
     }
 
     @Override

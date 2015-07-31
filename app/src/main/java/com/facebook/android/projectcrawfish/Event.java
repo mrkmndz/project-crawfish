@@ -3,6 +3,7 @@
 package com.facebook.android.projectcrawfish;
 
 import com.parse.FindCallback;
+import com.parse.Parse;
 import com.parse.ParseClassName;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -27,11 +28,20 @@ public class Event extends ParseObject {
     public static final String LOCATION = "LOCATION";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String ALL_DAY = "ALL_DAY";
+    public static final String CREATOR = "CREATOR";
 
     public static final int STANDARD_DURATION_HOURS = 1;
 
     public static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
     public static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
+
+    public ParseUser getCreator(){
+        return getParseUser(CREATOR);
+    }
+
+    public void setCreator(ParseUser user){
+        put(CREATOR,user);
+    }
 
     public Date getStartDate() {
             return (Date) get(START_DATE);
@@ -151,6 +161,7 @@ public class Event extends ParseObject {
         proxy.mIsAllDay = isAllDay();
         proxy.mStartDate = getStartDate();
         proxy.mEndDate = getEndDate();
+        proxy.mCreatorID = getCreator().getObjectId();
         return proxy;
     }
     public static class Proxy implements Serializable {
@@ -161,6 +172,7 @@ public class Event extends ParseObject {
         private boolean mIsAllDay;
         private Date mStartDate;
         private Date mEndDate;
+        private String mCreatorID;
 
         public Event toPO(){
             Event event;
@@ -175,6 +187,8 @@ public class Event extends ParseObject {
             event.setIsAllDay(mIsAllDay);
             event.setStartDate(mStartDate);
             event.setEndDate(mEndDate);
+            ParseUser creator = ParseUser.createWithoutData(ParseUser.class,mCreatorID);
+            event.setCreator(creator);
             return event;
         }
     }

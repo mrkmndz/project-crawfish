@@ -7,15 +7,16 @@ import android.bluetooth.BluetoothAdapter;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.support.design.widget.TabLayout;
+import android.support.design.widget.NavigationView;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
-import android.support.v4.app.FragmentPagerAdapter;
-import android.support.v4.view.ViewPager;
+import android.support.v4.view.GravityCompat;
+import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.FrameLayout;
 
 import com.joanzapata.android.iconify.IconDrawable;
 import com.joanzapata.android.iconify.Iconify;
@@ -23,6 +24,7 @@ import com.parse.GetCallback;
 import com.parse.Parse;
 import com.parse.ParseException;
 import com.parse.ParseInstallation;
+
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
@@ -43,7 +45,9 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventDetailsFragment.OnFragmentInteractionListener,
         ContactListFragment.OnFragmentInteractionListener,
         PastEventDetailsFragment.OnFragmentInteractionListener,
-        UpcomingEventsFragment.OnFragmentInteractionListener{
+        UpcomingEventsFragment.OnFragmentInteractionListener,
+        NavigationView.OnNavigationItemSelectedListener,
+        EventEditorFragment.OnFragmentInteractionListener{
 
     private static final int NEW_EVENT = 1;
     public static final int DISCOVERABLE = 3;
@@ -51,14 +55,23 @@ public class MainActivity extends AppCompatActivity implements
     private static final String DIALOG_CHECK_IN = "CheckInDialog";
     private static final String PAST_EVENT_DETAILS = "PastEventDetails";
     private static final String DIALOG_CONTACT_DETAILS = "DialogContactDetails";
-    public static final int UPCOMING_EVENT_TAB_INDEX = 0;
-    public static final int PAST_EVENT_TAB_INDEX = 1;
-    public static final int CONTACT_LIST_TAB = 2;
 
-    @Bind(R.id.main_pager)
-    ViewPager mViewPager;
-    @Bind(R.id.tab_layout)
-    TabLayout mTabLayout;
+    private int mSelectedFrag;
+    private static final int FRAG_HOME = 0;
+    private static final int FRAG_CHECK_IN = 1;
+    private static final int FRAG_MY_EVENTS = 2;
+    private static final int FRAG_MY_PROFILE = 3;
+    private static final int TAB_CONTACTS = -1;
+
+    @Bind(R.id.content)
+    FrameLayout mFrameLayout;
+
+
+    @Bind(R.id.drawer_layout)
+    DrawerLayout mDrawerLayout;
+
+    @Bind(R.id.nav_view)
+    NavigationView mNavigationView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -70,18 +83,10 @@ public class MainActivity extends AppCompatActivity implements
         installation.put("user", ParseUser.getCurrentUser());
         installation.saveInBackground();
 
-        mViewPager.setAdapter(new SectionsPagerAdapter(getSupportFragmentManager()));
-
-        mTabLayout.setupWithViewPager(mViewPager);
-
-        mTabLayout.getTabAt(0).setIcon(new IconDrawable(this, Iconify.IconValue.fa_users).actionBarSize().colorRes(R.color.offWhite));
-        mTabLayout.getTabAt(1).setIcon(new IconDrawable(this, Iconify.IconValue.fa_link).actionBarSize().colorRes(R.color.offWhite));
-        mTabLayout.getTabAt(2).setIcon(new IconDrawable(this, Iconify.IconValue.fa_user).actionBarSize().colorRes(R.color.offWhite));
-
-        mTabLayout.setTabGravity(TabLayout.GRAVITY_FILL);
+        mNavigationView.setNavigationItemSelectedListener(this);
 
         String jsonData = getIntent().getStringExtra("com.parse.Data");
-        if (jsonData != null){
+        if (jsonData != null) {
             try {
                 getIntent().putExtra("com.parse.Data", (String) null);
                 JSONObject jObject = new JSONObject(jsonData);
@@ -90,7 +95,10 @@ public class MainActivity extends AppCompatActivity implements
                 query.getInBackground(userID, new GetCallback<ParseUser>() {
                     @Override
                     public void done(ParseUser user, ParseException e) {
-                        mViewPager.setCurrentItem(CONTACT_LIST_TAB);
+                        mSelectedFrag = TAB_CONTACTS;
+                        refreshView();
+                        HomeFragment fragment = (HomeFragment) getDisplayedFragment();
+                        fragment.mViewPager.setCurrentItem(HomeFragment.CONTACT_LIST_TAB);
                         openContactDetails(user);
                     }
                 });
@@ -98,14 +106,18 @@ public class MainActivity extends AppCompatActivity implements
                 e.printStackTrace();
             }
         }
+
+        if (getDisplayedFragment() == null) {
+            mNavigationView.getMenu().getItem(0).setChecked(true);
+            mSelectedFrag = FRAG_HOME;
+            refreshView();
+        }
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK && requestCode == NEW_EVENT){
-            getUpcomingEventsTab().refreshList();
-        } else  if (requestCode == SWIPES) {
+        if (requestCode == SWIPES) {
             FragmentManager manager = getSupportFragmentManager();
             PastEventDetailsFragment fragment = (PastEventDetailsFragment) manager.findFragmentByTag(PAST_EVENT_DETAILS);
             fragment.refresh();
@@ -114,6 +126,13 @@ public class MainActivity extends AppCompatActivity implements
                 Log.e("BluetoothTest", "Chose No Discoverability");
             }
         }
+    }
+
+    @Override
+    public void onSaveNewEvent(){
+        FragmentManager manager = getSupportFragmentManager();
+        MyEventsFragment fragment = (MyEventsFragment) manager.findFragmentById(mFrameLayout.getId());
+        fragment.refreshList();
     }
 
     @Override
@@ -143,34 +162,23 @@ public class MainActivity extends AppCompatActivity implements
         startActivityForResult(intent, SWIPES);
     }
 
-    private UpcomingEventsFragment getUpcomingEventsTab() {
-        FragmentManager manager = this.getSupportFragmentManager();
-        String tag = makeFragmentName(UPCOMING_EVENT_TAB_INDEX);
-        return (UpcomingEventsFragment) manager.findFragmentByTag(tag);
-    }
-
-    private PastEventList getPastEventsTab() {
-        FragmentManager manager = this.getSupportFragmentManager();
-        String tag = makeFragmentName(PAST_EVENT_TAB_INDEX);
-        return (PastEventList) manager.findFragmentByTag(tag);
-    }
-
-    private static String makeFragmentName(int index) {
-        return "android:switcher:" + R.id.main_pager + ":" + index;
-    }
-
     @Override
     public void checkInToEvent(String eventID) {
-        getUpcomingEventsTab().startCheckIn();
-        Event event = ParseObject.createWithoutData(Event.class, eventID);
-        event.checkIn(new Event.CheckInCallback() {
-            @Override
-            public void checkedIn(Attendance attendance) {
-                startPinging(attendance);
-                getPastEventsTab().refreshList();
-                getUpcomingEventsTab().confirmCheckIn(attendance);
-            }
-        });
+        Fragment fragment = getSupportFragmentManager().findFragmentById(mFrameLayout.getId());
+        try {
+            final UpcomingEventsFragment newEventFragment = (UpcomingEventsFragment) fragment;
+            newEventFragment.startCheckIn();
+            Event event = ParseObject.createWithoutData(Event.class, eventID);
+            event.checkIn(new Event.CheckInCallback() {
+                @Override
+                public void checkedIn(Attendance attendance) {
+                    startPinging(attendance);
+                    newEventFragment.confirmCheckIn(attendance);
+                }
+            });
+        } catch (ClassCastException e){
+            Log.e("MA","not a HomeFragment");
+        }
     }
 
     @Override
@@ -199,32 +207,93 @@ public class MainActivity extends AppCompatActivity implements
         startActivityForResult(discoverableIntent, DISCOVERABLE);
     }
 
-    public class SectionsPagerAdapter extends FragmentPagerAdapter {
-
-        public SectionsPagerAdapter(FragmentManager fm) {
-            super(fm);
-        }
-
-        @Override
-        public Fragment getItem(int position) {
-            switch (position) {
-                case UPCOMING_EVENT_TAB_INDEX:
-                    return new UpcomingEventsFragment();
-                case PAST_EVENT_TAB_INDEX:
-                    return new PastEventList();
-                case CONTACT_LIST_TAB:
-                    return new ContactListFragment();
-                default:
-                    return null;
-            }
-        }
-
-        @Override
-        public int getCount() {
-            return 3;
-        }
-
+    public Fragment getDisplayedFragment(){
+        return getSupportFragmentManager().findFragmentById(mFrameLayout.getId());
     }
+
+    public void refreshView(){
+        invalidateOptionsMenu();
+        FragmentManager fm = getSupportFragmentManager();
+        switch (mSelectedFrag){
+            case FRAG_HOME:
+                fm.beginTransaction()
+                        .replace(mFrameLayout.getId(),
+                                HomeFragment.newInstance(HomeFragment.PAST_EVENT_TAB_INDEX))
+                        .commit();
+                break;
+            case TAB_CONTACTS:
+                fm.beginTransaction()
+                        .replace(mFrameLayout.getId(),
+                                HomeFragment.newInstance(HomeFragment.CONTACT_LIST_TAB))
+                        .commit();
+                mSelectedFrag = FRAG_HOME;
+                break;
+            case FRAG_CHECK_IN:
+                fm.beginTransaction()
+                        .replace(mFrameLayout.getId(), new UpcomingEventsFragment())
+                        .commit();
+                break;
+            case FRAG_MY_EVENTS:
+                fm.beginTransaction()
+                        .replace(mFrameLayout.getId(), new MyEventsFragment())
+                        .commit();
+                break;
+            case FRAG_MY_PROFILE:
+                FrameFragment<MeFragment> fragment = new FrameFragment<MeFragment>() {
+                    @Override
+                    protected MeFragment getNewFragmentInstance() {
+                        return MeFragment.newInstance();
+                    }
+                };
+                fm.beginTransaction()
+                        .replace(mFrameLayout.getId(), fragment)
+                        .commit();
+                break;
+        }
+    }
+    public void logOut(){
+        ParseUser.logOut();
+        // FLAG_ACTIVITY_CLEAR_TASK only works on API 11, so if the user
+        // logs out on older devices, we'll just exit.
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+            Intent i = new Intent(this,
+                    MainDispatchActivity.class);
+            i.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
+                    | Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(i);
+        } else {
+            finish();
+        }
+    }
+
+    @Override
+    public boolean onNavigationItemSelected(MenuItem menuItem) {
+        switch (menuItem.getItemId()){
+            case R.id.nav_home:
+                mSelectedFrag = FRAG_HOME;
+                break;
+            case R.id.nav_check_in:
+                mSelectedFrag = FRAG_CHECK_IN;
+                break;
+            case R.id.nav_new:
+                mSelectedFrag = FRAG_MY_EVENTS;
+                break;
+            case R.id.nav_me:
+                mSelectedFrag = FRAG_MY_PROFILE;
+                break;
+            case R.id.nav_log_out:
+                logOut();
+                return true;
+            default:
+                return false;
+        }
+        refreshView();
+        menuItem.setChecked(true);
+        mDrawerLayout.closeDrawers();
+        return true;
+    }
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -234,34 +303,38 @@ public class MainActivity extends AppCompatActivity implements
     }
 
     @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        menu.clear();
+        super.onPrepareOptionsMenu(menu);
+        switch (mSelectedFrag){
+            case FRAG_HOME:
+                getMenuInflater().inflate(R.menu.menu_main, menu);
+                return true;
+            case FRAG_MY_EVENTS:
+                getMenuInflater().inflate(R.menu.menu_my_events, menu);
+                return true;
+            case FRAG_CHECK_IN:
+                getMenuInflater().inflate(R.menu.menu_check_in, menu);
+                return true;
+            case FRAG_MY_PROFILE:
+                getMenuInflater().inflate(R.menu.menu_check_in, menu);
+                return true;
+            default:
+                return false;
+        }
+    }
+
+    @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case R.id.action_logout:
-                ParseUser.logOut();
-                // FLAG_ACTIVITY_CLEAR_TASK only works on API 11, so if the user
-                // logs out on older devices, we'll just exit.
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                    Intent intent = new Intent(this,
-                            MainDispatchActivity.class);
-                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK
-                            | Intent.FLAG_ACTIVITY_NEW_TASK);
-                    startActivity(intent);
-                } else {
-                    finish();
+            case android.R.id.home:
+                mDrawerLayout.openDrawer(GravityCompat.START);
+                return true;
+            case R.id.menu_item_add:
+                if (mSelectedFrag == FRAG_MY_EVENTS){
+                    EventEditorFragment fragment = EventEditorFragment.newInstance(null);
+                    fragment.show(getSupportFragmentManager(),"NEW_EVENT");
                 }
-                return false;
-            case R.id.action_my_profile:
-                FragmentManager manager = getSupportFragmentManager();
-                MeFragment meFragment = MeFragment.newInstance();
-                meFragment.show(manager, DIALOG_CONTACT_DETAILS);
-                return false;
-            case R.id.action_search:
-                return true;
-
-            case R.id.action_add:
-                Intent intent = new Intent(this, NewEventActivity.class);
-                startActivityForResult(intent, NEW_EVENT);
-                return true;
             default:
                 return super.onOptionsItemSelected(item);
         }

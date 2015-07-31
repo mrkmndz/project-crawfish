@@ -2,19 +2,19 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="wrap_content"
     android:layout_gravity="center"
     android:layout_marginBottom="16dp"
     android:layout_marginLeft="16dp"
     android:layout_marginRight="16dp"
     android:layout_marginTop="16dp">
     <com.facebook.android.projectcrawfish.ProgressSwitcher
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/switcher">
+            android:layout_width="match_parent"
+           android:layout_height="wrap_content"
+            android:id="@+id/switcher">
     <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:orientation="vertical">
 
         <com.facebook.android.projectcrawfish.CustomFontEditText
@@ -184,12 +184,18 @@
                 android:id="@+id/description"
                 android:layout_toRightOf="@id/text_icon"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="wrap_content"
+                android:minHeight="128dp"
                 android:hint="@string/description_hint"
                 android:layout_centerVertical="true"
                 android:gravity="top"
                 />
         </RelativeLayout>
+        <Button
+            android:id="@+id/save_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="SAVE"/>
     </LinearLayout>
     </com.facebook.android.projectcrawfish.ProgressSwitcher>
 </android.support.v7.widget.CardView>
