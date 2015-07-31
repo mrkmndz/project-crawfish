@@ -58,9 +58,9 @@ public class BluetoothPingService extends Service {
     private Handler mHandler;
     private String mAttendanceID;
 
-    public static Intent newIntent(Context context, Attendance attendance){
+    public static Intent newIntent(Context context, String attendanceID){
         Intent intent = new Intent(context, BluetoothPingService.class);
-        intent.putExtra(ATTENDANCE_ID, attendance.getObjectId());
+        intent.putExtra(ATTENDANCE_ID, attendanceID);
         return intent;
     }
 

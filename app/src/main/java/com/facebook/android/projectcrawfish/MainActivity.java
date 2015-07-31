@@ -77,10 +77,7 @@ public class MainActivity extends AppCompatActivity implements
             PastEventDetailsFragment fragment = (PastEventDetailsFragment) manager.findFragmentByTag(PAST_EVENT_DETAILS);
             fragment.refresh();
         } else if (requestCode == DISCOVERABLE){
-            if (resultCode != Activity.RESULT_CANCELED){
-                Intent intent = new Intent(this, BluetoothPingService.class);
-                startService(intent);
-            } else {
+            if (resultCode == Activity.RESULT_CANCELED){
                 Log.e("BluetoothTest", "Chose No Discoverability");
             }
         }
@@ -152,11 +149,10 @@ public class MainActivity extends AppCompatActivity implements
     private void startPinging(Attendance attendance) {
         BluetoothAdapter bluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
         if (bluetoothAdapter != null) {
+            Intent intent = BluetoothPingService.newIntent(this,attendance.getObjectId());
+            startService(intent);
             if (bluetoothAdapter.getScanMode() != BluetoothAdapter.SCAN_MODE_CONNECTABLE_DISCOVERABLE){
                 presentDiscoverableDialog();
-            } else {
-                Intent intent = BluetoothPingService.newIntent(this,attendance);
-                startService(intent);
             }
         } else {
             Log.e("BluetoothTest", "No Bluetooth Capability");
