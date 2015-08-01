@@ -10,7 +10,7 @@ import com.parse.ParseUser;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<Swipe> {
+public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<ParseUser> {
     private final View mView;
 
     @Bind(R.id.list_item_contact_name)
@@ -18,14 +18,13 @@ public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<Swipe> {
     @Bind(R.id.list_item_contact_position)
     TextView mPositionView;
 
-    public ContactViewHolder(View v, ClickEventListener<Swipe> listener) {
+    public ContactViewHolder(View v, ClickEventListener<ParseUser> listener) {
         super(listener);
         mView = v;
     }
 
     @Override
-    void bindObject(final Swipe swipe) {
-        ParseUser user = swipe.getParseUser(Swipe.SWIPEE);
+    void bindObject(final ParseUser user) {
         Profile profile = Profile.fromUser(user);
 
         ButterKnife.bind(this, mView);
@@ -36,7 +35,7 @@ public class ContactViewHolder extends CustomViewPQA.CustomViewHolder<Swipe> {
         mView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                ContactViewHolder.this.onClick(swipe);
+                ContactViewHolder.this.onClick(user);
             }
         });
     }

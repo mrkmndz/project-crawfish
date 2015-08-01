@@ -1,3 +1,4 @@
+//Parse Subclass Attendance
 var Attendance  = Parse.Object.extend("Attendance",{
   getUser: function () {
     return this.get(Attendance.USER);
@@ -33,6 +34,7 @@ var Attendance  = Parse.Object.extend("Attendance",{
   HAS_LEFT : "HAS_LEFT"
 });
 
+//Parse Subclass Swipe
 var Swipe  = Parse.Object.extend("Swipe",{
   isLeftSwipe: function () {
     return this.get(Swipe.IS_LEFT_SWIPE);
@@ -54,49 +56,62 @@ var Swipe  = Parse.Object.extend("Swipe",{
   IS_LEFT_SWIPE : "IS_LEFT_SWIPE"
 });
 
+//Fields on the _User class
 var User = {
-  USER_ID : "user_id",
   FIRST_NAME : "pr_first_name",
   LAST_NAME : "pr_last_name",
   REG_NAME : "name"
-}
+};
 
+//Fields on the _Installation class
 var Installation = {
   USER : "user"
-}
+};
 
-//args: String attendanceID
+//Fields on the  JSON passed to the client
+var PublicProfile = {
+  USER_ID : "user_id",
+  FIRST_NAME : User.FIRST_NAME,
+  LAST_NAME : User.LAST_NAME
+};
+
+//Cloud code function to record the pings from a set of MAC addresses
+//args: String attendanceID, String[] MACs
 Parse.Cloud.define("recordPings", function(request, response) {
-  if (request.params.MACs.length === 0) response.success("No pings to save");
-  var localAttendanceID = request.params.attendanceID;
-  var q = new Parse.Query(Attendance);
-  var localAttendance;
-  var hitCount;
-  q.get(localAttendanceID).then(function(result) {
-    localAttendance = result;
-    var query = new Parse.Query(Attendance);
-    query.containedIn(Attendance.MAC, request.params.MACs);
-    query.equalTo(Attendance.EVENT,localAttendance.getEvent());
-    query.equalTo(Attendance.HAS_LEFT, false);
-    query.include(Attendance.USER);
-    return query.find();
-  }).then(function(results) {
-    hitCount = results.length;
-    for (var i = 0; i < results.length; i++) {
-      var foreignAttendance = results[i];
-      foreignAttendance.recordPing(localAttendance.getUser());
-      localAttendance.recordPing(foreignAttendance.getUser());
-    }
-    return Attendance.saveAll(results);
-  }).then( function(result){
-    return localAttendance.save();
-  }).then( function(result){
-    response.success("Saved " + hitCount + " pings");
-  }, function(error){
-    response.error(error.message);
-  });
+  if (request.params.MACs.length === 0){
+      response.success("No pings to save");
+  } else {
+    var localAttendanceID = request.params.attendanceID;
+    var q = new Parse.Query(Attendance);
+    var localAttendance;
+    var hitCount;
+    q.get(localAttendanceID).then(function(result) {
+      localAttendance = result;
+      var query = new Parse.Query(Attendance);
+      query.containedIn(Attendance.MAC, request.params.MACs);
+      query.equalTo(Attendance.EVENT,localAttendance.getEvent());
+      query.equalTo(Attendance.HAS_LEFT, false);
+      query.include(Attendance.USER);
+      return query.find();
+    }).then(function(results) {
+      hitCount = results.length;
+      for (var i = 0; i < results.length; i++) {
+        var foreignAttendance = results[i];
+        foreignAttendance.recordPing(localAttendance.getUser());
+        localAttendance.recordPing(foreignAttendance.getUser());
+      }
+      return Attendance.saveAll(results);
+    }).then( function(result){
+      return localAttendance.save();
+    }).then( function(result){
+      response.success("Saved " + hitCount + " pings");
+    }, function(error){
+      response.error(error.message);
+    });
+  }
 });
 
+//Cloud code function to get a set of public profiles sorted by pings
 //args: String attendanceID
 Parse.Cloud.define("getSortedProfiles", function(request, response){
   var q = new Parse.Query(Attendance);
@@ -144,14 +159,14 @@ Parse.Cloud.define("getSortedProfiles", function(request, response){
       results.forEach(function(entry){
         var obj = {};
         var user = entry.getUser();
-        obj[User.USER_ID] = user.id;
+        obj[PublicProfile.USER_ID] = user.id;
         var first_name = user.get(User.FIRST_NAME);
         if (first_name === undefined){
-          obj[User.FIRST_NAME] = user.get(User.REG_NAME);
-          obj[User.LAST_NAME] = "";
+          obj[PublicProfile.FIRST_NAME] = user.get(User.REG_NAME);
+          obj[PublicProfile.LAST_NAME] = "";
         } else {
-          obj[User.FIRST_NAME] = first_name;
-          obj[User.LAST_NAME] = user.get(User.LAST_NAME);
+          obj[PublicProfile.FIRST_NAME] = first_name;
+          obj[PublicProfile.LAST_NAME] = user.get(User.LAST_NAME);
         }
         array.push(obj);
       });
@@ -162,6 +177,18 @@ Parse.Cloud.define("getSortedProfiles", function(request, response){
   });
 });
 
+//BeforeSave hook on Swipes to mirror the swipee pointer with a string ID
+Parse.Cloud.beforeSave(Swipe, function(request,response){
+  var swipe = request.object;
+  if (swipe.getSwipee().id === swipe.get("swipeeID")){
+    response.success();
+  } else {
+    swipe.set("swipeeID",swipe.getSwipee().id);
+    response.success();
+  }
+});
+
+//Convenience function to get a filled push request from one user to another
 function getPush(toUser, fromUser){
   var fullName;
   var firstName = fromUser.get(User.FIRST_NAME);
@@ -182,7 +209,7 @@ function getPush(toUser, fromUser){
   });
 }
 
-//Finding pairs on save swipe and sending push notifications
+//AfterSave hook on Swipes that finds pairs and sends push notifications
 Parse.Cloud.afterSave(Swipe, function(request) {
   var swipe = request.object;
   if (!swipe.isLeftSwipe()){
@@ -191,12 +218,14 @@ Parse.Cloud.afterSave(Swipe, function(request) {
     query.equalTo(Swipe.SWIPER, swipe.getSwipee());
     query.equalTo(Swipe.IS_LEFT_SWIPE, false);
     query.include(Swipe.SWIPER);
+
     query.find().then( function (results) {
       if (results.length ===0){
         console.log("No matches");
       } else if (results.length === 1){
         var connector = swipe.getSwiper();
         var connectee = results[0].getSwiper();
+
         connector.fetch().then(function(result){
             return getPush(connectee,connector);
         }).then (function (results){

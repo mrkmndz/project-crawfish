@@ -19,11 +19,11 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class ContactListFragment extends ListFragment<Swipe> {
+public class ContactListFragment extends ListFragment<ParseUser> {
 
 
     @Override
-    protected ParseQuery<Swipe> getQuery() {
+    protected ParseQuery<ParseUser> getQuery() {
         ParseQuery<Swipe> queryB = ParseQuery.getQuery(Swipe.class);
         queryB.whereEqualTo(Swipe.SWIPEE, ParseUser.getCurrentUser());
         queryB.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);
@@ -32,15 +32,19 @@ public class ContactListFragment extends ListFragment<Swipe> {
         queryA.whereEqualTo(Swipe.SWIPER, ParseUser.getCurrentUser());
         queryA.whereEqualTo(Swipe.IS_LEFT_SWIPE, false);//People you swiped right
         queryA.whereMatchesKeyInQuery(Swipe.SWIPEE, Swipe.SWIPER, queryB);//People who swiped right on you
-        queryA.include(Swipe.SWIPEE);
-        return queryA;
+
+        ParseQuery<ParseUser> query = ParseUser.getQuery();
+        query.whereMatchesKeyInQuery("objectId","swipeeID",queryA);
+        query.addAscendingOrder(Profile.LAST_NAME);
+
+        return query;
     }
 
     @Override
-    protected CustomViewPQA.CustomViewHolderFactory<Swipe> getHolderFactory() {
-        return new CustomViewPQA.CustomViewHolderFactory<Swipe>() {
+    protected CustomViewPQA.CustomViewHolderFactory<ParseUser> getHolderFactory() {
+        return new CustomViewPQA.CustomViewHolderFactory<ParseUser>() {
             @Override
-            public CustomViewPQA.CustomViewHolder<Swipe> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<Swipe> listener) {
+            public CustomViewPQA.CustomViewHolder<ParseUser> create(View v, CustomViewPQA.CustomViewHolder.ClickEventListener<ParseUser> listener) {
                 return new ContactViewHolder(v, listener);
             }
         };
@@ -59,8 +63,8 @@ public class ContactListFragment extends ListFragment<Swipe> {
     private OnFragmentInteractionListener mListener;
 
     @Override
-    public void OnClick(Swipe swipe) {
-        mListener.openContactDetails(swipe.getParseUser(Swipe.SWIPEE));
+    public void OnClick(ParseUser user) {
+        mListener.openContactDetails(user);
     }
 
     @Override
