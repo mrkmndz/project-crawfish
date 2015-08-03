@@ -27,7 +27,7 @@ abstract public class ListFragment<T extends ParseObject> extends Fragment
 
     private boolean mHasLoaded;
 
-    private CustomViewPQA<T> mAdapter;
+    protected CustomViewPQA<T> mAdapter;
 
     @Bind(R.id.list_view)
     ListView mListView;

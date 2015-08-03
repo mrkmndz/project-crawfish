@@ -11,6 +11,35 @@ import com.parse.ParseUser;
 public class ContactListFragment extends ListFragment<ParseUser> {
 
     @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        ParseQueryAdapter.QueryFactory<ParseUser> queryFactory =
+                new ParseQueryAdapter.QueryFactory<ParseUser>() {
+                    public ParseQuery<ParseUser> create() {
+                        return getQuery();
+                    }
+                };
+
+        mAdapter = new ContactPQA(
+                getActivity(),
+                queryFactory,
+                this,
+                getHolderFactory(),
+                getListItemResID()
+        );
+        mAdapter.loadObjects();
+    }
+
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
+        View v = super.onCreateView(inflater, container, savedInstanceState);
+        mListView.setScrollBarStyle(View.SCROLLBARS_INSIDE_INSET);
+        mListView.setScrollbarFadingEnabled(false);
+        mListView.setFastScrollAlwaysVisible(true);
+        return v;
+    }
+
+    @Override
     protected ParseQuery<ParseUser> getQuery() {
         ParseQuery<Swipe> queryB = ParseQuery.getQuery(Swipe.class);
         queryB.whereEqualTo(Swipe.SWIPEE, ParseUser.getCurrentUser());
