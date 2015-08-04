@@ -60,7 +60,8 @@ var Swipe  = Parse.Object.extend("Swipe",{
 var User = {
   FIRST_NAME : "pr_first_name",
   LAST_NAME : "pr_last_name",
-  REG_NAME : "name"
+  REG_NAME : "name",
+  PROFILE_PICTURE :"pr_profile_picture"
 };
 
 //Fields on the _Installation class
@@ -72,7 +73,8 @@ var Installation = {
 var PublicProfile = {
   USER_ID : "user_id",
   FIRST_NAME : User.FIRST_NAME,
-  LAST_NAME : User.LAST_NAME
+  LAST_NAME : User.LAST_NAME,
+  PICTURE : "picture_url"
 };
 
 //Cloud code function to record the pings from a set of MAC addresses
@@ -167,6 +169,10 @@ Parse.Cloud.define("getSortedProfiles", function(request, response){
         } else {
           obj[PublicProfile.FIRST_NAME] = first_name;
           obj[PublicProfile.LAST_NAME] = user.get(User.LAST_NAME);
+        }
+        var file = user.get(User.PROFILE_PICTURE);
+        if (file !== undefined){
+          obj[PublicProfile.PICTURE] = file.url();
         }
         array.push(obj);
       });

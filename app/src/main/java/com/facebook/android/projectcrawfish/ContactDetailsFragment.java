@@ -17,6 +17,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -38,6 +39,9 @@ public class ContactDetailsFragment extends ProfileDialog {
     IconButton mContactFb;
     @Bind(R.id.contact_linkedin)
     IconButton mContactLinkedIn;
+
+    @Bind(R.id.switcher)
+    ProgressSwitcher mSwitcher;
 
     public static ContactDetailsFragment newInstance(ParseUser user) {
         ContactDetailsFragment frag = new ContactDetailsFragment();
@@ -62,12 +66,7 @@ public class ContactDetailsFragment extends ProfileDialog {
         mPositionField.setText(mProfile.getPosition());
         mNumberField.setText(mProfile.getPhoneNumber());
         mEmailField.setText(mProfile.getEmail());
-        mProfile.getProfilePicture(new Profile.ProfilePictureGetListener() {
-            @Override
-            public void onGet(Bitmap bitmap) {
-                mPictureField.setImageBitmap(bitmap);
-            }
-        });
+        mProfile.loadProfilePictureIntoImageView(mPictureField,mSwitcher);
 
 
         String linkedIn = mProfile.getLinkedIn();

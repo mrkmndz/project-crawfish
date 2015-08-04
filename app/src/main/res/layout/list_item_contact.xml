@@ -12,54 +12,65 @@
         android:id="@+id/connections_list_card_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="4dp"
+        android:layout_marginEnd="4dp"
+        android:layout_marginStart="4dp"
+        android:layout_marginTop="4dp"
         cardview:cardCornerRadius="2dp"
         cardview:cardElevation="4dp"
-        android:layout_marginTop="4dp"
-        android:layout_marginBottom="4dp"
-        android:layout_marginStart="4dp"
-        android:layout_marginEnd="4dp"
         >
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_margin="4dp"
-            >
+            android:orientation="horizontal">
 
-            <ImageView
-                android:id="@+id/list_item_contact_photo"
+            <LinearLayout
+                android:layout_weight="1"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_alignParentEnd="true"
-                android:background="@drawable/contact_list_item_photo"
-                android:padding="40dp"
-                />
+                android:orientation="vertical">
 
-            <com.facebook.android.projectcrawfish.CustomFontTextView
-                android:id="@+id/list_item_contact_name"
-                android:layout_width="fill_parent"
+                <com.facebook.android.projectcrawfish.CustomFontTextView
+                    android:id="@+id/list_item_contact_name"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:padding="4dp"
+                    android:textSize="20sp"
+                    android:textStyle="bold"
+                    tools:text="Contact Name"
+                    />
+
+                <com.facebook.android.projectcrawfish.CustomFontTextView
+                    android:id="@+id/list_item_contact_position"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="4dp"
+                    android:textSize="16sp"
+                    tools:text="Contact Position"
+                    />
+            </LinearLayout>
+
+            <com.facebook.android.projectcrawfish.ProgressSwitcher
+                android:id="@+id/switcher"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="8dp"
-                android:layout_toStartOf="@id/list_item_contact_photo"
-                android:padding="4dp"
-                android:textSize="20sp"
-                android:textStyle="bold"
-                tools:text="Contact Name"
-                />
+                android:layout_gravity="right"
+                android:layout_weight="0">
 
-            <com.facebook.android.projectcrawfish.CustomFontTextView
-                android:id="@+id/list_item_contact_position"
-                android:layout_width="fill_parent"
-                android:layout_height="wrap_content"
-                android:layout_below="@id/list_item_contact_name"
-                android:layout_centerVertical="true"
-                android:layout_toStartOf="@id/list_item_contact_photo"
-                android:padding="4dp"
-                android:textSize="16sp"
-                tools:text="Contact Position"
-                />
-
-        </RelativeLayout>
+                <ImageView
+                    android:id="@+id/list_item_contact_photo"
+                    android:layout_width="68dp"
+                    android:layout_height="68dp"
+                    android:layout_alignParentEnd="true"
+                    android:cropToPadding="true"
+                    android:scaleType="centerCrop"
+                    android:src="@drawable/contact_list_item_photo"
+                    />
+            </com.facebook.android.projectcrawfish.ProgressSwitcher>
+        </LinearLayout>
 
     </android.support.v7.widget.CardView>
 

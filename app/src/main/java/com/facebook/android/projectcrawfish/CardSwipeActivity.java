@@ -4,6 +4,7 @@ package com.facebook.android.projectcrawfish;
 
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -11,11 +12,13 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -155,6 +158,7 @@ public class CardSwipeActivity extends AppCompatActivity {
         }
 
         public String getEventID(){return mEventID;}
+
     }
 
     private class CardAdapter extends ArrayAdapter<ProfileDisplayInstance> {
@@ -192,6 +196,12 @@ public class CardSwipeActivity extends AppCompatActivity {
 
             TextView phoneField = (TextView) view.findViewById(R.id.contact_number);
             phoneField.setText(pdi.getProfile().getPhoneNumber());
+
+            final ProgressSwitcher switcher = (ProgressSwitcher) view.findViewById(R.id.switcher);
+
+            final ImageView profilePic = (ImageView) view.findViewById(R.id.profile_picture);
+            pdi.getProfile().loadProfilePictureIntoImageView(profilePic,switcher);
+
             return view;
         }
     }

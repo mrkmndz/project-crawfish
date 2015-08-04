@@ -28,6 +28,8 @@ import android.widget.ViewSwitcher;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.IOException;
 
@@ -90,6 +92,9 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
 
         @Bind(R.id.profile_picture)
         ImageView mProfilePictureView;
+
+        @Bind(R.id.switcher)
+        ProgressSwitcher mSwitcher;
 
         OnFragmentInteractionListener mListener;
 
@@ -180,12 +185,8 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
             mEditPosition.setText(mProfile.getPosition());
             mEditEmail.setText(mProfile.getEmail());
             mEditNumber.setText(mProfile.getPhoneNumber());
-            mProfile.getProfilePicture(new Profile.ProfilePictureGetListener() {
-                @Override
-                public void onGet(Bitmap bitmap) {
-                    mProfilePictureView.setImageBitmap(bitmap);
-                }
-            });
+            mProfile.loadProfilePictureIntoImageView(mProfilePictureView,mSwitcher);
+
             hideKeyboard();
             validateInput();
         }
@@ -197,6 +198,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         }
 
         private void onChangedPicture(Uri selectedImageUri) {
+            mSwitcher.showBar();
             Bitmap profilePicture;
             try {
                 profilePicture = new UserPicture(selectedImageUri, getActivity().getApplicationContext().getContentResolver()).getBitmap();
@@ -204,6 +206,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
                     @Override
                     public void onSave(Bitmap bitmap) {
                         mProfilePictureView.setImageBitmap(bitmap);
+                        mSwitcher.showContent();
                     }
                 });
             } catch (IOException e) {

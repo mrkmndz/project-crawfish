@@ -3,8 +3,10 @@
 
 package com.facebook.android.projectcrawfish;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.widget.ImageView;
 
 import com.parse.GetCallback;
 import com.parse.GetDataCallback;
@@ -14,6 +16,8 @@ import com.parse.ParseObject;
 import com.parse.ParseQuery;
 import com.parse.ParseUser;
 import com.parse.SaveCallback;
+import com.squareup.picasso.Callback;
+import com.squareup.picasso.Picasso;
 
 import java.io.ByteArrayOutputStream;
 import java.io.Serializable;
@@ -39,7 +43,7 @@ public class Profile implements Serializable {
     private String mPosition;
     private String mPhoneNumber;
     private String mEmail;
-    private byte[] mProfilePicture;
+    private String mProfilePictureUrl;
     private String mFbId;
     private String mLinkedIn;
     private Boolean mIsFbPublic;
@@ -50,7 +54,7 @@ public class Profile implements Serializable {
         profile.setFullName(user.getString("name"));
         profile.setPosition("");
         profile.setPhoneNumber("");
-        profile.mProfilePicture = null;
+        profile.mProfilePictureUrl = null;
         profile.setFbId("");
         profile.setLinkedIn("");
         return profile;
@@ -69,7 +73,12 @@ public class Profile implements Serializable {
             profile.mPosition = (String) user.get(POSITION);
             profile.mPhoneNumber = (String) user.get(PHONE_NUMBER);
             profile.mEmail = (String) user.get(EMAIL);
-            profile.mProfilePicture = null;//TODO convert to bitmap in usages
+            ParseFile file = (ParseFile) user.get(PROFILE_PICTURE);
+            if (file ==null){
+                profile.mProfilePictureUrl = null;
+            } else {
+                profile.mProfilePictureUrl = file.getUrl();
+            }
             profile.mFbId = (String) user.get(FBID);
             profile.mLinkedIn = (String) user.get(LINKEDIN);
             profile.mIsFbPublic = (Boolean) user.get(IS_PUBLIC);
@@ -173,29 +182,12 @@ public class Profile implements Serializable {
         mFbId = fbId;
     }
 
-    public void getProfilePicture(final ProfilePictureGetListener listener) {
-        if (mProfilePicture != null) {
-            listener.onGet(BitmapFactory.decodeByteArray(mProfilePicture, 0, mProfilePicture.length));
-        } else {
-            ParseQuery<ParseUser> query = ParseUser.getQuery();
-            query.getInBackground(mUserID, new GetCallback<ParseUser>() {
-                @Override
-                public void done(ParseUser parseUser, ParseException e) {
-                    if (parseUser.get(PROFILE_PICTURE) != null) {
-                        ParseFile file = (ParseFile) parseUser.get(PROFILE_PICTURE);
-                        if (file != null) {
-                            file.getDataInBackground(new GetDataCallback() {
-                                @Override
-                                public void done(byte[] bytes, ParseException e) {
-                                    mProfilePicture = bytes;
-                                    listener.onGet(BitmapFactory.decodeByteArray(bytes, 0, bytes.length));
-                                }
-                            });
-                        }
-                    }
-                }
-            });
-        }
+    private String getProfilePictureUrl() {
+        return mProfilePictureUrl;
+    }
+
+    protected void setProfilePictureUrl(String url){
+        mProfilePictureUrl = url;
     }
 
     public interface ProfilePictureSaveListener {
@@ -206,14 +198,35 @@ public class Profile implements Serializable {
         ByteArrayOutputStream stream = new ByteArrayOutputStream();
         bitmap.compress(Bitmap.CompressFormat.PNG, 100, stream);
         byte[] data = stream.toByteArray();
-        mProfilePicture = data;
-        ParseFile file = new ParseFile("profile_picture.png", data);
+        final ParseFile file = new ParseFile("profile_picture.png", data);
         ParseUser user = ParseObject.createWithoutData(ParseUser.class, mUserID);
         user.put(PROFILE_PICTURE, file);
         user.saveInBackground(new SaveCallback() {
             @Override
             public void done(ParseException e) {
                 listener.onSave(bitmap);
+                setProfilePictureUrl(file.getUrl());
+            }
+        });
+    }
+
+    public void loadProfilePictureIntoImageView(ImageView view, final ProgressSwitcher switcher){
+        if (this.getProfilePictureUrl() == null){
+            switcher.showContent();
+            return;
+        }
+
+        switcher.showBar();
+        Picasso.with(view.getContext()).load(this.getProfilePictureUrl())
+                .into(view, new Callback() {
+            @Override
+            public void onSuccess() {
+                switcher.showContent();
+            }
+
+            @Override
+            public void onError() {
+                //TODO
             }
         });
     }
