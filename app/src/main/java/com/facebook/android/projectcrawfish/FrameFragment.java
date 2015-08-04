@@ -38,7 +38,6 @@ public abstract class FrameFragment<T extends Fragment> extends Fragment {
         }
 
         mToolbar.setTitle(getTitle());
-        mToolbar.setLogo(R.mipmap.ic_launcher);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbar);
 
@@ -52,7 +51,7 @@ public abstract class FrameFragment<T extends Fragment> extends Fragment {
     abstract protected T getNewFragmentInstance();
 
     protected String getTitle(){
-        return "Project Crawfish";
+        return "bïnder";
     }
 
     protected T getFragment(){

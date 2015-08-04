@@ -54,8 +54,7 @@ public class HomeFragment extends Fragment {
         View v = inflater.inflate(R.layout.fragment_home,container,false);
         ButterKnife.bind(this, v);
 
-        mToolbar.setTitle("Project Crawfish");
-        mToolbar.setLogo(R.mipmap.ic_launcher);
+        mToolbar.setTitle("bïnder");
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbar);
 

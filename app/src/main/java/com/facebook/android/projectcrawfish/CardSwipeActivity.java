@@ -64,8 +64,7 @@ public class CardSwipeActivity extends AppCompatActivity {
         setContentView(R.layout.activity_card_swipe);
         ButterKnife.bind(this);
 
-        mToolbar.setTitle(getTitle());
-        mToolbar.setLogo(R.mipmap.ic_launcher);;
+        mToolbar.setTitle("bïnder");
         this.setSupportActionBar(mToolbar);
 
         mCheckButton.setTextSize(BASE_SIZE);

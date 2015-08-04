@@ -133,7 +133,6 @@ public class UpcomingEventsFragment extends Fragment {
         }
 
         mToolbar.setTitle("Check In");
-        mToolbar.setLogo(R.mipmap.ic_launcher);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbar);
 
