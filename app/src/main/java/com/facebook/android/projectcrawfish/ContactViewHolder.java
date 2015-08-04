@@ -2,15 +2,11 @@
 
 package com.facebook.android.projectcrawfish;// Copyright 2004-present Facebook. All Rights Reserved.
 
-import android.content.Context;
-import android.graphics.Bitmap;
-import android.media.Image;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.parse.ParseUser;
-import com.squareup.picasso.Picasso;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;

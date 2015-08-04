@@ -4,20 +4,28 @@
     <group android:checkableBehavior="single">
         <item
             android:id="@+id/nav_home"
-            android:title="Home" />
+            android:icon="@drawable/ic_home"
+            android:title="Home"/>
         <item
             android:id="@+id/nav_check_in"
-            android:title="Check In" />
+            android:icon="@drawable/ic_checkin"
+            android:title="Check In"/>
         <item
             android:id="@+id/nav_new"
-            android:title="My Events" />
+            android:icon="@drawable/ic_events"
+            android:title="My Events"/>
         <item
             android:id="@+id/nav_me"
-            android:title="My Profile" />
+            android:icon="@drawable/ic_my_profile"
+            android:title="My Profile"/>
+
+
+    </group>
+
+    <group android:id="@+id/group2">
         <item
             android:id="@+id/nav_log_out"
             android:title="Log Out"/>
-
     </group>
 
 </menu>

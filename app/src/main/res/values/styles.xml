@@ -3,11 +3,11 @@
     <!-- Base application theme. -->
 
     <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
-        <item name="colorPrimary">#2196F3</item>
-        <item name="colorPrimaryDark">#1976D2</item>
+        <item name="colorPrimary">#1E88E5</item>
+        <item name="colorPrimaryDark">#1565C0</item>
         <item name="actionMenuTextColor">@color/white</item>
         <item name="android:actionMenuTextColor">@color/white</item>
-        <item name="android:textColorSecondary">@color/white</item>
+        <item name="android:textColorSecondary">@color/darkGray</item>
     </style>
 
 

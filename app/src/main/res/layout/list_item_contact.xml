@@ -17,7 +17,7 @@
         android:layout_marginStart="4dp"
         android:layout_marginTop="4dp"
         cardview:cardCornerRadius="2dp"
-        cardview:cardElevation="4dp"
+        cardview:cardElevation="1.75dp"
         >
 
         <LinearLayout

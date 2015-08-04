@@ -17,6 +17,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.FrameLayout;
+import android.widget.TextView;
 
 import com.parse.GetCallback;
 import com.parse.ParseException;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MainActivity extends AppCompatActivity implements
         UpcomingEventListFragment.OnFragmentInteractionListener,
@@ -69,6 +71,18 @@ public class MainActivity extends AppCompatActivity implements
     @Bind(R.id.nav_view)
     NavigationView mNavigationView;
 
+    @Bind(R.id.nav_bar_username)
+    TextView mUsername;
+
+    @Bind(R.id.nav_bar_email)
+    TextView mEmail;
+
+    @Bind(R.id.nav_bar_picture)
+    CircleImageView mPicture;
+
+    @Bind(R.id.nav_bar_picture_switcher)
+    ProgressSwitcher mProgressSwitcher;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -78,6 +92,11 @@ public class MainActivity extends AppCompatActivity implements
         ParseInstallation installation = ParseInstallation.getCurrentInstallation();
         installation.put("user", ParseUser.getCurrentUser());
         installation.saveInBackground();
+
+        mUsername.setText(Profile.fromUser(ParseUser.getCurrentUser()).getFullName());
+        mEmail.setText(Profile.fromUser(ParseUser.getCurrentUser()).getEmail());
+
+        Profile.fromUser(ParseUser.getCurrentUser()).loadProfilePictureIntoImageView(mPicture, mProgressSwitcher);
 
         mNavigationView.setNavigationItemSelectedListener(this);
 
