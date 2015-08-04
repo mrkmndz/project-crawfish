@@ -27,6 +27,7 @@ public class PastEventList extends ListFragment<Attendance>  {
     protected ParseQuery<Attendance> getQuery() {
         ParseQuery<Attendance> query = new ParseQuery<>(Attendance.CLASS_NAME);
         query.whereEqualTo(Attendance.USER, ParseUser.getCurrentUser());
+        query.whereNotEqualTo(Attendance.IS_FINISHED,true);
         query.include(Attendance.EVENT);
         return query;
     }

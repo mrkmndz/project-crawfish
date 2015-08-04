@@ -18,6 +18,7 @@ public class Attendance extends ParseObject {
     public static final String EVENT = "EVENT";
     public static final String HAS_LEFT = "HAS_LEFT";
     public static final String MAC = "MAC";
+    public static final String IS_FINISHED = "IS_FINISHED";
 
     public void setUser(ParseUser user) {
         put(USER,user);

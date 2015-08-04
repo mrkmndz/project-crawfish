@@ -24,6 +24,9 @@ var Attendance  = Parse.Object.extend("Attendance",{
       pingCounts[user.id] = old + 1;
     }
     this.setPingCounts(pingCounts);
+  },
+  setFinished : function () {
+    this.set(Attendance.IS_FINISHED,true)
   }
 },
 {
@@ -31,7 +34,8 @@ var Attendance  = Parse.Object.extend("Attendance",{
   EVENT : "EVENT",
   USER : "USER",
   PING_COUNTS : "PING_COUNTS",
-  HAS_LEFT : "HAS_LEFT"
+  HAS_LEFT : "HAS_LEFT",
+  IS_FINISHED : "IS_FINISHED"
 });
 
 //Parse Subclass Swipe
@@ -117,6 +121,7 @@ Parse.Cloud.define("recordPings", function(request, response) {
 //args: String attendanceID
 Parse.Cloud.define("getSortedProfiles", function(request, response){
   var q = new Parse.Query(Attendance);
+  q.include(Attendance.EVENT);
   var attendance;
   q.get(request.params.attendanceID).then(function(result) {
     attendance = result;
@@ -142,7 +147,18 @@ Parse.Cloud.define("getSortedProfiles", function(request, response){
   }).then(function(results) {
     var array = [];
     if (results.length===0){
-      response.success(array);
+      var currentTime = new Date();
+      var endTime = attendance.getEvent().get("END_DATE");
+      if (endTime < currentTime){
+        attendance.setFinished();
+        attendance.save().then(function(result){
+          response.success(array);
+        },function(error){
+          response.error(error.message);
+        });
+      } else {
+        response.success(array);
+      }
     } else {
       var pingCounts = attendance.getPingCounts();
       if (pingCounts !== undefined){

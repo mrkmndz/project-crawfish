@@ -196,6 +196,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="SAVE"/>
+        <Button
+            android:id="@+id/delete_button"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="DELETE"/>
     </LinearLayout>
     </com.facebook.android.projectcrawfish.ProgressSwitcher>
 </android.support.v7.widget.CardView>
