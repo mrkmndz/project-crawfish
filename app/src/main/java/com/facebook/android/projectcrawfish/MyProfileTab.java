@@ -44,7 +44,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         return MeFragment.newInstance();
     }
 
-    public void onChangedPicture(Uri selectedImageUri){
+    public void onChangedPicture(Uri selectedImageUri) {
         getFragment().onChangedPicture(selectedImageUri);
     }
 
@@ -108,7 +108,21 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
             View v = inflater.inflate(R.layout.fragment_me, container, false);
             ButterKnife.bind(this, v);
             updateUI();
+            mContactFb.setClickable(false);
+            mContactLinkedIn.setClickable(false);
             return v;
+        }
+
+        @Override
+        public void onAttach(Activity activity) {
+            super.onAttach(activity);
+
+            try {
+                mListener = (OnFragmentInteractionListener) activity;
+            } catch (ClassCastException e) {
+                throw new ClassCastException(activity.toString()
+                        + " must implement OnHeadlineSelectedListener");
+            }
         }
 
         @OnClick(R.id.edit_button)
@@ -234,19 +248,15 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         }
 
 
+        @OnClick(R.id.contact_fb)
+        public void linkFb() {
+            mListener.onFbSelected(ParseUser.getCurrentUser());
+        }
 
-   @OnClick(R.id.contact_fb)
-    public void linkFb(){
-        LinkFacebookFragment linkFbDialog = new LinkFacebookFragment();
-        linkFbDialog.show(getChildFragmentManager(), "Link Facebook");
-    }
-
-    /*
-    @OnClick(R.id.contact_linkedin)
-    public void linkLinkedIn(){
-
-    }
-    */
+        @OnClick(R.id.contact_linkedin)
+        public void linkLinkedIn() {
+            mListener.onLinkedInSelected(ParseUser.getCurrentUser());
+        }
 
         @OnTextChanged(R.id.contact_name_edit)
         void onNameChanged(CharSequence text) {
@@ -284,18 +294,10 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
 
         interface OnFragmentInteractionListener {
             void openGallery();
+            void onFbSelected(ParseUser currentUser);
+            void onLinkedInSelected(ParseUser currentUser);
         }
 
-        @Override
-        public void onAttach(Activity activity) {
-            super.onAttach(activity);
-            try {
-                mListener = (OnFragmentInteractionListener) activity;
-            } catch (ClassCastException e) {
-                throw new ClassCastException(activity.toString()
-                        + " must implement OnFragmentInteractionListener");
-            }
-        }
 
         @Override
         public void onDetach() {

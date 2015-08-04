@@ -43,9 +43,7 @@ public class MainActivity extends AppCompatActivity implements
         UpcomingEventsFragment.OnFragmentInteractionListener,
         NavigationView.OnNavigationItemSelectedListener,
         EventEditorFragment.OnFragmentInteractionListener,
-        MyProfileTab.MeFragment.OnFragmentInteractionListener,
-        MeFragment.OnLinkingSelectedListener,
-        MeFragment.OnLinkedInListener {
+        MyProfileTab.MeFragment.OnFragmentInteractionListener {
 
     public static final int DISCOVERABLE = 3;
     private static final int SWIPES = 5;
@@ -224,6 +222,13 @@ public class MainActivity extends AppCompatActivity implements
         linkFacebookFragment.show(manager, FB_DIALOG);
     }
 
+    @Override
+    public void onLinkedInSelected(ParseUser user) {
+        FragmentManager manager = getSupportFragmentManager();
+        LinkedInFragment linkedInFragment = LinkedInFragment.newInstance(user);
+        linkedInFragment.show(manager, LINKED_IN_DIALOG);
+    }
+
     public void refreshView() {
         invalidateOptionsMenu();
         FragmentManager fm = getSupportFragmentManager();
@@ -257,13 +262,6 @@ public class MainActivity extends AppCompatActivity implements
                         .commit();
                 break;
         }
-    }
-
-    @Override
-    public void onLinkedInSelected(ParseUser user) {
-        FragmentManager manager = getSupportFragmentManager();
-        LinkedInFragment linkedInFragment = LinkedInFragment.newInstance(user);
-        linkedInFragment.show(manager, LINKED_IN_DIALOG);
     }
 
     public void logOut() {

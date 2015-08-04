@@ -22,14 +22,6 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 
-import android.widget.TextView;
-
-import com.parse.ParseUser;
-
-import butterknife.Bind;
-import butterknife.ButterKnife;
-import butterknife.OnClick;
-
 public class ContactDetailsFragment extends ProfileDialog {
 
     @Bind(R.id.contact_name)
