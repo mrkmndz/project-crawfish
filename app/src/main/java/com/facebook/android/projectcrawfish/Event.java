@@ -33,7 +33,7 @@ public class Event extends ParseObject {
     public static final int STANDARD_DURATION_HOURS = 1;
 
     public static final SimpleDateFormat DISPLAY_DATE_FORMAT = new SimpleDateFormat("EEE, MMM d, yyyy", Locale.US);
-    public static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("K:mm a", Locale.US);
+    public static final SimpleDateFormat DISPLAY_TIME_FORMAT = new SimpleDateFormat("h:mm a", Locale.US);
 
     public ParseUser getCreator(){
         return getParseUser(CREATOR);
