@@ -22,6 +22,11 @@ public class MyEventsFragment extends  FrameFragment<MyEventsFragment.MyEventsLi
         getFragment().refreshList();
     }
 
+    @Override
+    protected String getTitle() {
+        return "My Events";
+    }
+
     public static class MyEventsList extends ListFragment<Event> {
         @Override
         protected ParseQuery<Event> getQuery() {

@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.graphics.Bitmap;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +19,7 @@ import android.widget.TextView;
 import com.lorentzos.flingswipe.SwipeFlingAdapterView;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
+import com.squareup.picasso.Callback;
 import com.squareup.picasso.Picasso;
 
 import java.io.Serializable;
@@ -46,6 +48,9 @@ public class CardSwipeActivity extends AppCompatActivity {
     @Bind(R.id.frame)
     protected SwipeFlingAdapterView flingContainer;
 
+    @Bind(R.id.toolbar)
+    Toolbar mToolbar;
+
 
     public static Intent newIntent(Context context, ArrayList<CardSwipeActivity.ProfileDisplayInstance> PDIs) {
         Intent intent = new Intent(context, CardSwipeActivity.class);
@@ -58,6 +63,10 @@ public class CardSwipeActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_card_swipe);
         ButterKnife.bind(this);
+
+        mToolbar.setTitle(getTitle());
+        mToolbar.setLogo(R.mipmap.ic_launcher);;
+        this.setSupportActionBar(mToolbar);
 
         mCheckButton.setTextSize(BASE_SIZE);
         mXButton.setTextSize(BASE_SIZE);
@@ -166,7 +175,7 @@ public class CardSwipeActivity extends AppCompatActivity {
         private final List<ProfileDisplayInstance> mProfileDisplayInstances;
 
         public CardAdapter(Context context, List<ProfileDisplayInstance> objects) {
-            super(context, R.layout.card, objects);
+            super(context, R.layout.fragment_contact, objects);
             mInflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             mProfileDisplayInstances = objects;
         }
@@ -176,7 +185,7 @@ public class CardSwipeActivity extends AppCompatActivity {
             View view;
 
             if (convertView == null) {
-                view = mInflater.inflate(R.layout.card, parent, false);
+                view = mInflater.inflate(R.layout.fragment_contact, parent, false);
             } else {
                 view = convertView;
             }
@@ -198,9 +207,12 @@ public class CardSwipeActivity extends AppCompatActivity {
             phoneField.setText(pdi.getProfile().getPhoneNumber());
 
             final ProgressSwitcher switcher = (ProgressSwitcher) view.findViewById(R.id.switcher);
+            switcher.showContent();
 
-            final ImageView profilePic = (ImageView) view.findViewById(R.id.profile_picture);
-            pdi.getProfile().loadProfilePictureIntoImageView(profilePic,switcher);
+            ImageView profilePic = (ImageView) view.findViewById(R.id.profile_picture);
+
+            Picasso.with(view.getContext()).load(pdi.getProfile().getProfilePictureUrl())
+                    .into(profilePic);
 
             return view;
         }

@@ -126,7 +126,7 @@ public class UpcomingEventsFragment extends Fragment{
             onLoaded();
         }
 
-        mToolbar.setTitle("Project Crawfish");
+        mToolbar.setTitle("Check In");
         mToolbar.setLogo(R.mipmap.ic_launcher);
         AppCompatActivity activity = (AppCompatActivity) getActivity();
         activity.setSupportActionBar(mToolbar);

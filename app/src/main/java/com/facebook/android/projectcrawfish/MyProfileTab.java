@@ -50,6 +50,11 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
         getFragment().onChangedPicture(selectedImageUri);
     }
 
+    @Override
+    protected String getTitle() {
+        return "My Profile";
+    }
+
     public static class MeFragment extends ProfileDialog implements View.OnClickListener {
 
         @Bind(R.id.contact_fb)
@@ -185,7 +190,7 @@ public class MyProfileTab extends FrameFragment<MyProfileTab.MeFragment> {
             mEditPosition.setText(mProfile.getPosition());
             mEditEmail.setText(mProfile.getEmail());
             mEditNumber.setText(mProfile.getPhoneNumber());
-            mProfile.loadProfilePictureIntoImageView(mProfilePictureView,mSwitcher);
+            mProfile.loadProfilePictureIntoImageView(mProfilePictureView, mSwitcher);
 
             hideKeyboard();
             validateInput();

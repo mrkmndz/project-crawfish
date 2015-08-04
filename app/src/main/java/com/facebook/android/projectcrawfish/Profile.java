@@ -182,7 +182,7 @@ public class Profile implements Serializable {
         mFbId = fbId;
     }
 
-    private String getProfilePictureUrl() {
+    public String getProfilePictureUrl() {
         return mProfilePictureUrl;
     }
 

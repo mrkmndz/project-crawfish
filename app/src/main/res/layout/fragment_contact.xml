@@ -6,10 +6,8 @@
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:layout_gravity="center"
-    android:layout_marginBottom="64dp"
     android:layout_marginLeft="24dp"
     android:layout_marginRight="24dp"
-    android:layout_marginTop="64dp"
     cardview:cardCornerRadius="4dp">
 
     <LinearLayout
@@ -17,56 +15,44 @@
         android:layout_height="430dp"
         android:orientation="vertical">
 
-        <RelativeLayout
+        <com.facebook.android.projectcrawfish.ProgressSwitcher
+            android:id="@+id/switcher"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginTop="24dp">
+
+            <ImageView
+                android:id="@+id/profile_picture"
+                android:layout_width="140dp"
+                android:layout_height="140dp"
+                android:layout_marginBottom="8dp"
+                android:background="@android:color/darker_gray"
+                android:contentDescription="@string/contact_photo"
+                android:cropToPadding="true"
+                android:scaleType="centerCrop"/>
+        </com.facebook.android.projectcrawfish.ProgressSwitcher>
+
+        <com.facebook.android.projectcrawfish.CustomFontTextView
+            android:id="@+id/contact_name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="24dp"
-            android:gravity="fill_vertical">
+            android:layout_centerVertical="true"
+            android:layout_marginBottom="1dp"
+            android:layout_marginTop="8dp"
+            android:ellipsize="end"
+            android:gravity="center_horizontal"
+            android:singleLine="true"
+            android:textSize="32sp"
+            tools:text="@string/name_hint"/>
 
-            <com.facebook.android.projectcrawfish.ProgressSwitcher
-                android:id="@+id/switcher"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true">
 
-                <ImageView
-                    android:id="@+id/profile_picture"
-                    android:layout_width="140dp"
-                    android:layout_height="140dp"
-                    android:layout_marginBottom="8dp"
-                    android:background="@android:color/darker_gray"
-                    android:contentDescription="@string/contact_photo"
-                    android:cropToPadding="true"
-                    android:scaleType="centerCrop"/>
-            </com.facebook.android.projectcrawfish.ProgressSwitcher>
-        </RelativeLayout>
-
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            >
-
-            <com.facebook.android.projectcrawfish.CustomFontTextView
-                android:id="@+id/contact_name"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_marginBottom="1dp"
-                android:layout_marginTop="8dp"
-                android:ellipsize="end"
-                android:gravity="center_horizontal"
-                android:singleLine="true"
-                android:textSize="32sp"
-                tools:text="@string/name_hint"/>
-
-
-        </RelativeLayout>
-
-
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginRight="16dp">
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:orientation="horizontal">
 
             <android.widget.IconTextView
                 android:id="@+id/position_icon"
@@ -81,15 +67,13 @@
                 android:id="@+id/contact_position"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerVertical="true"
-                android:layout_toRightOf="@+id/position_icon"
                 android:ellipsize="end"
                 android:gravity="center_vertical"
                 android:singleLine="true"
                 android:textSize="18sp"
                 tools:text="@string/position_hint"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -98,10 +82,12 @@
             android:layout_marginRight="24dp"
             android:background="@android:color/darker_gray"/>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp">
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:orientation="horizontal">
 
             <android.widget.IconTextView
                 android:id="@+id/email_icon"
@@ -124,7 +110,7 @@
                 android:textSize="18sp"
                 tools:text="@string/email_hint"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -133,10 +119,12 @@
             android:layout_marginRight="24dp"
             android:background="@android:color/darker_gray"/>
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginRight="16dp">
+            android:layout_gravity="center_vertical"
+            android:layout_marginRight="16dp"
+            android:orientation="horizontal">
 
             <android.widget.IconTextView
                 android:id="@+id/number_icon"
@@ -159,7 +147,7 @@
                 android:textSize="18sp"
                 tools:text="@string/phone_number_hint"/>
 
-        </RelativeLayout>
+        </LinearLayout>
 
         <View
             android:layout_width="fill_parent"
@@ -168,12 +156,11 @@
             android:layout_marginRight="24dp"
             android:background="@android:color/darker_gray"/>
 
-        <RelativeLayout
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
-            android:gravity="fill_vertical"
-            >
+            android:gravity="center_horizontal"
+            android:orientation="horizontal">
 
             <android.widget.IconButton
                 android:id="@+id/contact_fb"
@@ -191,13 +178,12 @@
                 style="?android:attr/borderlessButtonStyle"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_toRightOf="@id/contact_fb"
                 android:clickable="false"
                 android:gravity="center"
                 android:text="{fa_linkedin_square}"
                 android:textColor="@color/linkedIn"
                 android:textSize="48sp"/>
-        </RelativeLayout>
+        </LinearLayout>
 
     </LinearLayout>
 
